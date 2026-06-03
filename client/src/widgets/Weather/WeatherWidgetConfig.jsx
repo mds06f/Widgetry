@@ -1,0 +1,116 @@
+import React, { useState, useEffect } from 'react';
+import { GRADIENTS } from '../index';
+
+export default function WeatherWidgetConfig({ config, onChange }) {
+  const [localCity, setLocalCity] = useState(config.city || 'Paris');
+
+  // Sync state if config.city changes externally (e.g. from defaults)
+  useEffect(() => {
+    setLocalCity(config.city || 'Paris');
+  }, [config.city]);
+
+  const handleUpdate = (key, value) => {
+    onChange({
+      ...config,
+      [key]: value
+    });
+  };
+
+  // Wait for user to stop typing before trigger API updates to avoid spamming the backend
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (localCity.trim()) {
+        handleUpdate('city', localCity.trim());
+      }
+    }, 600); // 600ms debounce
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [localCity]);
+
+  return (
+    <div className="config-group">
+      <h3>Weather Configuration</h3>
+
+      <div className="config-field">
+        <label>Search City</label>
+        <input
+          type="text"
+          value={localCity}
+          onChange={(e) => setLocalCity(e.target.value)}
+          placeholder="e.g. New York, Tokyo"
+        />
+      </div>
+
+      <div className="config-field">
+        <label>Temperature Unit</label>
+        <select
+          value={config.unit || 'C'}
+          onChange={(e) => handleUpdate('unit', e.target.value)}
+        >
+          <option value="C">Celsius (°C)</option>
+          <option value="F">Fahrenheit (°F)</option>
+        </select>
+      </div>
+
+      <div className="config-field">
+        <label>Background Style</label>
+        <select
+          value={config.backgroundStyle || 'gradient'}
+          onChange={(e) => handleUpdate('backgroundStyle', e.target.value)}
+        >
+          <option value="gradient">Gradient Presets</option>
+          <option value="solid">Solid Background Color</option>
+        </select>
+      </div>
+
+      {config.backgroundStyle === 'solid' ? (
+        <div className="config-row">
+          <div className="config-field">
+            <label>Background Color</label>
+            <input
+              type="color"
+              value={config.backgroundColor || '#131a30'}
+              onChange={(e) => handleUpdate('backgroundColor', e.target.value)}
+            />
+          </div>
+          <div className="config-field">
+            <label>Text Color</label>
+            <input
+              type="color"
+              value={config.textColor || '#ffffff'}
+              onChange={(e) => handleUpdate('textColor', e.target.value)}
+            />
+          </div>
+        </div>
+      ) : (
+        <div className="config-field">
+          <label>Gradient Theme</label>
+          <div className="gradient-picker">
+            {Object.keys(GRADIENTS).map((key) => (
+              <div
+                key={key}
+                className={`gradient-option ${config.gradientName === key ? 'active' : ''}`}
+                style={{ background: GRADIENTS[key] }}
+                onClick={() => handleUpdate('gradientName', key)}
+                title={key}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="config-field">
+        <label>Card Corner Rounding</label>
+        <select
+          value={config.borderRadius || '12px'}
+          onChange={(e) => handleUpdate('borderRadius', e.target.value)}
+        >
+          <option value="0px">Sharp Corners (0px)</option>
+          <option value="6px">Subtle (6px)</option>
+          <option value="12px">Rounded (12px)</option>
+          <option value="24px">Extra Rounded (24px)</option>
+        </select>
+      </div>
+    </div>
+  );
+}
