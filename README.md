@@ -43,4 +43,6 @@ npm run dev
 ---
 
 ## How to Contribute
-We love contributions! If you're looking to add a new widget or fix a bug, please check out our [CONTRIBUTING.md](./CONTRIBUTING.md) file for a detailed step-by-step onboarding guide.
+We love contributions! If you are looking for ideas, check out our [Good First Issues & Feature Roadmap](./ISSUES.md). 
+
+Please refer to our [CONTRIBUTING.md](./CONTRIBUTING.md) file for a detailed step-by-step onboarding guide on how to setup your branch and submit a pull request.
