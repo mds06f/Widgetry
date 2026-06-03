@@ -6,6 +6,15 @@ This guide will walk you through the codebase architecture and explain how to ad
 
 ---
 
+## Branching & PR Workflow
+
+To keep the project organized, we follow a simple branching workflow:
+1. **Target Branch**: The `development` branch is the main, active development branch.
+2. **Feature Branches**: For any new features, bug fixes, or improvements, create a new branch from `development` (e.g., `git checkout -b feature/my-new-widget development`).
+3. **Submitting Changes**: Once your work is complete, push your branch and open a Pull Request (PR) targeting the `development` branch.
+
+---
+
 ## Codebase Architecture
 
 ```text
