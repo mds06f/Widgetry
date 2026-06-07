@@ -18,7 +18,7 @@ To keep the project organized, we follow a simple branching workflow:
 ## Codebase Architecture
 
 ```text
-max/
+widgetry/
 ├── client/
 │   ├── src/
 │   │   ├── pages/         # Dashboard, WidgetEditor, and WidgetRender pages
