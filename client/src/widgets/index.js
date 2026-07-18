@@ -10,6 +10,9 @@ import WeatherWidgetConfig from './Weather/WeatherWidgetConfig';
 import TodoWidgetView from './Todo/TodoWidgetView';
 import TodoWidgetConfig from './Todo/TodoWidgetConfig';
 
+import CountdownWidgetView from './Countdown/CountdownWidgetView';
+import CountdownWidgetConfig from './Countdown/CountdownWidgetConfig';
+
 export const widgetRegistry = {
   clock: {
     name: 'Digital Clock',
@@ -80,6 +83,28 @@ export const widgetRegistry = {
       backgroundStyle: 'gradient',
       backgroundColor: '#1b2542',
       gradientName: 'darkness',
+      backgroundImageUrl: '',
+      borderRadius: '12px',
+      customCSS: ''
+    }
+  },
+  countdown: {
+    name: 'Countdown Timer',
+    description: 'Counts down in real-time to any target date and time with customizable labels and styling.',
+    icon: 'Timer',
+    view: CountdownWidgetView,
+    config: CountdownWidgetConfig,
+    defaultConfig: {
+      label: 'Countdown',
+      targetDate: '',
+      showDays: true,
+      showHours: true,
+      showMinutes: true,
+      showSeconds: true,
+      textColor: '#ffffff',
+      backgroundStyle: 'gradient',
+      backgroundColor: '#1b2542',
+      gradientName: 'cosmic',
       backgroundImageUrl: '',
       borderRadius: '12px',
       customCSS: ''
