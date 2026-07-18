@@ -65,10 +65,35 @@ export const widgetRegistry = {
 };
 
 export const GRADIENTS = {
-  royal: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
-  sunset: 'linear-gradient(135deg, #f12711 0%, #f5af19 100%)',
-  ocean: 'linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)',
-  neon: 'linear-gradient(135deg, #0575e6 0%, #00f260 100%)',
-  cosmic: 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)',
-  darkness: 'linear-gradient(135deg, #141e30 0%, #243b55 100%)'
+  // Blues & Royals
+  royal:     'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
+  ocean:     'linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)',
+  arctic:    'linear-gradient(135deg, #2980b9 0%, #6dd5fa 50%, #ffffff 100%)',
+  midnight:  'linear-gradient(135deg, #0d0d2b 0%, #1a1a5e 50%, #3d348b 100%)',
+
+  // Purples & Cosmics
+  cosmic:    'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)',
+  nebula:    'linear-gradient(135deg, #3d0366 0%, #c6007e 100%)',
+  aurora:    'linear-gradient(135deg, #007991 0%, #78ffd6 100%)',
+  lavender:  'linear-gradient(135deg, #bdc3c7 0%, #2c3e50 100%)',
+
+  // Sunsets & Warms
+  sunset:    'linear-gradient(135deg, #f12711 0%, #f5af19 100%)',
+  ember:     'linear-gradient(135deg, #c31432 0%, #240b36 100%)',
+  peach:     'linear-gradient(135deg, #ed4264 0%, #ffedbc 100%)',
+  gold:      'linear-gradient(135deg, #f7971e 0%, #ffd200 100%)',
+
+  // Greens & Nature
+  forest:    'linear-gradient(135deg, #134e5e 0%, #71b280 100%)',
+  emerald:   'linear-gradient(135deg, #0f9b58 0%, #00bf8f 100%)',
+  lime:      'linear-gradient(135deg, #acb6e5 0%, #86fde8 100%)',
+
+  // Neons & Synthwave
+  neon:      'linear-gradient(135deg, #0575e6 0%, #00f260 100%)',
+  synthwave: 'linear-gradient(135deg, #fc466b 0%, #3f5efb 100%)',
+  cyberpunk: 'linear-gradient(135deg, #f953c6 0%, #b91d73 100%)',
+
+  // Neutrals & Darks
+  darkness:  'linear-gradient(135deg, #141e30 0%, #243b55 100%)',
+  obsidian:  'linear-gradient(135deg, #1c1c1c 0%, #3d3d3d 100%)',
 };
