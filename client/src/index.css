@@ -599,18 +599,25 @@ input:checked + .slider:before {
 /* Custom gradients for Widget Options */
 .gradient-picker {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.5rem;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.4rem;
 }
 
 .gradient-option {
-  height: 35px;
+  height: 32px;
   border-radius: var(--radius-sm);
   cursor: pointer;
   border: 2px solid transparent;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.gradient-option:hover {
+  transform: scale(1.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .gradient-option.active {
   border-color: white;
-  box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.6), 0 2px 8px rgba(0, 0, 0, 0.4);
+  transform: scale(1.05);
 }
