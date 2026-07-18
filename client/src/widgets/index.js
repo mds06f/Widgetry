@@ -10,6 +10,9 @@ import WeatherWidgetConfig from './Weather/WeatherWidgetConfig';
 import CountdownWidgetView from './Countdown/CountdownWidgetView';
 import CountdownWidgetConfig from './Countdown/CountdownWidgetConfig';
 
+import TodoWidgetView from './Todo/TodoWidgetView';
+import TodoWidgetConfig from './Todo/TodoWidgetConfig';
+
 export const widgetRegistry = {
   clock: {
     name: 'Digital Clock',
@@ -85,6 +88,23 @@ export const widgetRegistry = {
       backgroundStyle: 'gradient',
       backgroundColor: '#1b2542',
       gradientName: 'cosmic',
+      backgroundImageUrl: '',
+      borderRadius: '12px',
+      customCSS: ''
+    }
+  },
+  todo: {
+    name: 'To-Do List',
+    description: 'An interactive, persistent checklist widget. Items are saved in localStorage per embed instance.',
+    icon: 'ListChecks',
+    view: TodoWidgetView,
+    config: TodoWidgetConfig,
+    defaultConfig: {
+      title: 'My To-Do List',
+      textColor: '#ffffff',
+      backgroundStyle: 'gradient',
+      backgroundColor: '#1b2542',
+      gradientName: 'darkness',
       backgroundImageUrl: '',
       borderRadius: '12px',
       customCSS: ''
