@@ -464,7 +464,11 @@ a {
 }
 
 .config-field input[type="text"],
+<<<<<<< HEAD
 .config-field input[type="datetime-local"],
+=======
+.config-field textarea,
+>>>>>>> origin/development
 .config-field select {
   background-color: var(--bg-input);
   border: 1px solid var(--border-color);
@@ -477,6 +481,7 @@ a {
   transition: border-color 0.2s ease;
 }
 
+<<<<<<< HEAD
 /* Style the datetime-local calendar icon to match the dark theme */
 .config-field input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   filter: invert(0.7);
@@ -485,6 +490,18 @@ a {
 
 .config-field input[type="text"]:focus,
 .config-field input[type="datetime-local"]:focus,
+=======
+.config-field textarea {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.6;
+}
+
+.config-field input[type="text"]:focus,
+.config-field textarea:focus,
+>>>>>>> origin/development
 .config-field select:focus {
   outline: none;
   border-color: var(--border-focus);

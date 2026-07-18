@@ -35,8 +35,12 @@ export default function WeatherWidgetView({ config }) {
     backgroundStyle = 'gradient',
     gradientName = 'sunset',
     backgroundImageUrl = '',
-    borderRadius = '12px'
+    borderRadius = '12px',
+    customCSS = ''
   } = config;
+
+  // Sanitize: strip any </style> tags to prevent style-block breakout
+  const safeCSS = customCSS.replace(/<\/style>/gi, '');
 
   useEffect(() => {
     let active = true;
@@ -99,18 +103,24 @@ export default function WeatherWidgetView({ config }) {
 
   if (loading) {
     return (
-      <div style={style}>
-        <p style={{ opacity: 0.8, fontSize: '0.9rem' }}>Loading weather details...</p>
-      </div>
+      <>
+        {safeCSS ? <style>{safeCSS}</style> : null}
+        <div style={style}>
+          <p style={{ opacity: 0.8, fontSize: '0.9rem' }}>Loading weather details...</p>
+        </div>
+      </>
     );
   }
 
   if (error) {
     return (
-      <div style={style}>
-        <p style={{ color: '#ef4444', fontSize: '0.9rem', fontWeight: 'bold' }}>⚠️ Error</p>
-        <p style={{ fontSize: '0.8rem', opacity: 0.9 }}>{error}</p>
-      </div>
+      <>
+        {safeCSS ? <style>{safeCSS}</style> : null}
+        <div style={style}>
+          <p style={{ color: '#ef4444', fontSize: '0.9rem', fontWeight: 'bold' }}>⚠️ Error</p>
+          <p style={{ fontSize: '0.8rem', opacity: 0.9 }}>{error}</p>
+        </div>
+      </>
     );
   }
 
@@ -124,19 +134,22 @@ export default function WeatherWidgetView({ config }) {
   const WeatherIcon = ICON_MAP[data.icon] || Cloud;
 
   return (
-    <div style={style}>
-      <div style={{ fontSize: '1rem', fontWeight: '600', opacity: 0.9, marginBottom: '0.25rem' }}>
-        {data.city}, {data.country}
+    <>
+      {safeCSS ? <style>{safeCSS}</style> : null}
+      <div style={style}>
+        <div style={{ fontSize: '1rem', fontWeight: '600', opacity: 0.9, marginBottom: '0.25rem' }}>
+          {data.city}, {data.country}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', margin: '0.5rem 0' }}>
+          <WeatherIcon size={40} style={{ strokeWidth: 2 }} />
+          <span style={{ fontSize: '2.5rem', fontWeight: '700' }}>
+            {displayTemp}°{unit}
+          </span>
+        </div>
+        <div style={{ fontSize: '0.9rem', fontWeight: '500', opacity: 0.8 }}>
+          {data.condition}
+        </div>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', margin: '0.5rem 0' }}>
-        <WeatherIcon size={40} style={{ strokeWidth: 2 }} />
-        <span style={{ fontSize: '2.5rem', fontWeight: '700' }}>
-          {displayTemp}°{unit}
-        </span>
-      </div>
-      <div style={{ fontSize: '0.9rem', fontWeight: '500', opacity: 0.8 }}>
-        {data.condition}
-      </div>
-    </div>
+    </>
   );
 }

@@ -26,7 +26,8 @@ export const widgetRegistry = {
       backgroundColor: 'transparent',
       backgroundImageUrl: '',
       borderColor: 'transparent',
-      borderWidth: '0px'
+      borderWidth: '0px',
+      customCSS: ''
     }
   },
   quote: {
@@ -45,7 +46,8 @@ export const widgetRegistry = {
       gradientName: 'royal',
       backgroundImageUrl: '',
       borderRadius: '12px',
-      showAuthor: true
+      showAuthor: true,
+      customCSS: ''
     }
   },
   weather: {
@@ -62,7 +64,8 @@ export const widgetRegistry = {
       backgroundStyle: 'gradient',
       gradientName: 'sunset',
       backgroundImageUrl: '',
-      borderRadius: '12px'
+      borderRadius: '12px',
+      customCSS: ''
     }
   },
   countdown: {

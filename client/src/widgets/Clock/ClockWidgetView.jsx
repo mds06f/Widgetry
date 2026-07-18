@@ -19,8 +19,12 @@ export default function ClockWidgetView({ config }) {
     backgroundColor = 'transparent',
     backgroundImageUrl = '',
     borderColor = 'transparent',
-    borderWidth = '0px'
+    borderWidth = '0px',
+    customCSS = ''
   } = config;
+
+  // Sanitize: strip any </style> tags to prevent style-block breakout
+  const safeCSS = customCSS.replace(/<\/style>/gi, '');
 
   // Format time
   let hours = time.getHours();
@@ -38,28 +42,31 @@ export default function ClockWidgetView({ config }) {
   const timeString = `${displayHours}:${minutes}${showSeconds ? `:${seconds}` : ''}${ampm}`;
 
   return (
-    <div style={{
-      color: textColor,
-      fontSize: fontSize,
-      fontFamily: fontFamily === 'monospace' ? 'JetBrains Mono, monospace' : 'Outfit, sans-serif',
-      fontWeight: 'bold',
-      backgroundColor: backgroundColor,
-      backgroundImage: backgroundImageUrl ? `url(${backgroundImageUrl})` : undefined,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-      border: `${borderWidth} solid ${borderColor}`,
-      borderRadius: '8px',
-      padding: '10px 20px',
-      textAlign: 'center',
-      userSelect: 'none',
-      width: '100%',
-      height: '100vh',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center'
-    }}>
-      {timeString}
-    </div>
+    <>
+      {safeCSS ? <style>{safeCSS}</style> : null}
+      <div style={{
+        color: textColor,
+        fontSize: fontSize,
+        fontFamily: fontFamily === 'monospace' ? 'JetBrains Mono, monospace' : 'Outfit, sans-serif',
+        fontWeight: 'bold',
+        backgroundColor: backgroundColor,
+        backgroundImage: backgroundImageUrl ? `url(${backgroundImageUrl})` : undefined,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        border: `${borderWidth} solid ${borderColor}`,
+        borderRadius: '8px',
+        padding: '10px 20px',
+        textAlign: 'center',
+        userSelect: 'none',
+        width: '100%',
+        height: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}>
+        {timeString}
+      </div>
+    </>
   );
 }

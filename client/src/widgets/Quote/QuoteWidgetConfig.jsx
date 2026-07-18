@@ -118,6 +118,19 @@ export default function QuoteWidgetConfig({ config, onChange }) {
           <option value="24px">Extra Rounded (24px)</option>
         </select>
       </div>
+
+      <div className="config-field">
+        <label>Custom CSS</label>
+        <textarea
+          value={config.customCSS || ''}
+          onChange={(e) => handleUpdate('customCSS', e.target.value)}
+          placeholder={`/* Override any widget styles */\ndiv {\n  font-style: italic;\n  backdrop-filter: blur(10px);\n}`}
+          rows={6}
+        />
+        <small style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>
+          CSS is scoped to this widget's iframe — use standard selectors freely.
+        </small>
+      </div>
     </div>
   );
 }
