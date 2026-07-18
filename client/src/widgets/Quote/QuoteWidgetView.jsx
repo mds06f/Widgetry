@@ -31,6 +31,7 @@ export default function QuoteWidgetView({ config }) {
     backgroundStyle = 'gradient',
     backgroundColor = '#1b2542',
     gradientName = 'royal',
+    backgroundImageUrl = '',
     borderRadius = '12px',
     showAuthor = true
   } = config;
@@ -68,6 +69,13 @@ export default function QuoteWidgetView({ config }) {
     style.background = GRADIENTS[gradientName] || GRADIENTS.royal;
   } else {
     style.backgroundColor = backgroundColor;
+  }
+
+  if (backgroundImageUrl) {
+    style.backgroundImage = `url(${backgroundImageUrl})`;
+    style.backgroundSize = 'cover';
+    style.backgroundPosition = 'center';
+    style.backgroundRepeat = 'no-repeat';
   }
 
   return (

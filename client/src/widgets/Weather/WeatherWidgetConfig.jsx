@@ -100,6 +100,16 @@ export default function WeatherWidgetConfig({ config, onChange }) {
       )}
 
       <div className="config-field">
+        <label>Background Image URL</label>
+        <input
+          type="text"
+          value={config.backgroundImageUrl || ''}
+          onChange={(e) => handleUpdate('backgroundImageUrl', e.target.value)}
+          placeholder="https://images.unsplash.com/photo-..."
+        />
+      </div>
+
+      <div className="config-field">
         <label>Card Corner Rounding</label>
         <select
           value={config.borderRadius || '12px'}

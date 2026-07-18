@@ -85,6 +85,16 @@ export default function ClockWidgetConfig({ config, onChange }) {
           </button>
         </div>
       </div>
+
+      <div className="config-field">
+        <label>Background Image URL</label>
+        <input
+          type="text"
+          value={config.backgroundImageUrl || ''}
+          onChange={(e) => handleUpdate('backgroundImageUrl', e.target.value)}
+          placeholder="https://images.unsplash.com/photo-..."
+        />
+      </div>
     </div>
   );
 }
