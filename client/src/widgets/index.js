@@ -13,6 +13,9 @@ import CountdownWidgetConfig from './Countdown/CountdownWidgetConfig';
 import TodoWidgetView from './Todo/TodoWidgetView';
 import TodoWidgetConfig from './Todo/TodoWidgetConfig';
 
+import SpotifyWidgetView from './Spotify/SpotifyWidgetView';
+import SpotifyWidgetConfig from './Spotify/SpotifyWidgetConfig';
+
 export const widgetRegistry = {
   clock: {
     name: 'Digital Clock',
@@ -101,6 +104,29 @@ export const widgetRegistry = {
     config: TodoWidgetConfig,
     defaultConfig: {
       title: 'My To-Do List',
+      textColor: '#ffffff',
+      backgroundStyle: 'gradient',
+      backgroundColor: '#1b2542',
+      gradientName: 'darkness',
+      backgroundImageUrl: '',
+      borderRadius: '12px',
+      customCSS: ''
+    }
+  },
+  spotify: {
+    name: 'Spotify Player',
+    description: 'Displays a beautiful mock Spotify player with track info, progress, and animated visualizer.',
+    icon: 'Music',
+    view: SpotifyWidgetView,
+    config: SpotifyWidgetConfig,
+    defaultConfig: {
+      trackPreset: 'resonance',
+      customTitle: '',
+      customArtist: '',
+      customAlbum: '',
+      customDuration: 180,
+      customCoverUrl: '',
+      showVisualizer: true,
       textColor: '#ffffff',
       backgroundStyle: 'gradient',
       backgroundColor: '#1b2542',
