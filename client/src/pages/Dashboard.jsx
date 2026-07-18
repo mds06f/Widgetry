@@ -138,6 +138,31 @@ export default function Dashboard({ navigate }) {
                       </button>
                     </div>
                   </div>
+
+                  {/* Widget Thumbnail Preview */}
+                  <div style={{
+                    width: '100%',
+                    height: '120px',
+                    borderRadius: '8px',
+                    overflow: 'hidden',
+                    marginBottom: '1rem',
+                    border: '1px solid var(--border-color)',
+                    background: 'var(--bg-main)',
+                    position: 'relative'
+                  }}>
+                    <iframe 
+                      src={`/widget/render/${widget.id}`} 
+                      title={widget.name}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        border: 'none',
+                        pointerEvents: 'none'
+                      }}
+                      scrolling="no"
+                    />
+                  </div>
+
                   <div>
                     <h3 className="card-title">{widget.name}</h3>
                     <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
