@@ -12,15 +12,16 @@ export default function ClockWidgetConfig({ config, onChange }) {
     <div className="config-group">
       <h3>Clock Configuration</h3>
 
-      <div className="config-field">
-        <label>Time Format</label>
-        <select
-          value={config.timeFormat || '12'}
-          onChange={(e) => handleUpdate('timeFormat', e.target.value)}
-        >
-          <option value="12">12-Hour Clock (AM/PM)</option>
-          <option value="24">24-Hour Clock</option>
-        </select>
+      <div className="config-field toggle-field">
+        <label>24-Hour Format</label>
+        <label className="toggle-switch">
+          <input
+            type="checkbox"
+            checked={config.timeFormat === '24'}
+            onChange={(e) => handleUpdate('timeFormat', e.target.checked ? '24' : '12')}
+          />
+          <span className="slider"></span>
+        </label>
       </div>
 
       <div className="config-field toggle-field">
