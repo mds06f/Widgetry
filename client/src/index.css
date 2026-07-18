@@ -464,6 +464,7 @@ a {
 }
 
 .config-field input[type="text"],
+.config-field input[type="datetime-local"],
 .config-field textarea,
 .config-field select {
   background-color: var(--bg-input);
@@ -477,6 +478,7 @@ a {
   transition: border-color 0.2s ease;
 }
 
+/* Textarea uses monospace for code-like input (Custom CSS field) */
 .config-field textarea {
   font-family: var(--font-mono);
   font-size: 0.82rem;
@@ -485,12 +487,20 @@ a {
   line-height: 1.6;
 }
 
+/* Style the datetime-local calendar icon to match the dark theme */
+.config-field input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+  cursor: pointer;
+}
+
 .config-field input[type="text"]:focus,
+.config-field input[type="datetime-local"]:focus,
 .config-field textarea:focus,
 .config-field select:focus {
   outline: none;
   border-color: var(--border-focus);
 }
+
 
 .config-field input[type="color"] {
   -webkit-appearance: none;
