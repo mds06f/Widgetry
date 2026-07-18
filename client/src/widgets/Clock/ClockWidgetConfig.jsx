@@ -96,6 +96,19 @@ export default function ClockWidgetConfig({ config, onChange }) {
           placeholder="https://images.unsplash.com/photo-..."
         />
       </div>
+
+      <div className="config-field">
+        <label>Custom CSS</label>
+        <textarea
+          value={config.customCSS || ''}
+          onChange={(e) => handleUpdate('customCSS', e.target.value)}
+          placeholder={`/* Override any widget styles */\ndiv {\n  letter-spacing: 0.1em;\n  text-shadow: 0 0 20px rgba(255,255,255,0.5);\n}`}
+          rows={6}
+        />
+        <small style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>
+          CSS is scoped to this widget's iframe — use standard selectors freely.
+        </small>
+      </div>
     </div>
   );
 }

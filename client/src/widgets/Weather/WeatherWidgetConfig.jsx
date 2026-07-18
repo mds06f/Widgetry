@@ -121,6 +121,19 @@ export default function WeatherWidgetConfig({ config, onChange }) {
           <option value="24px">Extra Rounded (24px)</option>
         </select>
       </div>
+
+      <div className="config-field">
+        <label>Custom CSS</label>
+        <textarea
+          value={config.customCSS || ''}
+          onChange={(e) => handleUpdate('customCSS', e.target.value)}
+          placeholder={`/* Override any widget styles */\ndiv {\n  border: 2px solid rgba(255,255,255,0.2);\n  backdrop-filter: blur(8px);\n}`}
+          rows={6}
+        />
+        <small style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>
+          CSS is scoped to this widget's iframe — use standard selectors freely.
+        </small>
+      </div>
     </div>
   );
 }

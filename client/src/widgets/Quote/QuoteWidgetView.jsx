@@ -33,8 +33,12 @@ export default function QuoteWidgetView({ config }) {
     gradientName = 'royal',
     backgroundImageUrl = '',
     borderRadius = '12px',
-    showAuthor = true
+    showAuthor = true,
+    customCSS = ''
   } = config;
+
+  // Sanitize: strip any </style> tags to prevent style-block breakout
+  const safeCSS = customCSS.replace(/<\/style>/gi, '');
 
   // Select quotes list
   const list = QUOTES[category] || QUOTES.motivational;
@@ -79,24 +83,27 @@ export default function QuoteWidgetView({ config }) {
   }
 
   return (
-    <div style={style}>
-      <p style={{
-        fontWeight: '500',
-        lineHeight: '1.4',
-        marginBottom: showAuthor ? '1rem' : '0'
-      }}>
-        "{quote.text}"
-      </p>
-      {showAuthor && (
-        <span style={{
-          fontSize: '0.85em',
-          opacity: 0.8,
-          fontWeight: '300',
-          fontStyle: 'italic'
+    <>
+      {safeCSS ? <style>{safeCSS}</style> : null}
+      <div style={style}>
+        <p style={{
+          fontWeight: '500',
+          lineHeight: '1.4',
+          marginBottom: showAuthor ? '1rem' : '0'
         }}>
-          — {quote.author}
-        </span>
-      )}
-    </div>
+          "{quote.text}"
+        </p>
+        {showAuthor && (
+          <span style={{
+            fontSize: '0.85em',
+            opacity: 0.8,
+            fontWeight: '300',
+            fontStyle: 'italic'
+          }}>
+            — {quote.author}
+          </span>
+        )}
+      </div>
+    </>
   );
 }
