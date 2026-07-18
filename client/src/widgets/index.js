@@ -7,6 +7,9 @@ import QuoteWidgetConfig from './Quote/QuoteWidgetConfig';
 import WeatherWidgetView from './Weather/WeatherWidgetView';
 import WeatherWidgetConfig from './Weather/WeatherWidgetConfig';
 
+import CountdownWidgetView from './Countdown/CountdownWidgetView';
+import CountdownWidgetConfig from './Countdown/CountdownWidgetConfig';
+
 export const widgetRegistry = {
   clock: {
     name: 'Digital Clock',
@@ -60,6 +63,28 @@ export const widgetRegistry = {
       backgroundColor: '#131a30',
       backgroundStyle: 'gradient',
       gradientName: 'sunset',
+      backgroundImageUrl: '',
+      borderRadius: '12px',
+      customCSS: ''
+    }
+  },
+  countdown: {
+    name: 'Countdown Timer',
+    description: 'Counts down in real-time to any target date and time with customizable labels and styling.',
+    icon: 'Timer',
+    view: CountdownWidgetView,
+    config: CountdownWidgetConfig,
+    defaultConfig: {
+      label: 'Countdown',
+      targetDate: '',
+      showDays: true,
+      showHours: true,
+      showMinutes: true,
+      showSeconds: true,
+      textColor: '#ffffff',
+      backgroundStyle: 'gradient',
+      backgroundColor: '#1b2542',
+      gradientName: 'cosmic',
       backgroundImageUrl: '',
       borderRadius: '12px',
       customCSS: ''
