@@ -464,6 +464,7 @@ a {
 }
 
 .config-field input[type="text"],
+.config-field textarea,
 .config-field select {
   background-color: var(--bg-input);
   border: 1px solid var(--border-color);
@@ -476,7 +477,16 @@ a {
   transition: border-color 0.2s ease;
 }
 
+.config-field textarea {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.6;
+}
+
 .config-field input[type="text"]:focus,
+.config-field textarea:focus,
 .config-field select:focus {
   outline: none;
   border-color: var(--border-focus);
