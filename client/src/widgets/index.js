@@ -21,6 +21,7 @@ export const widgetRegistry = {
       fontSize: '36px',
       fontFamily: 'Outfit',
       backgroundColor: 'transparent',
+      backgroundImageUrl: '',
       borderColor: 'transparent',
       borderWidth: '0px'
     }
@@ -39,6 +40,7 @@ export const widgetRegistry = {
       backgroundStyle: 'gradient', // 'solid' or 'gradient'
       backgroundColor: '#1b2542',
       gradientName: 'royal',
+      backgroundImageUrl: '',
       borderRadius: '12px',
       showAuthor: true
     }
@@ -56,6 +58,7 @@ export const widgetRegistry = {
       backgroundColor: '#131a30',
       backgroundStyle: 'gradient',
       gradientName: 'sunset',
+      backgroundImageUrl: '',
       borderRadius: '12px'
     }
   }

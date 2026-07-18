@@ -34,6 +34,7 @@ export default function WeatherWidgetView({ config }) {
     backgroundColor = '#131a30',
     backgroundStyle = 'gradient',
     gradientName = 'sunset',
+    backgroundImageUrl = '',
     borderRadius = '12px'
   } = config;
 
@@ -87,6 +88,13 @@ export default function WeatherWidgetView({ config }) {
     style.background = GRADIENTS[gradientName] || GRADIENTS.sunset;
   } else {
     style.backgroundColor = backgroundColor;
+  }
+
+  if (backgroundImageUrl) {
+    style.backgroundImage = `url(${backgroundImageUrl})`;
+    style.backgroundSize = 'cover';
+    style.backgroundPosition = 'center';
+    style.backgroundRepeat = 'no-repeat';
   }
 
   if (loading) {
