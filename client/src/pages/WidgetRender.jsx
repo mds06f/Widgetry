@@ -9,6 +9,8 @@ export default function WidgetRender({ id }) {
   useEffect(() => {
     if (id) {
       fetchWidget(id);
+      // Track impression hit
+      fetch(`/api/widgets/${id}/track`, { method: 'POST' }).catch(() => {});
     }
   }, [id]);
 

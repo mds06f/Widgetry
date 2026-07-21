@@ -173,9 +173,25 @@ export default function Dashboard({ navigate, token, user }) {
 
                   <div>
                     <h3 className="card-title">{widget.name}</h3>
-                    <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
-                      Type: {registryItem.name}
-                    </p>
+                    <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center', marginBottom: '0.5rem' }}>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                        Type: {registryItem.name}
+                      </span>
+                      <span style={{ 
+                        fontSize: '0.75rem', 
+                        background: 'rgba(99, 102, 241, 0.15)', 
+                        color: '#818cf8', 
+                        padding: '0.1rem 0.4rem', 
+                        borderRadius: '4px',
+                        fontWeight: '600',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.25rem'
+                      }}>
+                        <LucideIcons.Eye size={12} />
+                        <span>{widget.views || 0} views</span>
+                      </span>
+                    </div>
                     <p className="card-desc">
                       {registryItem.description}
                     </p>
