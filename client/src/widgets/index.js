@@ -28,6 +28,9 @@ import AnalogClockWidgetConfig from './AnalogClock/AnalogClockWidgetConfig';
 import TriviaWidgetView from './Trivia/TriviaWidgetView';
 import TriviaWidgetConfig from './Trivia/TriviaWidgetConfig';
 
+import PomodoroWidgetView from './Pomodoro/PomodoroWidgetView';
+import PomodoroWidgetConfig from './Pomodoro/PomodoroWidgetConfig';
+
 export const widgetRegistry = {
   clock: {
     name: 'Digital Clock',
@@ -214,6 +217,25 @@ export const widgetRegistry = {
     config: TriviaWidgetConfig,
     defaultConfig: {
       category: 'dad-jokes',
+      textColor: '#ffffff',
+      backgroundStyle: 'gradient',
+      backgroundColor: '#1b2542',
+      gradientName: 'cosmic',
+      backgroundImageUrl: '',
+      borderRadius: '12px',
+      customCSS: ''
+    }
+  },
+  pomodoro: {
+    name: 'Pomodoro Timer',
+    description: 'A customizable Focus & Break productivity Pomodoro timer.',
+    icon: 'Flame',
+    view: PomodoroWidgetView,
+    config: PomodoroWidgetConfig,
+    defaultConfig: {
+      workDuration: 25,
+      breakDuration: 5,
+      soundAlert: true,
       textColor: '#ffffff',
       backgroundStyle: 'gradient',
       backgroundColor: '#1b2542',
