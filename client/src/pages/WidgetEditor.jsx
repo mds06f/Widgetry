@@ -14,6 +14,13 @@ export default function WidgetEditor({ navigate, initialId, initialType, isNew, 
 
   const socketRef = useRef(null);
 
+  const generateWebhookToken = () => {
+    if (window.crypto && window.crypto.randomUUID) {
+      return window.crypto.randomUUID();
+    }
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+  };
+
   // Load existing widget data if editing
   useEffect(() => {
     if (!isNew && initialId) {
@@ -23,7 +30,10 @@ export default function WidgetEditor({ navigate, initialId, initialType, isNew, 
       if (typeDetails) {
         setWidgetType(initialType);
         setWidgetName(`New ${typeDetails.name}`);
-        setConfig(typeDetails.defaultConfig || {});
+        setConfig({
+          ...(typeDetails.defaultConfig || {}),
+          webhookToken: generateWebhookToken()
+        });
       } else {
         // Fallback if invalid type
         navigate('/');
@@ -66,7 +76,12 @@ export default function WidgetEditor({ navigate, initialId, initialType, isNew, 
         setWidgetId(data.id);
         setWidgetType(data.type);
         setWidgetName(data.name);
-        setConfig(data.config);
+        
+        let loadedConfig = data.config || {};
+        if (!loadedConfig.webhookToken) {
+          loadedConfig = { ...loadedConfig, webhookToken: generateWebhookToken() };
+        }
+        setConfig(loadedConfig);
       } else {
         alert('Widget not found');
         navigate('/');
@@ -262,6 +277,47 @@ export default function WidgetEditor({ navigate, initialId, initialType, isNew, 
             {isNew && (
               <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
                 * Save this widget to generate a deployable embed code.
+              </p>
+            )}
+          </div>
+
+          {/* Webhooks Integration Panel */}
+          <div className="embed-box" style={{ marginTop: '1.5rem' }}>
+            <div className="embed-header">
+              <h4>Webhook Integration</h4>
+              {!isNew && widgetId && (
+                <button 
+                  className="btn btn-secondary" 
+                  style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem' }}
+                  onClick={() => {
+                    const url = `${window.location.origin}/api/widgets/${widgetId}/webhook?token=${config.webhookToken}`;
+                    navigator.clipboard.writeText(url);
+                    alert('Webhook URL copied!');
+                  }}
+                >
+                  <LucideIcons.Copy size={14} />
+                  <span>Copy URL</span>
+                </button>
+              )}
+            </div>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '0.5rem 0' }}>
+              Update this widget's configuration in real-time by sending a POST request.
+            </p>
+            {!isNew && widgetId ? (
+              <>
+                <pre className="embed-code" style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
+                  <code>{`${window.location.origin}/api/widgets/${widgetId}/webhook?token=${config.webhookToken}`}</code>
+                </pre>
+                <h5 style={{ margin: '0.75rem 0 0.25rem 0', fontSize: '0.8rem', fontWeight: 'bold' }}>Sample payload (curl)</h5>
+                <pre className="embed-code" style={{ whiteSpace: 'pre-wrap', fontSize: '0.75rem' }}>
+                  <code>{`curl -X POST "${window.location.origin}/api/widgets/${widgetId}/webhook?token=${config.webhookToken}" \\
+  -H "Content-Type: application/json" \\
+  -d '{"textColor": "#ff007f"}'`}</code>
+                </pre>
+              </>
+            ) : (
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                * Save this widget to generate a secure webhook integration URL.
               </p>
             )}
           </div>
