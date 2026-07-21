@@ -252,23 +252,36 @@ export default function WidgetEditor({ navigate, initialId, initialType, isNew, 
             <div className="embed-header">
               <h4>Get Embed Link</h4>
               {!isNew && widgetId && (
-                <button 
-                  className="btn btn-secondary" 
-                  style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem' }}
-                  onClick={handleCopyCode}
-                >
-                  {copied ? (
-                    <>
-                      <LucideIcons.Check size={14} style={{ color: 'var(--success)' }} />
-                      <span>Copied!</span>
-                    </>
-                  ) : (
-                    <>
-                      <LucideIcons.Copy size={14} />
-                      <span>Copy Code</span>
-                    </>
-                  )}
-                </button>
+                <div style={{ display: 'flex', gap: '0.4rem' }}>
+                  <button 
+                    className="btn btn-secondary" 
+                    style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem' }}
+                    onClick={handleCopyCode}
+                  >
+                    {copied ? (
+                      <>
+                        <LucideIcons.Check size={14} style={{ color: 'var(--success)' }} />
+                        <span>Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <LucideIcons.Copy size={14} />
+                        <span>Copy Code</span>
+                      </>
+                    )}
+                  </button>
+                  <button 
+                    className="btn btn-secondary" 
+                    style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
+                    onClick={() => {
+                      window.open(`/api/widgets/${widgetId}/export`, '_blank');
+                    }}
+                    title="Export stand-alone HTML package"
+                  >
+                    <LucideIcons.Download size={14} />
+                    <span>Export ZIP</span>
+                  </button>
+                </div>
               )}
             </div>
             <pre className="embed-code">
