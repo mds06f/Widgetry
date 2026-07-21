@@ -1,13 +1,39 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
+const jwt = require('jsonwebtoken');
 const db = require('../database');
 
-// GET all widgets
+const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_widgetry_key';
+
+// Helper to get optional user from request headers
+function getOptionalUser(req) {
+  const authHeader = req.header('Authorization');
+  if (!authHeader) return null;
+  const tokenParts = authHeader.split(' ');
+  if (tokenParts.length !== 2 || tokenParts[0] !== 'Bearer') return null;
+  try {
+    return jwt.verify(tokenParts[1], JWT_SECRET);
+  } catch (err) {
+    return null;
+  }
+}
+
+// GET all widgets (optionally filtered by user)
 router.get('/', (req, res) => {
   try {
+    const user = getOptionalUser(req);
     const widgets = db.getAll();
-    res.json(widgets);
+    
+    if (user) {
+      // Return user's widgets and anonymous widgets
+      const userWidgets = widgets.filter(w => w.userId === user.id || !w.userId);
+      res.json(userWidgets);
+    } else {
+      // Return only anonymous widgets
+      const anonymousWidgets = widgets.filter(w => !w.userId);
+      res.json(anonymousWidgets);
+    }
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch widgets' });
   }
@@ -20,20 +46,33 @@ router.get('/:id', (req, res) => {
     if (!widget) {
       return res.status(404).json({ error: 'Widget not found' });
     }
+    
+    // Anyone can read anonymous widgets, but private ones require ownership check
+    if (widget.userId) {
+      const user = getOptionalUser(req);
+      if (!user || user.id !== widget.userId) {
+        return res.status(403).json({ error: 'Access denied: private widget' });
+      }
+    }
+    
     res.json(widget);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch widget' });
   }
 });
 
-// POST create widget
+// POST create widget (can be associated with user)
 router.post('/', (req, res) => {
   try {
     const { type, name, config } = req.body;
     if (!type) {
       return res.status(400).json({ error: 'Widget type is required' });
     }
-    const newWidget = db.create({ type, name, config });
+    
+    const user = getOptionalUser(req);
+    const userId = user ? user.id : null;
+    
+    const newWidget = db.create({ type, name, config, userId });
     res.status(201).json(newWidget);
   } catch (err) {
     res.status(500).json({ error: 'Failed to create widget' });
@@ -44,10 +83,20 @@ router.post('/', (req, res) => {
 router.put('/:id', (req, res) => {
   try {
     const { name, config } = req.body;
-    const updated = db.update(req.params.id, { name, config });
-    if (!updated) {
+    const widget = db.getById(req.params.id);
+    if (!widget) {
       return res.status(404).json({ error: 'Widget not found' });
     }
+
+    // Check ownership if private
+    if (widget.userId) {
+      const user = getOptionalUser(req);
+      if (!user || user.id !== widget.userId) {
+        return res.status(403).json({ error: 'Access denied: private widget' });
+      }
+    }
+
+    const updated = db.update(req.params.id, { name, config });
     res.json(updated);
   } catch (err) {
     res.status(500).json({ error: 'Failed to update widget' });
@@ -57,10 +106,20 @@ router.put('/:id', (req, res) => {
 // DELETE widget
 router.delete('/:id', (req, res) => {
   try {
-    const success = db.delete(req.params.id);
-    if (!success) {
+    const widget = db.getById(req.params.id);
+    if (!widget) {
       return res.status(404).json({ error: 'Widget not found' });
     }
+
+    // Check ownership if private
+    if (widget.userId) {
+      const user = getOptionalUser(req);
+      if (!user || user.id !== widget.userId) {
+        return res.status(403).json({ error: 'Access denied: private widget' });
+      }
+    }
+
+    db.delete(req.params.id);
     res.json({ message: 'Widget deleted successfully' });
   } catch (err) {
     res.status(500).json({ error: 'Failed to delete widget' });

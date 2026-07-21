@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { widgetRegistry } from '../widgets';
 import * as LucideIcons from 'lucide-react';
 
-export default function WidgetEditor({ navigate, initialId, initialType, isNew }) {
+export default function WidgetEditor({ navigate, initialId, initialType, isNew, token, user }) {
   const [widgetType, setWidgetType] = useState(initialType || 'clock');
   const [widgetName, setWidgetName] = useState('');
   const [config, setConfig] = useState({});
@@ -26,11 +26,15 @@ export default function WidgetEditor({ navigate, initialId, initialType, isNew }
         navigate('/');
       }
     }
-  }, [initialId, initialType, isNew]);
+  }, [initialId, initialType, isNew, token]);
 
   const fetchWidget = async (id) => {
     try {
-      const res = await fetch(`/api/widgets/${id}`);
+      const headers = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      const res = await fetch(`/api/widgets/${id}`, { headers });
       if (res.ok) {
         const data = await res.json();
         setWidgetId(data.id);
@@ -61,9 +65,14 @@ export default function WidgetEditor({ navigate, initialId, initialType, isNew }
       const url = isNew ? '/api/widgets' : `/api/widgets/${widgetId}`;
       const method = isNew ? 'POST' : 'PUT';
 
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const res = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify(payload)
       });
 
