@@ -22,6 +22,9 @@ import GithubStatsWidgetConfig from './GithubStats/GithubStatsWidgetConfig';
 import CryptoTickerWidgetView from './CryptoTicker/CryptoTickerWidgetView';
 import CryptoTickerWidgetConfig from './CryptoTicker/CryptoTickerWidgetConfig';
 
+import AnalogClockWidgetView from './AnalogClock/AnalogClockWidgetView';
+import AnalogClockWidgetConfig from './AnalogClock/AnalogClockWidgetConfig';
+
 export const widgetRegistry = {
   clock: {
     name: 'Digital Clock',
@@ -169,6 +172,28 @@ export const widgetRegistry = {
     defaultConfig: {
       coinId: 'bitcoin',
       vsCurrency: 'usd',
+      textColor: '#ffffff',
+      backgroundStyle: 'gradient',
+      backgroundColor: '#1b2542',
+      gradientName: 'cosmic',
+      backgroundImageUrl: '',
+      borderRadius: '12px',
+      customCSS: ''
+    }
+  },
+  analogclock: {
+    name: 'Analog Clock',
+    description: 'A classic, smooth-sweep analog clock face widget.',
+    icon: 'Watch',
+    view: AnalogClockWidgetView,
+    config: AnalogClockWidgetConfig,
+    defaultConfig: {
+      hourHandColor: '#ffffff',
+      minuteHandColor: '#ffffff',
+      secondHandColor: '#ff4d4d',
+      faceColor: 'rgba(0,0,0,0.2)',
+      showNumbers: true,
+      showTicks: true,
       textColor: '#ffffff',
       backgroundStyle: 'gradient',
       backgroundColor: '#1b2542',
