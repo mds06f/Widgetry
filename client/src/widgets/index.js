@@ -31,6 +31,9 @@ import TriviaWidgetConfig from './Trivia/TriviaWidgetConfig';
 import PomodoroWidgetView from './Pomodoro/PomodoroWidgetView';
 import PomodoroWidgetConfig from './Pomodoro/PomodoroWidgetConfig';
 
+import GridWidgetView from './Grid/GridWidgetView';
+import GridWidgetConfig from './Grid/GridWidgetConfig';
+
 export const widgetRegistry = {
   clock: {
     name: 'Digital Clock',
@@ -241,6 +244,24 @@ export const widgetRegistry = {
       backgroundColor: '#1b2542',
       gradientName: 'cosmic',
       backgroundImageUrl: '',
+      borderRadius: '12px',
+      customCSS: ''
+    }
+  },
+  grid: {
+    name: 'Multi-Widget Grid',
+    description: 'Embeds multiple other widgets in a customizable columns layout.',
+    icon: 'Grid',
+    view: GridWidgetView,
+    config: GridWidgetConfig,
+    defaultConfig: {
+      columns: '2',
+      gap: '16px',
+      items: [],
+      textColor: '#ffffff',
+      backgroundStyle: 'gradient',
+      backgroundColor: '#1b2542',
+      gradientName: 'darkness',
       borderRadius: '12px',
       customCSS: ''
     }
