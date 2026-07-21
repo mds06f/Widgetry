@@ -11,8 +11,31 @@ export default function WidgetEditor({ navigate, initialId, initialType, isNew, 
   const [saving, setSaving] = useState(false);
   const [widgetId, setWidgetId] = useState(initialId || null);
   const [copied, setCopied] = useState(false);
+  const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false);
+  const [analyticsData, setAnalyticsData] = useState(null);
+  const [loadingAnalytics, setLoadingAnalytics] = useState(false);
 
   const socketRef = useRef(null);
+
+  const fetchAnalytics = async () => {
+    if (!widgetId) return;
+    setLoadingAnalytics(true);
+    try {
+      const headers = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      const res = await fetch(`/api/widgets/${widgetId}/analytics`, { headers });
+      if (res.ok) {
+        const data = await res.json();
+        setAnalyticsData(data);
+      }
+    } catch (err) {
+      console.error('Error fetching analytics:', err);
+    } finally {
+      setLoadingAnalytics(false);
+    }
+  };
 
   const generateWebhookToken = () => {
     if (window.crypto && window.crypto.randomUUID) {
@@ -187,14 +210,28 @@ export default function WidgetEditor({ navigate, initialId, initialType, isNew, 
       {/* Sidebar Controls */}
       <aside className="editor-sidebar">
         <div>
-          <button 
+           <button 
             className="btn btn-secondary" 
-            style={{ marginBottom: '1.5rem', width: '100%', justifyContent: 'flex-start' }}
+            style={{ marginBottom: '0.75rem', width: '100%', justifyContent: 'flex-start' }}
             onClick={() => navigate('/')}
           >
             <LucideIcons.ArrowLeft size={16} />
             <span>Back to Dashboard</span>
           </button>
+
+          {!isNew && widgetId && (
+            <button 
+              className="btn btn-secondary" 
+              style={{ marginBottom: '1.5rem', width: '100%', justifyContent: 'flex-start', gap: '0.4rem', border: '1px solid rgba(99, 102, 241, 0.4)', background: 'rgba(99, 102, 241, 0.05)' }}
+              onClick={() => {
+                setIsAnalyticsOpen(true);
+                fetchAnalytics();
+              }}
+            >
+              <LucideIcons.BarChart3 size={16} style={{ color: '#818cf8' }} />
+              <span style={{ color: '#818cf8', fontWeight: '600' }}>View Analytics</span>
+            </button>
+          )}
 
           <div className="config-group">
             <h3>Basic Info</h3>
@@ -337,6 +374,82 @@ export default function WidgetEditor({ navigate, initialId, initialType, isNew, 
           </div>
         </div>
       </main>
+
+      {/* Analytics Modal overlay */}
+      {isAnalyticsOpen && (
+        <div className="modal-overlay" onClick={() => setIsAnalyticsOpen(false)}>
+          <div 
+            className="modal" 
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              maxWidth: '500px',
+              background: 'rgba(30, 41, 59, 0.85)',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)',
+              borderRadius: '16px',
+              padding: '2rem'
+            }}
+          >
+            <div className="modal-header" style={{ border: 'none', padding: 0, marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <LucideIcons.BarChart3 size={24} style={{ color: '#6366f1' }} />
+                <h2 style={{ fontSize: '1.5rem', fontWeight: '800' }}>Widget Analytics</h2>
+              </div>
+              <button className="modal-close" onClick={() => setIsAnalyticsOpen(false)} style={{ color: 'var(--text-muted)' }}>
+                <LucideIcons.X size={20} />
+              </button>
+            </div>
+
+            {loadingAnalytics ? (
+              <p style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem 0' }}>
+                Loading analytics data...
+              </p>
+            ) : !analyticsData || analyticsData.totalViews === 0 ? (
+              <div style={{ textAlign: 'center', padding: '2rem 0', color: 'var(--text-secondary)' }}>
+                <p style={{ fontSize: '2.5rem', margin: 0 }}>📊</p>
+                <h3 style={{ margin: '0.75rem 0 0.25rem 0', fontSize: '1.1rem' }}>No data collected yet</h3>
+                <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', maxWidth: '320px', margin: '0 auto' }}>
+                  Embed your widget on websites. Once people view your widget, referrers and views will show up here!
+                </p>
+              </div>
+            ) : (
+              <div>
+                {/* Stats summary */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+                  <div style={{ background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: '10px', textAlign: 'center', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Views</div>
+                    <div style={{ fontSize: '1.75rem', fontWeight: '800', color: '#fff', marginTop: '0.25rem' }}>{analyticsData.totalViews}</div>
+                  </div>
+                  <div style={{ background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: '10px', textAlign: 'center', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Referrers</div>
+                    <div style={{ fontSize: '1.75rem', fontWeight: '800', color: '#fff', marginTop: '0.25rem' }}>{analyticsData.referrers.length}</div>
+                  </div>
+                </div>
+
+                {/* Referrers breakdown */}
+                <h4 style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>Top Referrer Domains</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '200px', overflowY: 'auto', paddingRight: '0.25rem' }}>
+                  {analyticsData.referrers.map((ref) => {
+                    const pct = Math.round((ref.count / analyticsData.totalViews) * 100);
+                    return (
+                      <div key={ref.domain} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                        <div style={{ display: 'flex', justifycontent: 'space-between', fontSize: '0.85rem' }}>
+                          <span style={{ color: '#fff', fontWeight: '500', wordBreak: 'break-all' }}>{ref.domain}</span>
+                          <span style={{ color: 'var(--text-secondary)', marginLeft: 'auto' }}>{ref.count} ({pct}%)</span>
+                        </div>
+                        <div style={{ width: '100%', height: '6px', background: 'rgba(255, 255, 255, 0.08)', borderRadius: '3px', overflow: 'hidden' }}>
+                          <div style={{ height: '100%', width: `${pct}%`, background: '#6366f1', borderRadius: '3px' }} />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

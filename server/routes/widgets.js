@@ -3,6 +3,7 @@ const router = express.Router();
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const db = require('../database');
+const analyticsDb = require('../database_analytics');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_widgetry_key';
 
@@ -25,15 +26,25 @@ router.get('/', (req, res) => {
     const user = getOptionalUser(req);
     const widgets = db.getAll();
     
+    let filteredWidgets = [];
     if (user) {
       // Return user's widgets and anonymous widgets
-      const userWidgets = widgets.filter(w => w.userId === user.id || !w.userId);
-      res.json(userWidgets);
+      filteredWidgets = widgets.filter(w => w.userId === user.id || !w.userId);
     } else {
       // Return only anonymous widgets
-      const anonymousWidgets = widgets.filter(w => !w.userId);
-      res.json(anonymousWidgets);
+      filteredWidgets = widgets.filter(w => !w.userId);
     }
+
+    // Attach views analytics count
+    const result = filteredWidgets.map(w => {
+      const stats = analyticsDb.getAnalytics(w.id);
+      return {
+        ...w,
+        views: stats.totalViews
+      };
+    });
+
+    res.json(result);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch widgets' });
   }
@@ -360,6 +371,49 @@ router.get('/:id/export', (req, res) => {
   } catch (err) {
     console.error('Export Error:', err.message);
     res.status(500).json({ error: 'Failed to export widget' });
+  }
+});
+
+// POST track widget impression
+router.post('/:id/track', (req, res) => {
+  try {
+    const widget = db.getById(req.params.id);
+    if (!widget) {
+      return res.status(404).json({ error: 'Widget not found' });
+    }
+
+    // Get referrer domain from headers
+    const rawReferrer = req.headers.referer || req.headers.referrer || null;
+    analyticsDb.recordHit(req.params.id, rawReferrer);
+
+    res.json({ message: 'Impression tracked successfully' });
+  } catch (err) {
+    console.error('Tracking Error:', err.message);
+    res.status(500).json({ error: 'Failed to track widget impression' });
+  }
+});
+
+// GET widget analytics report
+router.get('/:id/analytics', (req, res) => {
+  try {
+    const widget = db.getById(req.params.id);
+    if (!widget) {
+      return res.status(404).json({ error: 'Widget not found' });
+    }
+
+    // Perform widget ownership verification if user-auth is enabled on private widgets
+    if (widget.userId) {
+      const user = getOptionalUser(req);
+      if (!user || user.id !== widget.userId) {
+        return res.status(403).json({ error: 'Access denied: private analytics' });
+      }
+    }
+
+    const report = analyticsDb.getAnalytics(req.params.id);
+    res.json(report);
+  } catch (err) {
+    console.error('Analytics Fetch Error:', err.message);
+    res.status(500).json({ error: 'Failed to fetch widget analytics' });
   }
 });
 
