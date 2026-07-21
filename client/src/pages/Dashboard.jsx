@@ -2,20 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { widgetRegistry } from '../widgets';
 import * as LucideIcons from 'lucide-react';
 
-export default function Dashboard({ navigate }) {
+export default function Dashboard({ navigate, token, user }) {
   const [widgets, setWidgets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
 
-  // Fetch widgets on load
+  // Fetch widgets on load and when token changes
   useEffect(() => {
     fetchWidgets();
-  }, []);
+  }, [token]);
 
   const fetchWidgets = async () => {
     try {
-      const res = await fetch('/api/widgets');
+      const headers = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      const res = await fetch('/api/widgets', { headers });
       if (res.ok) {
         const data = await res.json();
         setWidgets(data);
@@ -32,7 +36,11 @@ export default function Dashboard({ navigate }) {
     if (!confirm('Are you sure you want to delete this widget?')) return;
 
     try {
-      const res = await fetch(`/api/widgets/${id}`, { method: 'DELETE' });
+      const headers = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      const res = await fetch(`/api/widgets/${id}`, { method: 'DELETE', headers });
       if (res.ok) {
         setWidgets(widgets.filter(w => w.id !== id));
       }

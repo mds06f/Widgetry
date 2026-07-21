@@ -46,6 +46,7 @@ function create(widgetData) {
   const widgets = getAll();
   const newWidget = {
     id: uuidv4(),
+    userId: widgetData.userId || null,
     type: widgetData.type,
     name: widgetData.name || `My ${widgetData.type} Widget`,
     config: widgetData.config || {},
