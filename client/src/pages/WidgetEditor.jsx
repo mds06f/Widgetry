@@ -214,6 +214,7 @@ export default function WidgetEditor({ navigate, initialId, initialType, isNew, 
         <ConfigComponent 
           config={config} 
           onChange={handleConfigChange} 
+          token={token}
         />
 
         <div style={{ marginTop: 'auto', display: 'flex', gap: '0.5rem' }}>
