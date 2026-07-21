@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { widgetRegistry } from '../widgets';
 import * as LucideIcons from 'lucide-react';
+import { io } from 'socket.io-client';
 
 export default function WidgetEditor({ navigate, initialId, initialType, isNew, token, user }) {
   const [widgetType, setWidgetType] = useState(initialType || 'clock');
@@ -10,6 +11,8 @@ export default function WidgetEditor({ navigate, initialId, initialType, isNew, 
   const [saving, setSaving] = useState(false);
   const [widgetId, setWidgetId] = useState(initialId || null);
   const [copied, setCopied] = useState(false);
+
+  const socketRef = useRef(null);
 
   // Load existing widget data if editing
   useEffect(() => {
@@ -27,6 +30,29 @@ export default function WidgetEditor({ navigate, initialId, initialType, isNew, 
       }
     }
   }, [initialId, initialType, isNew, token]);
+
+  // Handle Socket.io collaboration connection
+  useEffect(() => {
+    if (widgetId) {
+      const socketUrl = window.location.origin.includes('5173') 
+        ? 'http://localhost:5001' 
+        : window.location.origin;
+      
+      const socket = io(socketUrl);
+      socketRef.current = socket;
+
+      socket.emit('join-widget', widgetId);
+
+      socket.on('config-updated', ({ name, config }) => {
+        if (name !== undefined) setWidgetName(name);
+        if (config !== undefined) setConfig(config);
+      });
+
+      return () => {
+        socket.disconnect();
+      };
+    }
+  }, [widgetId]);
 
   const fetchWidget = async (id) => {
     try {
@@ -98,6 +124,16 @@ export default function WidgetEditor({ navigate, initialId, initialType, isNew, 
 
   const handleConfigChange = (newConfig) => {
     setConfig(newConfig);
+    if (socketRef.current && widgetId) {
+      socketRef.current.emit('edit-config', { widgetId, config: newConfig });
+    }
+  };
+
+  const handleNameChange = (newName) => {
+    setWidgetName(newName);
+    if (socketRef.current && widgetId) {
+      socketRef.current.emit('edit-config', { widgetId, name: newName });
+    }
   };
 
   const getEmbedCode = () => {
@@ -152,7 +188,7 @@ export default function WidgetEditor({ navigate, initialId, initialType, isNew, 
               <input 
                 type="text" 
                 value={widgetName} 
-                onChange={(e) => setWidgetName(e.target.value)} 
+                onChange={(e) => handleNameChange(e.target.value)} 
                 placeholder="My Custom Widget"
               />
             </div>
