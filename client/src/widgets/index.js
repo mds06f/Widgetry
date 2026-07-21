@@ -19,6 +19,9 @@ import SpotifyWidgetConfig from './Spotify/SpotifyWidgetConfig';
 import GithubStatsWidgetView from './GithubStats/GithubStatsWidgetView';
 import GithubStatsWidgetConfig from './GithubStats/GithubStatsWidgetConfig';
 
+import CryptoTickerWidgetView from './CryptoTicker/CryptoTickerWidgetView';
+import CryptoTickerWidgetConfig from './CryptoTicker/CryptoTickerWidgetConfig';
+
 export const widgetRegistry = {
   clock: {
     name: 'Digital Clock',
@@ -152,6 +155,24 @@ export const widgetRegistry = {
       backgroundStyle: 'gradient',
       backgroundColor: '#0d1117',
       gradientName: 'darkness',
+      backgroundImageUrl: '',
+      borderRadius: '12px',
+      customCSS: ''
+    }
+  },
+  cryptoticker: {
+    name: 'Crypto Ticker',
+    description: 'Displays real-time prices for top cryptocurrencies with a mini-sparkline trend.',
+    icon: 'Coins',
+    view: CryptoTickerWidgetView,
+    config: CryptoTickerWidgetConfig,
+    defaultConfig: {
+      coinId: 'bitcoin',
+      vsCurrency: 'usd',
+      textColor: '#ffffff',
+      backgroundStyle: 'gradient',
+      backgroundColor: '#1b2542',
+      gradientName: 'cosmic',
       backgroundImageUrl: '',
       borderRadius: '12px',
       customCSS: ''
