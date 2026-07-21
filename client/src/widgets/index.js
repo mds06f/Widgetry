@@ -25,6 +25,9 @@ import CryptoTickerWidgetConfig from './CryptoTicker/CryptoTickerWidgetConfig';
 import AnalogClockWidgetView from './AnalogClock/AnalogClockWidgetView';
 import AnalogClockWidgetConfig from './AnalogClock/AnalogClockWidgetConfig';
 
+import TriviaWidgetView from './Trivia/TriviaWidgetView';
+import TriviaWidgetConfig from './Trivia/TriviaWidgetConfig';
+
 export const widgetRegistry = {
   clock: {
     name: 'Digital Clock',
@@ -194,6 +197,23 @@ export const widgetRegistry = {
       faceColor: 'rgba(0,0,0,0.2)',
       showNumbers: true,
       showTicks: true,
+      textColor: '#ffffff',
+      backgroundStyle: 'gradient',
+      backgroundColor: '#1b2542',
+      gradientName: 'cosmic',
+      backgroundImageUrl: '',
+      borderRadius: '12px',
+      customCSS: ''
+    }
+  },
+  trivia: {
+    name: 'Jokes & Trivia',
+    description: 'Displays a daily joke or general trivia fact with click-to-reveal answers.',
+    icon: 'MessageSquare',
+    view: TriviaWidgetView,
+    config: TriviaWidgetConfig,
+    defaultConfig: {
+      category: 'dad-jokes',
       textColor: '#ffffff',
       backgroundStyle: 'gradient',
       backgroundColor: '#1b2542',
