@@ -16,6 +16,9 @@ import TodoWidgetConfig from './Todo/TodoWidgetConfig';
 import SpotifyWidgetView from './Spotify/SpotifyWidgetView';
 import SpotifyWidgetConfig from './Spotify/SpotifyWidgetConfig';
 
+import GithubStatsWidgetView from './GithubStats/GithubStatsWidgetView';
+import GithubStatsWidgetConfig from './GithubStats/GithubStatsWidgetConfig';
+
 export const widgetRegistry = {
   clock: {
     name: 'Digital Clock',
@@ -130,6 +133,24 @@ export const widgetRegistry = {
       textColor: '#ffffff',
       backgroundStyle: 'gradient',
       backgroundColor: '#1b2542',
+      gradientName: 'darkness',
+      backgroundImageUrl: '',
+      borderRadius: '12px',
+      customCSS: ''
+    }
+  },
+  githubstats: {
+    name: 'GitHub Profile Stats',
+    description: 'Displays a GitHub user\'s public profile stats and contributions grid.',
+    icon: 'Github',
+    view: GithubStatsWidgetView,
+    config: GithubStatsWidgetConfig,
+    defaultConfig: {
+      username: 'octocat',
+      showGraph: true,
+      textColor: '#ffffff',
+      backgroundStyle: 'gradient',
+      backgroundColor: '#0d1117',
       gradientName: 'darkness',
       backgroundImageUrl: '',
       borderRadius: '12px',
