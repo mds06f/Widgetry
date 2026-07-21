@@ -192,4 +192,41 @@ router.get('/proxy/weather', async (req, res) => {
   }
 });
 
+// POST webhook data update
+router.post('/:id/webhook', (req, res) => {
+  try {
+    const widget = db.getById(req.params.id);
+    if (!widget) {
+      return res.status(404).json({ error: 'Widget not found' });
+    }
+
+    const { token } = req.query;
+    if (!token || token !== widget.config.webhookToken) {
+      return res.status(403).json({ error: 'Invalid webhook token' });
+    }
+
+    // Merge incoming JSON payload directly into widget config
+    const updatedConfig = {
+      ...widget.config,
+      ...req.body
+    };
+
+    const updated = db.update(req.params.id, { config: updatedConfig });
+
+    // Emit live WebSocket update to the widget edit room
+    const io = req.app.get('io');
+    if (io) {
+      io.to(req.params.id).emit('config-updated', { config: updatedConfig });
+    }
+
+    res.json({
+      message: 'Webhook received and widget updated successfully',
+      config: updated.config
+    });
+  } catch (err) {
+    console.error('Webhook processing error:', err.message);
+    res.status(500).json({ error: 'Failed to process webhook data' });
+  }
+});
+
 module.exports = router;
