@@ -32,6 +32,33 @@ app.get('*', (req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
+const http = require('http');
+const socketIo = require('socket.io');
+
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE']
+  }
+});
+
+// Expose io on app object for other routers (e.g. webhooks)
+app.set('io', io);
+
+// Socket.io Real-time Collaboration Logic
+io.on('connection', (socket) => {
+  // Join a widget room
+  socket.on('join-widget', (widgetId) => {
+    socket.join(widgetId);
+  });
+
+  // Broadcast layout/config changes to other collaborators in room
+  socket.on('edit-config', ({ widgetId, name, config }) => {
+    socket.to(widgetId).emit('config-updated', { name, config });
+  });
+});
+
+server.listen(PORT, () => {
   console.log(`Widgetry Backend listening on http://localhost:${PORT}`);
 });
