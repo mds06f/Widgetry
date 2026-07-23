@@ -63,6 +63,19 @@ export default function ClockWidgetConfig({ config, onChange }) {
       </div>
 
       <div className="config-field">
+        <label>Text Shadow</label>
+        <select
+          value={config.textShadow || "none"}
+          onChange={(e) => handleUpdate("textShadow", e.target.value)}
+        >
+          <option value="none">None</option>
+          <option value="subtle">Subtle Drop</option>
+          <option value="glow">Soft Glow</option>
+          <option value="hard">Hard Shadow</option>
+        </select>
+      </div>
+
+      <div className="config-field">
         <label>Hover Animation</label>
         <select
           value={config.hoverAnimation || "none"}

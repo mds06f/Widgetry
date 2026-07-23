@@ -24,7 +24,15 @@ export default function ClockWidgetView({ config }) {
     darkMode = false,
     hoverAnimation = "none",
     showDate = false,
+    textShadow = "none",
   } = config;
+
+  const shadowStyles = {
+    subtle: "1px 1px 3px rgba(0, 0, 0, 0.7)",
+    glow: "0 0 12px rgba(255, 255, 255, 0.8)",
+    hard: "2px 2px 0px rgba(0, 0, 0, 0.9)",
+  };
+  const effectiveTextShadow = shadowStyles[textShadow] || "none";
 
   const hoverClass =
     hoverAnimation && hoverAnimation !== "none"
@@ -66,6 +74,7 @@ export default function ClockWidgetView({ config }) {
         className={`${darkMode ? "dark-mode" : "light-mode"} ${hoverClass}`}
         style={{
           color: effectiveTextColor,
+          textShadow: effectiveTextShadow,
           fontSize: fontSize,
           fontFamily:
             fontFamily === "monospace"

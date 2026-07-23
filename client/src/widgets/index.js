@@ -55,6 +55,7 @@ export const widgetRegistry = {
       customCSS: "",
       darkMode: false,
       hoverAnimation: "none",
+      textShadow: "none",
       showDate: false,
     },
   },
@@ -79,6 +80,7 @@ export const widgetRegistry = {
       customCSS: "",
       darkMode: false,
       hoverAnimation: "none",
+      textShadow: "none",
     },
   },
   weather: {
@@ -100,6 +102,7 @@ export const widgetRegistry = {
       customCSS: "",
       darkMode: false,
       hoverAnimation: "none",
+      textShadow: "none",
     },
   },
   countdown: {
@@ -125,6 +128,7 @@ export const widgetRegistry = {
       customCSS: "",
       darkMode: false,
       hoverAnimation: "none",
+      textShadow: "none",
     },
   },
   todo: {
@@ -145,6 +149,7 @@ export const widgetRegistry = {
       customCSS: "",
       darkMode: false,
       hoverAnimation: "none",
+      textShadow: "none",
     },
   },
   spotify: {
@@ -171,6 +176,7 @@ export const widgetRegistry = {
       customCSS: "",
       darkMode: false,
       hoverAnimation: "none",
+      textShadow: "none",
     },
   },
   githubstats: {
@@ -192,6 +198,7 @@ export const widgetRegistry = {
       customCSS: "",
       darkMode: false,
       hoverAnimation: "none",
+      textShadow: "none",
     },
   },
   cryptoticker: {
@@ -213,6 +220,7 @@ export const widgetRegistry = {
       customCSS: "",
       darkMode: false,
       hoverAnimation: "none",
+      textShadow: "none",
     },
   },
   analogclock: {
@@ -237,6 +245,7 @@ export const widgetRegistry = {
       customCSS: "",
       darkMode: false,
       hoverAnimation: "none",
+      textShadow: "none",
     },
   },
   trivia: {
@@ -257,6 +266,7 @@ export const widgetRegistry = {
       customCSS: "",
       darkMode: false,
       hoverAnimation: "none",
+      textShadow: "none",
     },
   },
   pomodoro: {
@@ -278,6 +288,7 @@ export const widgetRegistry = {
       customCSS: "",
       darkMode: false,
       hoverAnimation: "none",
+      textShadow: "none",
     },
   },
   grid: {
