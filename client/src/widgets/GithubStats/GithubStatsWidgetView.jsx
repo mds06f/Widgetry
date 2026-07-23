@@ -12,6 +12,7 @@ export default function GithubStatsWidgetView({ config }) {
     backgroundImageUrl = "",
     borderRadius = "12px",
     customCSS = "",
+    heatmapTheme = "green",
   } = config;
 
   const [loading, setLoading] = useState(false);
@@ -19,6 +20,18 @@ export default function GithubStatsWidgetView({ config }) {
   const [data, setData] = useState(null);
 
   const safeCSS = customCSS.replace(/<\/style>/gi, "");
+
+  const THEME_PALETTES = {
+    green: ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"],
+    blue: ["#161b22", "#0a3069", "#0969da", "#54aefe", "#80ccff"],
+    fire: ["#161b22", "#5c1d00", "#9e2a00", "#e65100", "#ff9800"],
+    purple: ["#161b22", "#3b1254", "#6b1b9a", "#ab47bc", "#e1bee7"],
+  };
+
+  const getContributionColor = (val) => {
+    const palette = THEME_PALETTES[heatmapTheme] || THEME_PALETTES.green;
+    return palette[val] || palette[0];
+  };
 
   useEffect(() => {
     if (!username) {
@@ -86,21 +99,6 @@ export default function GithubStatsWidgetView({ config }) {
       }
     }
     return grid;
-  };
-
-  const getContributionColor = (val) => {
-    switch (val) {
-      case 1:
-        return "#0e4429";
-      case 2:
-        return "#006d32";
-      case 3:
-        return "#26a641";
-      case 4:
-        return "#39d353";
-      default:
-        return "#161b22";
-    }
   };
 
   // Build backgrounds

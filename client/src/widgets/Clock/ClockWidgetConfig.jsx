@@ -38,6 +38,56 @@ export default function ClockWidgetConfig({ config, onChange }) {
         </label>
       </div>
 
+      <div className="config-field toggle-field">
+        <label>Show Date</label>
+        <label className="toggle-switch">
+          <input
+            type="checkbox"
+            checked={config.showDate === true}
+            onChange={(e) => handleUpdate("showDate", e.target.checked)}
+          />
+          <span className="slider"></span>
+        </label>
+      </div>
+
+      <div className="config-field toggle-field">
+        <label>Dark Mode</label>
+        <label className="toggle-switch">
+          <input
+            type="checkbox"
+            checked={config.darkMode === true}
+            onChange={(e) => handleUpdate("darkMode", e.target.checked)}
+          />
+          <span className="slider"></span>
+        </label>
+      </div>
+
+      <div className="config-field">
+        <label>Text Shadow</label>
+        <select
+          value={config.textShadow || "none"}
+          onChange={(e) => handleUpdate("textShadow", e.target.value)}
+        >
+          <option value="none">None</option>
+          <option value="subtle">Subtle Drop</option>
+          <option value="glow">Soft Glow</option>
+          <option value="hard">Hard Shadow</option>
+        </select>
+      </div>
+
+      <div className="config-field">
+        <label>Hover Animation</label>
+        <select
+          value={config.hoverAnimation || "none"}
+          onChange={(e) => handleUpdate("hoverAnimation", e.target.value)}
+        >
+          <option value="none">None</option>
+          <option value="scale">Scale Up</option>
+          <option value="fade">Fade Pulse</option>
+          <option value="glow">Glow Effect</option>
+        </select>
+      </div>
+
       <div className="config-field">
         <label>Font Size</label>
         <select
@@ -52,12 +102,17 @@ export default function ClockWidgetConfig({ config, onChange }) {
       </div>
 
       <div className="config-field">
-        <label>Font Style</label>
+        <label>Font Style (Google Fonts)</label>
         <select
           value={config.fontFamily || "Outfit"}
           onChange={(e) => handleUpdate("fontFamily", e.target.value)}
         >
-          <option value="Outfit">Modern Sans (Outfit)</option>
+          <option value="Outfit">Outfit (Sans)</option>
+          <option value="Roboto">Roboto (Google Font)</option>
+          <option value="Inter">Inter (Google Font)</option>
+          <option value="Poppins">Poppins (Google Font)</option>
+          <option value="Montserrat">Montserrat (Google Font)</option>
+          <option value="Playfair Display">Playfair Display (Serif)</option>
           <option value="monospace">Digital Coding (Monospace)</option>
         </select>
       </div>

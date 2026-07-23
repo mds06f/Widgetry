@@ -171,6 +171,20 @@ export default function SpotifyWidgetConfig({ config, onChange }) {
         </select>
       </div>
 
+      <div className="config-field toggle-field">
+        <label>Show Playback Controls</label>
+        <label className="toggle-switch">
+          <input
+            type="checkbox"
+            checked={config.showPlaybackControls !== false}
+            onChange={(e) =>
+              handleUpdate("showPlaybackControls", e.target.checked)
+            }
+          />
+          <span className="slider"></span>
+        </label>
+      </div>
+
       <div className="config-field">
         <label>Custom CSS</label>
         <textarea

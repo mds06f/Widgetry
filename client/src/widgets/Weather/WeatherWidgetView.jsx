@@ -29,6 +29,8 @@ export default function WeatherWidgetView({ config }) {
 
   const {
     city = "Paris",
+    citiesList = "",
+    enableSlideshow = false,
     unit = "C",
     textColor = "#ffffff",
     backgroundColor = "#131a30",
@@ -38,6 +40,22 @@ export default function WeatherWidgetView({ config }) {
     borderRadius = "12px",
     customCSS = "",
   } = config;
+
+  const parsedCities = citiesList
+    ? citiesList.split(",").map((c) => c.trim()).filter(Boolean)
+    : [city];
+  const activeCities = enableSlideshow && parsedCities.length > 0 ? parsedCities : [city];
+  const [cityIdx, setCityIdx] = useState(0);
+
+  useEffect(() => {
+    if (!enableSlideshow || activeCities.length <= 1) return;
+    const interval = setInterval(() => {
+      setCityIdx((prev) => (prev + 1) % activeCities.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [enableSlideshow, activeCities.length]);
+
+  const currentCity = activeCities[cityIdx] || city;
 
   // Sanitize: strip any </style> tags to prevent style-block breakout
   const safeCSS = customCSS.replace(/<\/style>/gi, "");
@@ -50,7 +68,7 @@ export default function WeatherWidgetView({ config }) {
     async function fetchWeather() {
       try {
         const response = await fetch(
-          `/api/widgets/proxy/weather?city=${encodeURIComponent(city)}`,
+          `/api/widgets/proxy/weather?city=${encodeURIComponent(currentCity)}`,
         );
         if (!response.ok) {
           throw new Error("City not found or server error");
@@ -73,7 +91,7 @@ export default function WeatherWidgetView({ config }) {
     return () => {
       active = false;
     };
-  }, [city]);
+  }, [currentCity]);
 
   const style = {
     color: textColor,

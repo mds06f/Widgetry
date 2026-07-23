@@ -34,7 +34,83 @@ import PomodoroWidgetConfig from "./Pomodoro/PomodoroWidgetConfig";
 import GridWidgetView from "./Grid/GridWidgetView";
 import GridWidgetConfig from "./Grid/GridWidgetConfig";
 
+import StockTickerWidgetView from "./StockTicker/StockTickerWidgetView";
+import StockTickerWidgetConfig from "./StockTicker/StockTickerWidgetConfig";
+
+import PollWidgetView from "./Poll/PollWidgetView";
+import PollWidgetConfig from "./Poll/PollWidgetConfig";
+
+import WhiteboardWidgetView from "./Whiteboard/WhiteboardWidgetView";
+import WhiteboardWidgetConfig from "./Whiteboard/WhiteboardWidgetConfig";
+
+import CustomScriptWidgetView from "./CustomScript/CustomScriptWidgetView";
+import CustomScriptWidgetConfig from "./CustomScript/CustomScriptWidgetConfig";
+
 export const widgetRegistry = {
+  customscript: {
+    name: "Custom Script Injector",
+    description: "Write custom HTML, CSS, and JS to build sandboxed custom widgets.",
+    icon: "Code",
+    view: CustomScriptWidgetView,
+    config: CustomScriptWidgetConfig,
+    defaultConfig: {
+      htmlCode: "<div class='custom-card'>Hello Custom Widget!</div>",
+      cssCode: ".custom-card {\n  color: #6366f1;\n  font-weight: bold;\n}",
+      jsCode: "",
+      borderRadius: "12px",
+      customCSS: "",
+    },
+  },
+  whiteboard: {
+    name: "Interactive Whiteboard",
+    description: "Draw and sketch freehand canvas drawings interactively.",
+    icon: "Edit3",
+    view: WhiteboardWidgetView,
+    config: WhiteboardWidgetConfig,
+    defaultConfig: {
+      brushColor: "#6366f1",
+      brushSize: 4,
+      backgroundColor: "#0f172a",
+      borderRadius: "12px",
+      customCSS: "",
+    },
+  },
+  poll: {
+    name: "Interactive Poll",
+    description: "Render quick voting options and live percentage progress bars.",
+    icon: "Vote",
+    view: PollWidgetView,
+    config: PollWidgetConfig,
+    defaultConfig: {
+      question: "What is your favorite frontend framework?",
+      optionsString: "React, Vue, Svelte, Angular",
+      textColor: "#ffffff",
+      backgroundStyle: "gradient",
+      backgroundColor: "#1b2542",
+      gradientName: "cosmic",
+      borderRadius: "12px",
+      customCSS: "",
+    },
+  },
+  stockticker: {
+    name: "Stock Market Ticker",
+    description: "A stock price index widget tracking active market tickers.",
+    icon: "TrendingUp",
+    view: StockTickerWidgetView,
+    config: StockTickerWidgetConfig,
+    defaultConfig: {
+      symbol: "AAPL",
+      companyName: "Apple Inc.",
+      basePrice: "185.50",
+      changePercent: "+2.45%",
+      textColor: "#ffffff",
+      backgroundStyle: "gradient",
+      backgroundColor: "#1b2542",
+      gradientName: "darkness",
+      borderRadius: "12px",
+      customCSS: "",
+    },
+  },
   clock: {
     name: "Digital Clock",
     description:
@@ -53,6 +129,12 @@ export const widgetRegistry = {
       borderColor: "transparent",
       borderWidth: "0px",
       customCSS: "",
+      darkMode: false,
+      hoverAnimation: "none",
+      textShadow: "none",
+      cspDirective: "default-src 'self' 'unsafe-inline' https:;",
+      outboundWebhookUrl: "",
+      showDate: false,
     },
   },
   quote: {
@@ -74,6 +156,11 @@ export const widgetRegistry = {
       borderRadius: "12px",
       showAuthor: true,
       customCSS: "",
+      darkMode: false,
+      hoverAnimation: "none",
+      textShadow: "none",
+      cspDirective: "default-src 'self' 'unsafe-inline' https:;",
+      outboundWebhookUrl: "",
     },
   },
   weather: {
@@ -93,6 +180,11 @@ export const widgetRegistry = {
       backgroundImageUrl: "",
       borderRadius: "12px",
       customCSS: "",
+      darkMode: false,
+      hoverAnimation: "none",
+      textShadow: "none",
+      cspDirective: "default-src 'self' 'unsafe-inline' https:;",
+      outboundWebhookUrl: "",
     },
   },
   countdown: {
@@ -116,6 +208,11 @@ export const widgetRegistry = {
       backgroundImageUrl: "",
       borderRadius: "12px",
       customCSS: "",
+      darkMode: false,
+      hoverAnimation: "none",
+      textShadow: "none",
+      cspDirective: "default-src 'self' 'unsafe-inline' https:;",
+      outboundWebhookUrl: "",
     },
   },
   todo: {
@@ -134,6 +231,11 @@ export const widgetRegistry = {
       backgroundImageUrl: "",
       borderRadius: "12px",
       customCSS: "",
+      darkMode: false,
+      hoverAnimation: "none",
+      textShadow: "none",
+      cspDirective: "default-src 'self' 'unsafe-inline' https:;",
+      outboundWebhookUrl: "",
     },
   },
   spotify: {
@@ -158,6 +260,11 @@ export const widgetRegistry = {
       backgroundImageUrl: "",
       borderRadius: "12px",
       customCSS: "",
+      darkMode: false,
+      hoverAnimation: "none",
+      textShadow: "none",
+      cspDirective: "default-src 'self' 'unsafe-inline' https:;",
+      outboundWebhookUrl: "",
     },
   },
   githubstats: {
@@ -177,6 +284,11 @@ export const widgetRegistry = {
       backgroundImageUrl: "",
       borderRadius: "12px",
       customCSS: "",
+      darkMode: false,
+      hoverAnimation: "none",
+      textShadow: "none",
+      cspDirective: "default-src 'self' 'unsafe-inline' https:;",
+      outboundWebhookUrl: "",
     },
   },
   cryptoticker: {
@@ -196,6 +308,10 @@ export const widgetRegistry = {
       backgroundImageUrl: "",
       borderRadius: "12px",
       customCSS: "",
+      darkMode: false,
+      hoverAnimation: "none",
+      textShadow: "none",
+      cspDirective: "default-src 'self' 'unsafe-inline' https:;",
     },
   },
   analogclock: {
@@ -218,6 +334,9 @@ export const widgetRegistry = {
       backgroundImageUrl: "",
       borderRadius: "12px",
       customCSS: "",
+      darkMode: false,
+      hoverAnimation: "none",
+      textShadow: "none",
     },
   },
   trivia: {
@@ -236,6 +355,9 @@ export const widgetRegistry = {
       backgroundImageUrl: "",
       borderRadius: "12px",
       customCSS: "",
+      darkMode: false,
+      hoverAnimation: "none",
+      textShadow: "none",
     },
   },
   pomodoro: {
@@ -255,6 +377,9 @@ export const widgetRegistry = {
       backgroundImageUrl: "",
       borderRadius: "12px",
       customCSS: "",
+      darkMode: false,
+      hoverAnimation: "none",
+      textShadow: "none",
     },
   },
   grid: {
@@ -274,6 +399,7 @@ export const widgetRegistry = {
       gradientName: "darkness",
       borderRadius: "12px",
       customCSS: "",
+      darkMode: false,
     },
   },
 };

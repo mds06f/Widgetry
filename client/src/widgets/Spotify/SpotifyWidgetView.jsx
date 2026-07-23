@@ -46,6 +46,7 @@ export default function SpotifyWidgetView({ config }) {
     customDuration = 180,
     customCoverUrl = "",
     showVisualizer = true,
+    showPlaybackControls = true,
     textColor = "#ffffff",
     backgroundStyle = "gradient",
     backgroundColor = "#1b2542",
@@ -372,86 +373,88 @@ export default function SpotifyWidgetView({ config }) {
             </div>
 
             {/* Core Play/Pause controls */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "1rem",
-                transform: "translateX(-10px)", // Center properly relative to visualizer
-              }}
-            >
-              <button
-                onClick={() => setProgress(0)}
+            {showPlaybackControls ? (
+              <div
                 style={{
-                  background: "none",
-                  border: "none",
-                  color: "inherit",
-                  cursor: "pointer",
-                  padding: "4px",
                   display: "flex",
                   alignItems: "center",
-                  opacity: 0.8,
+                  gap: "1rem",
+                  transform: "translateX(-10px)", // Center properly relative to visualizer
                 }}
-                title="Restart"
               >
-                <SkipBack size={16} fill="currentColor" />
-              </button>
+                <button
+                  onClick={() => setProgress(0)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "inherit",
+                    cursor: "pointer",
+                    padding: "4px",
+                    display: "flex",
+                    alignItems: "center",
+                    opacity: 0.8,
+                  }}
+                  title="Restart"
+                >
+                  <SkipBack size={16} fill="currentColor" />
+                </button>
 
-              <button
-                onClick={() => setIsPlaying(!isPlaying)}
-                style={{
-                  background: textColor,
-                  border: "none",
-                  color:
-                    backgroundStyle === "solid" ? backgroundColor : "#121212",
-                  cursor: "pointer",
-                  width: "36px",
-                  height: "36px",
-                  borderRadius: "50%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
-                  transition: "transform 0.2s",
-                  transform: "scale(1)",
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.transform = "scale(1.06)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.transform = "scale(1)")
-                }
-              >
-                {isPlaying ? (
-                  <Pause size={18} fill="currentColor" />
-                ) : (
-                  <Play
-                    size={18}
-                    fill="currentColor"
-                    style={{ marginLeft: "2px" }}
-                  />
-                )}
-              </button>
+                <button
+                  onClick={() => setIsPlaying(!isPlaying)}
+                  style={{
+                    background: textColor,
+                    border: "none",
+                    color:
+                      backgroundStyle === "solid" ? backgroundColor : "#121212",
+                    cursor: "pointer",
+                    width: "36px",
+                    height: "36px",
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
+                    transition: "transform 0.2s",
+                    transform: "scale(1)",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.transform = "scale(1.06)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.transform = "scale(1)")
+                  }
+                >
+                  {isPlaying ? (
+                    <Pause size={18} fill="currentColor" />
+                  ) : (
+                    <Play
+                      size={18}
+                      fill="currentColor"
+                      style={{ marginLeft: "2px" }}
+                    />
+                  )}
+                </button>
 
-              <button
-                onClick={() =>
-                  setProgress(Math.min(activeTrack.duration, progress + 10))
-                }
-                style={{
-                  background: "none",
-                  border: "none",
-                  color: "inherit",
-                  cursor: "pointer",
-                  padding: "4px",
-                  display: "flex",
-                  alignItems: "center",
-                  opacity: 0.8,
-                }}
-                title="Skip 10s"
-              >
-                <SkipForward size={16} fill="currentColor" />
-              </button>
-            </div>
+                <button
+                  onClick={() =>
+                    setProgress(Math.min(activeTrack.duration, progress + 10))
+                  }
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "inherit",
+                    cursor: "pointer",
+                    padding: "4px",
+                    display: "flex",
+                    alignItems: "center",
+                    opacity: 0.8,
+                  }}
+                  title="Skip 10s"
+                >
+                  <SkipForward size={16} fill="currentColor" />
+                </button>
+              </div>
+            ) : <div />}
 
             {/* Volume Control Icon */}
             <div

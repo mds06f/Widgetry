@@ -65,9 +65,29 @@ async function create(userData) {
   return userWithoutPassword;
 }
 
+function createOrg(orgData) {
+  const users = getAll();
+  const org = {
+    id: uuidv4(),
+    name: orgData.name,
+    ownerId: orgData.ownerId,
+    members: [orgData.ownerId],
+    createdAt: new Date().toISOString(),
+  };
+  const user = users.find((u) => u.id === orgData.ownerId);
+  if (user) {
+    if (!user.orgs) user.orgs = [];
+    user.orgs.push(org);
+    saveAll(users);
+  }
+  return org;
+}
+
 module.exports = {
   getAll,
   getById,
   getByEmail,
   create,
+  verifyPassword,
+  createOrg,
 };

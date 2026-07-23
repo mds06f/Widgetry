@@ -5,8 +5,14 @@ import * as LucideIcons from "lucide-react";
 export default function Dashboard({ navigate, token, user }) {
   const [widgets, setWidgets] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [copiedId, setCopiedId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredWidgets = widgets.filter((w) => {
+    const query = searchQuery.toLowerCase();
+    const nameMatch = w.name ? w.name.toLowerCase().includes(query) : false;
+    const typeMatch = w.type ? w.type.toLowerCase().includes(query) : false;
+    return nameMatch || typeMatch;
+  });
 
   // Fetch widgets on load and when token changes
   useEffect(() => {
@@ -60,6 +66,45 @@ export default function Dashboard({ navigate, token, user }) {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  const exportBackup = () => {
+    const jsonStr = JSON.stringify(widgets, null, 2);
+    const blob = new Blob([jsonStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `widgetry-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportBackup = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const importedWidgets = JSON.parse(text);
+      if (Array.isArray(importedWidgets)) {
+        for (const item of importedWidgets) {
+          const headers = { "Content-Type": "application/json" };
+          if (token) headers["Authorization"] = `Bearer ${token}`;
+          await fetch("/api/widgets", {
+            method: "POST",
+            headers,
+            body: JSON.stringify({
+              type: item.type,
+              name: item.name,
+              config: item.config,
+            }),
+          });
+        }
+        fetchWidgets();
+        alert("Widget configurations successfully restored!");
+      }
+    } catch (err) {
+      alert("Invalid backup JSON file.");
+    }
+  };
+
   // Helper to render Lucide icons dynamically
   const renderIcon = (iconName, size = 24) => {
     const IconComponent = LucideIcons[iconName] || LucideIcons.Layers;
@@ -73,14 +118,59 @@ export default function Dashboard({ navigate, token, user }) {
           <h1>My Widgets</h1>
           <p>Create, customize, and embed lightweight widgets anywhere.</p>
         </div>
-        <button
-          className="btn btn-primary"
-          onClick={() => setIsModalOpen(true)}
-        >
-          <LucideIcons.Plus size={18} />
-          <span>New Widget</span>
-        </button>
+        <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+          <button
+            className="btn btn-secondary"
+            onClick={exportBackup}
+            title="Export Configuration Backup JSON"
+          >
+            <LucideIcons.Download size={16} />
+            <span>Export Backup</span>
+          </button>
+
+          <label className="btn btn-secondary" style={{ cursor: "pointer", margin: 0 }} title="Import Configuration Backup JSON">
+            <LucideIcons.Upload size={16} />
+            <span>Import Backup</span>
+            <input
+              type="file"
+              accept=".json"
+              onChange={handleImportBackup}
+              style={{ display: "none" }}
+            />
+          </label>
+
+          <button
+            className="btn btn-primary"
+            onClick={() => setIsModalOpen(true)}
+          >
+            <LucideIcons.Plus size={18} />
+            <span>New Widget</span>
+          </button>
+        </div>
       </div>
+
+      {widgets.length > 0 && (
+        <div style={{ marginBottom: "1.5rem", position: "relative" }}>
+          <LucideIcons.Search
+            size={18}
+            style={{
+              position: "absolute",
+              left: "14px",
+              top: "50%",
+              transform: "translateY(-50%)",
+              color: "var(--text-secondary)",
+            }}
+          />
+          <input
+            type="text"
+            className="input"
+            placeholder="Search widgets by name or type..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ paddingLeft: "42px", width: "100%" }}
+          />
+        </div>
+      )}
 
       {loading ? (
         <div
@@ -131,10 +221,14 @@ export default function Dashboard({ navigate, token, user }) {
             <span>Create First Widget</span>
           </button>
         </div>
+      ) : filteredWidgets.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "3rem", color: "var(--text-secondary)" }}>
+          <p>No widgets found matching "{searchQuery}"</p>
+        </div>
       ) : (
         // Widgets Grid
         <div className="grid">
-          {widgets.map((widget) => {
+          {filteredWidgets.map((widget) => {
             const registryItem = widgetRegistry[widget.type] || {
               name: "Unknown Widget",
               icon: "HelpCircle",

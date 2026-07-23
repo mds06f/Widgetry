@@ -21,7 +21,30 @@ export default function ClockWidgetView({ config }) {
     borderColor = "transparent",
     borderWidth = "0px",
     customCSS = "",
+    darkMode = false,
+    hoverAnimation = "none",
+    showDate = false,
+    textShadow = "none",
   } = config;
+
+  const shadowStyles = {
+    subtle: "1px 1px 3px rgba(0, 0, 0, 0.7)",
+    glow: "0 0 12px rgba(255, 255, 255, 0.8)",
+    hard: "2px 2px 0px rgba(0, 0, 0, 0.9)",
+  };
+  const effectiveTextShadow = shadowStyles[textShadow] || "none";
+
+  const hoverClass =
+    hoverAnimation && hoverAnimation !== "none"
+      ? `hover-anim-${hoverAnimation}`
+      : "";
+
+  const effectiveBgColor = darkMode
+    ? "#111827"
+    : backgroundColor;
+  const effectiveTextColor = darkMode
+    ? "#f9fafb"
+    : textColor;
 
   // Sanitize: strip any </style> tags to prevent style-block breakout
   const safeCSS = customCSS.replace(/<\/style>/gi, "");
@@ -41,19 +64,30 @@ export default function ClockWidgetView({ config }) {
 
   const timeString = `${displayHours}:${minutes}${showSeconds ? `:${seconds}` : ""}${ampm}`;
 
+  const dateOptions = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
+  const dateString = time.toLocaleDateString(undefined, dateOptions);
+
+  const fontUrl =
+    fontFamily && fontFamily !== "monospace"
+      ? `https://fonts.googleapis.com/css2?family=${encodeURIComponent(fontFamily)}:wght@400;600;700&display=swap`
+      : null;
+
   return (
     <>
+      {fontUrl ? <link rel="stylesheet" href={fontUrl} /> : null}
       {safeCSS ? <style>{safeCSS}</style> : null}
       <div
+        className={`${darkMode ? "dark-mode" : "light-mode"} ${hoverClass}`}
         style={{
-          color: textColor,
+          color: effectiveTextColor,
+          textShadow: effectiveTextShadow,
           fontSize: fontSize,
           fontFamily:
             fontFamily === "monospace"
               ? "JetBrains Mono, monospace"
-              : "Outfit, sans-serif",
+              : `'${fontFamily}', sans-serif`,
           fontWeight: "bold",
-          backgroundColor: backgroundColor,
+          backgroundColor: effectiveBgColor,
           backgroundImage: backgroundImageUrl
             ? `url(${backgroundImageUrl})`
             : undefined,
@@ -68,11 +102,24 @@ export default function ClockWidgetView({ config }) {
           width: "100%",
           height: "100vh",
           display: "flex",
+          flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
         }}
       >
-        {timeString}
+        <div>{timeString}</div>
+        {showDate && (
+          <div
+            style={{
+              fontSize: "0.45em",
+              fontWeight: "normal",
+              opacity: 0.85,
+              marginTop: "0.25em",
+            }}
+          >
+            {dateString}
+          </div>
+        )}
       </div>
     </>
   );
