@@ -98,6 +98,7 @@ export const widgetRegistry = {
       darkMode: false,
       hoverAnimation: "none",
       textShadow: "none",
+      cspDirective: "default-src 'self' 'unsafe-inline' https:;",
       showDate: false,
     },
   },
@@ -123,6 +124,7 @@ export const widgetRegistry = {
       darkMode: false,
       hoverAnimation: "none",
       textShadow: "none",
+      cspDirective: "default-src 'self' 'unsafe-inline' https:;",
     },
   },
   weather: {
@@ -145,6 +147,7 @@ export const widgetRegistry = {
       darkMode: false,
       hoverAnimation: "none",
       textShadow: "none",
+      cspDirective: "default-src 'self' 'unsafe-inline' https:;",
     },
   },
   countdown: {
@@ -171,6 +174,7 @@ export const widgetRegistry = {
       darkMode: false,
       hoverAnimation: "none",
       textShadow: "none",
+      cspDirective: "default-src 'self' 'unsafe-inline' https:;",
     },
   },
   todo: {
@@ -192,6 +196,7 @@ export const widgetRegistry = {
       darkMode: false,
       hoverAnimation: "none",
       textShadow: "none",
+      cspDirective: "default-src 'self' 'unsafe-inline' https:;",
     },
   },
   spotify: {
@@ -219,6 +224,7 @@ export const widgetRegistry = {
       darkMode: false,
       hoverAnimation: "none",
       textShadow: "none",
+      cspDirective: "default-src 'self' 'unsafe-inline' https:;",
     },
   },
   githubstats: {
@@ -241,6 +247,7 @@ export const widgetRegistry = {
       darkMode: false,
       hoverAnimation: "none",
       textShadow: "none",
+      cspDirective: "default-src 'self' 'unsafe-inline' https:;",
     },
   },
   cryptoticker: {
@@ -263,6 +270,7 @@ export const widgetRegistry = {
       darkMode: false,
       hoverAnimation: "none",
       textShadow: "none",
+      cspDirective: "default-src 'self' 'unsafe-inline' https:;",
     },
   },
   analogclock: {
