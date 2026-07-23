@@ -24,7 +24,7 @@ export default function GithubStatsWidgetConfig({ config, onChange }) {
       </div>
 
       <div className="config-field toggle-field">
-        <label>Show Mock Contribution Graph</label>
+        <label>Show Contribution Heatmap</label>
         <label className="toggle-switch">
           <input
             type="checkbox"
@@ -34,6 +34,21 @@ export default function GithubStatsWidgetConfig({ config, onChange }) {
           <span className="slider"></span>
         </label>
       </div>
+
+      {config.showGraph !== false && (
+        <div className="config-field">
+          <label>Heatmap Theme</label>
+          <select
+            value={config.heatmapTheme || "green"}
+            onChange={(e) => handleUpdate("heatmapTheme", e.target.value)}
+          >
+            <option value="green">Classic Green</option>
+            <option value="blue">Ocean Blue</option>
+            <option value="fire">Fire Orange</option>
+            <option value="purple">Cosmic Purple</option>
+          </select>
+        </div>
+      )}
 
       <div className="config-field">
         <label>Background Style</label>
