@@ -34,7 +34,29 @@ import PomodoroWidgetConfig from "./Pomodoro/PomodoroWidgetConfig";
 import GridWidgetView from "./Grid/GridWidgetView";
 import GridWidgetConfig from "./Grid/GridWidgetConfig";
 
+import StockTickerWidgetView from "./StockTicker/StockTickerWidgetView";
+import StockTickerWidgetConfig from "./StockTicker/StockTickerWidgetConfig";
+
 export const widgetRegistry = {
+  stockticker: {
+    name: "Stock Market Ticker",
+    description: "A stock price index widget tracking active market tickers.",
+    icon: "TrendingUp",
+    view: StockTickerWidgetView,
+    config: StockTickerWidgetConfig,
+    defaultConfig: {
+      symbol: "AAPL",
+      companyName: "Apple Inc.",
+      basePrice: "185.50",
+      changePercent: "+2.45%",
+      textColor: "#ffffff",
+      backgroundStyle: "gradient",
+      backgroundColor: "#1b2542",
+      gradientName: "darkness",
+      borderRadius: "12px",
+      customCSS: "",
+    },
+  },
   clock: {
     name: "Digital Clock",
     description:
