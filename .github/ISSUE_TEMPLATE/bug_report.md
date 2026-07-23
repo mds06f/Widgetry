@@ -11,6 +11,7 @@ A clear and concise description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce the behavior:
+
 1. Go to '...'
 2. Click on '....'
 3. See error
@@ -22,6 +23,7 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Environment details:**
+
 - OS: [e.g. macOS, Windows]
 - Browser [e.g. chrome, safari]
 - Node version [e.g. 18.16.0]

@@ -1,18 +1,18 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const axios = require('axios');
-const jwt = require('jsonwebtoken');
-const db = require('../database');
-const analyticsDb = require('../database_analytics');
+const axios = require("axios");
+const jwt = require("jsonwebtoken");
+const db = require("../database");
+const analyticsDb = require("../database_analytics");
 
-const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_widgetry_key';
+const JWT_SECRET = process.env.JWT_SECRET || "super_secret_widgetry_key";
 
 // Helper to get optional user from request headers
 function getOptionalUser(req) {
-  const authHeader = req.header('Authorization');
+  const authHeader = req.header("Authorization");
   if (!authHeader) return null;
-  const tokenParts = authHeader.split(' ');
-  if (tokenParts.length !== 2 || tokenParts[0] !== 'Bearer') return null;
+  const tokenParts = authHeader.split(" ");
+  if (tokenParts.length !== 2 || tokenParts[0] !== "Bearer") return null;
   try {
     return jwt.verify(tokenParts[1], JWT_SECRET);
   } catch (err) {
@@ -21,132 +21,134 @@ function getOptionalUser(req) {
 }
 
 // GET all widgets (optionally filtered by user)
-router.get('/', (req, res) => {
+router.get("/", (req, res) => {
   try {
     const user = getOptionalUser(req);
     const widgets = db.getAll();
-    
+
     let filteredWidgets = [];
     if (user) {
       // Return user's widgets and anonymous widgets
-      filteredWidgets = widgets.filter(w => w.userId === user.id || !w.userId);
+      filteredWidgets = widgets.filter(
+        (w) => w.userId === user.id || !w.userId,
+      );
     } else {
       // Return only anonymous widgets
-      filteredWidgets = widgets.filter(w => !w.userId);
+      filteredWidgets = widgets.filter((w) => !w.userId);
     }
 
     // Attach views analytics count
-    const result = filteredWidgets.map(w => {
+    const result = filteredWidgets.map((w) => {
       const stats = analyticsDb.getAnalytics(w.id);
       return {
         ...w,
-        views: stats.totalViews
+        views: stats.totalViews,
       };
     });
 
     res.json(result);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch widgets' });
+    res.status(500).json({ error: "Failed to fetch widgets" });
   }
 });
 
 // GET widget by ID
-router.get('/:id', (req, res) => {
+router.get("/:id", (req, res) => {
   try {
     const widget = db.getById(req.params.id);
     if (!widget) {
-      return res.status(404).json({ error: 'Widget not found' });
+      return res.status(404).json({ error: "Widget not found" });
     }
-    
+
     // Anyone can read anonymous widgets, but private ones require ownership check
     if (widget.userId) {
       const user = getOptionalUser(req);
       if (!user || user.id !== widget.userId) {
-        return res.status(403).json({ error: 'Access denied: private widget' });
+        return res.status(403).json({ error: "Access denied: private widget" });
       }
     }
-    
+
     res.json(widget);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch widget' });
+    res.status(500).json({ error: "Failed to fetch widget" });
   }
 });
 
 // POST create widget (can be associated with user)
-router.post('/', (req, res) => {
+router.post("/", (req, res) => {
   try {
     const { type, name, config } = req.body;
     if (!type) {
-      return res.status(400).json({ error: 'Widget type is required' });
+      return res.status(400).json({ error: "Widget type is required" });
     }
-    
+
     const user = getOptionalUser(req);
     const userId = user ? user.id : null;
-    
+
     const newWidget = db.create({ type, name, config, userId });
     res.status(201).json(newWidget);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to create widget' });
+    res.status(500).json({ error: "Failed to create widget" });
   }
 });
 
 // PUT update widget
-router.put('/:id', (req, res) => {
+router.put("/:id", (req, res) => {
   try {
     const { name, config } = req.body;
     const widget = db.getById(req.params.id);
     if (!widget) {
-      return res.status(404).json({ error: 'Widget not found' });
+      return res.status(404).json({ error: "Widget not found" });
     }
 
     // Check ownership if private
     if (widget.userId) {
       const user = getOptionalUser(req);
       if (!user || user.id !== widget.userId) {
-        return res.status(403).json({ error: 'Access denied: private widget' });
+        return res.status(403).json({ error: "Access denied: private widget" });
       }
     }
 
     const updated = db.update(req.params.id, { name, config });
     res.json(updated);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to update widget' });
+    res.status(500).json({ error: "Failed to update widget" });
   }
 });
 
 // DELETE widget
-router.delete('/:id', (req, res) => {
+router.delete("/:id", (req, res) => {
   try {
     const widget = db.getById(req.params.id);
     if (!widget) {
-      return res.status(404).json({ error: 'Widget not found' });
+      return res.status(404).json({ error: "Widget not found" });
     }
 
     // Check ownership if private
     if (widget.userId) {
       const user = getOptionalUser(req);
       if (!user || user.id !== widget.userId) {
-        return res.status(403).json({ error: 'Access denied: private widget' });
+        return res.status(403).json({ error: "Access denied: private widget" });
       }
     }
 
     db.delete(req.params.id);
-    res.json({ message: 'Widget deleted successfully' });
+    res.json({ message: "Widget deleted successfully" });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to delete widget' });
+    res.status(500).json({ error: "Failed to delete widget" });
   }
 });
 
 // GET weather proxy endpoint
-router.get('/proxy/weather', async (req, res) => {
-  const city = req.query.city || 'San Francisco';
+router.get("/proxy/weather", async (req, res) => {
+  const city = req.query.city || "San Francisco";
   try {
     // 1. Geocode city name to lat/long using Open-Meteo Geocoding API
     const geocodeUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`;
     const geocodeRes = await axios.get(geocodeUrl);
-    
+
     if (!geocodeRes.data.results || geocodeRes.data.results.length === 0) {
-      return res.status(404).json({ error: 'City not found' });
+      return res.status(404).json({ error: "City not found" });
     }
 
     const { latitude, longitude, name, country } = geocodeRes.data.results[0];
@@ -156,7 +158,9 @@ router.get('/proxy/weather', async (req, res) => {
     const weatherRes = await axios.get(weatherUrl);
 
     if (!weatherRes.data.current_weather) {
-      return res.status(500).json({ error: 'Failed to fetch weather conditions' });
+      return res
+        .status(500)
+        .json({ error: "Failed to fetch weather conditions" });
     }
 
     const { temperature, weathercode } = weatherRes.data.current_weather;
@@ -164,103 +168,115 @@ router.get('/proxy/weather', async (req, res) => {
     // 3. Map weather codes to friendly descriptions
     // Reference: WMO weather interpretation codes
     const weatherCodeMap = {
-      0: { condition: 'Clear Sky', icon: 'Sun' },
-      1: { condition: 'Mainly Clear', icon: 'CloudSun' },
-      2: { condition: 'Partly Cloudy', icon: 'CloudSun' },
-      3: { condition: 'Overcast', icon: 'Cloud' },
-      45: { condition: 'Foggy', icon: 'CloudFog' },
-      48: { condition: 'Depositing Rime Fog', icon: 'CloudFog' },
-      51: { condition: 'Light Drizzle', icon: 'CloudDrizzle' },
-      53: { condition: 'Moderate Drizzle', icon: 'CloudDrizzle' },
-      55: { condition: 'Dense Drizzle', icon: 'CloudDrizzle' },
-      61: { condition: 'Slight Rain', icon: 'CloudRain' },
-      63: { condition: 'Moderate Rain', icon: 'CloudRain' },
-      65: { condition: 'Heavy Rain', icon: 'CloudRain' },
-      71: { condition: 'Slight Snowfall', icon: 'CloudSnow' },
-      73: { condition: 'Moderate Snowfall', icon: 'CloudSnow' },
-      75: { condition: 'Heavy Snowfall', icon: 'CloudSnow' },
-      80: { condition: 'Slight Rain Showers', icon: 'CloudRain' },
-      81: { condition: 'Moderate Rain Showers', icon: 'CloudRain' },
-      82: { condition: 'Violent Rain Showers', icon: 'CloudRain' },
-      95: { condition: 'Thunderstorm', icon: 'CloudLightning' }
+      0: { condition: "Clear Sky", icon: "Sun" },
+      1: { condition: "Mainly Clear", icon: "CloudSun" },
+      2: { condition: "Partly Cloudy", icon: "CloudSun" },
+      3: { condition: "Overcast", icon: "Cloud" },
+      45: { condition: "Foggy", icon: "CloudFog" },
+      48: { condition: "Depositing Rime Fog", icon: "CloudFog" },
+      51: { condition: "Light Drizzle", icon: "CloudDrizzle" },
+      53: { condition: "Moderate Drizzle", icon: "CloudDrizzle" },
+      55: { condition: "Dense Drizzle", icon: "CloudDrizzle" },
+      61: { condition: "Slight Rain", icon: "CloudRain" },
+      63: { condition: "Moderate Rain", icon: "CloudRain" },
+      65: { condition: "Heavy Rain", icon: "CloudRain" },
+      71: { condition: "Slight Snowfall", icon: "CloudSnow" },
+      73: { condition: "Moderate Snowfall", icon: "CloudSnow" },
+      75: { condition: "Heavy Snowfall", icon: "CloudSnow" },
+      80: { condition: "Slight Rain Showers", icon: "CloudRain" },
+      81: { condition: "Moderate Rain Showers", icon: "CloudRain" },
+      82: { condition: "Violent Rain Showers", icon: "CloudRain" },
+      95: { condition: "Thunderstorm", icon: "CloudLightning" },
     };
 
-    const details = weatherCodeMap[weathercode] || { condition: 'Moderate Weather', icon: 'Cloud' };
+    const details = weatherCodeMap[weathercode] || {
+      condition: "Moderate Weather",
+      icon: "Cloud",
+    };
 
     res.json({
       city: name,
-      country: country || '',
+      country: country || "",
       temperature,
       condition: details.condition,
       icon: details.icon,
       latitude,
-      longitude
+      longitude,
     });
-
   } catch (err) {
-    console.error('Weather Proxy Error:', err.message);
-    res.status(500).json({ error: 'Weather service currently unavailable' });
+    console.error("Weather Proxy Error:", err.message);
+    res.status(500).json({ error: "Weather service currently unavailable" });
   }
 });
 
 // POST webhook data update
-router.post('/:id/webhook', (req, res) => {
+router.post("/:id/webhook", (req, res) => {
   try {
     const widget = db.getById(req.params.id);
     if (!widget) {
-      return res.status(404).json({ error: 'Widget not found' });
+      return res.status(404).json({ error: "Widget not found" });
     }
 
     const { token } = req.query;
     if (!token || token !== widget.config.webhookToken) {
-      return res.status(403).json({ error: 'Invalid webhook token' });
+      return res.status(403).json({ error: "Invalid webhook token" });
     }
 
     // Merge incoming JSON payload directly into widget config
     const updatedConfig = {
       ...widget.config,
-      ...req.body
+      ...req.body,
     };
 
     const updated = db.update(req.params.id, { config: updatedConfig });
 
     // Emit live WebSocket update to the widget edit room
-    const io = req.app.get('io');
+    const io = req.app.get("io");
     if (io) {
-      io.to(req.params.id).emit('config-updated', { config: updatedConfig });
+      io.to(req.params.id).emit("config-updated", { config: updatedConfig });
     }
 
     res.json({
-      message: 'Webhook received and widget updated successfully',
-      config: updated.config
+      message: "Webhook received and widget updated successfully",
+      config: updated.config,
     });
   } catch (err) {
-    console.error('Webhook processing error:', err.message);
-    res.status(500).json({ error: 'Failed to process webhook data' });
+    console.error("Webhook processing error:", err.message);
+    res.status(500).json({ error: "Failed to process webhook data" });
   }
 });
 
 // GET export widget bundle
-router.get('/:id/export', (req, res) => {
+router.get("/:id/export", (req, res) => {
   try {
     const widget = db.getById(req.params.id);
     if (!widget) {
-      return res.status(404).json({ error: 'Widget not found' });
+      return res.status(404).json({ error: "Widget not found" });
     }
 
     // 1. Resolve widget type React view file path
-    const viewFilePath = path.join(__dirname, `../../client/src/widgets/${widget.type}/${widget.type}WidgetView.jsx`);
+    const viewFilePath = path.join(
+      __dirname,
+      `../../client/src/widgets/${widget.type}/${widget.type}WidgetView.jsx`,
+    );
     if (!fs.existsSync(viewFilePath)) {
-      return res.status(500).json({ error: `Widget view for type '${widget.type}' not found on server` });
+      return res
+        .status(500)
+        .json({
+          error: `Widget view for type '${widget.type}' not found on server`,
+        });
     }
 
-    let viewCode = fs.readFileSync(viewFilePath, 'utf8');
+    let viewCode = fs.readFileSync(viewFilePath, "utf8");
 
     // 2. Transpile/clean React JSX code for standard Babel CDN compile in index.html
     // Remove imports
-    viewCode = viewCode.replace(/import\s+.*?;/g, '');
+    viewCode = viewCode.replace(/import\s+.*?;/g, "");
     // Strip "export default" to let Babel resolve components globally
-    viewCode = viewCode.replace(/export\s+default\s+function\s+(\w+)/g, 'function $1');
+    viewCode = viewCode.replace(
+      /export\s+default\s+function\s+(\w+)/g,
+      "function $1",
+    );
 
     // 3. Assemble self-contained standalone HTML bundle
     const htmlContent = `<!DOCTYPE html>
@@ -268,7 +284,7 @@ router.get('/:id/export', (req, res) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${widget.name || 'Widgetry Widget'}</title>
+  <title>${widget.name || "Widgetry Widget"}</title>
   
   <!-- Premium Outfit Google Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -358,62 +374,66 @@ router.get('/:id/export', (req, res) => {
 </html>`;
 
     // 4. Create ZIP bundle
-    const AdmZip = require('adm-zip');
+    const AdmZip = require("adm-zip");
     const zip = new AdmZip();
-    zip.addFile('index.html', Buffer.from(htmlContent, 'utf-8'));
+    zip.addFile("index.html", Buffer.from(htmlContent, "utf-8"));
 
     const zipBuffer = zip.toBuffer();
-    res.setHeader('Content-Type', 'application/zip');
-    res.setHeader('Content-Disposition', `attachment; filename=${widget.type}-widget-${widget.id}.zip`);
-    res.setHeader('Content-Length', zipBuffer.length);
+    res.setHeader("Content-Type", "application/zip");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=${widget.type}-widget-${widget.id}.zip`,
+    );
+    res.setHeader("Content-Length", zipBuffer.length);
     res.send(zipBuffer);
-
   } catch (err) {
-    console.error('Export Error:', err.message);
-    res.status(500).json({ error: 'Failed to export widget' });
+    console.error("Export Error:", err.message);
+    res.status(500).json({ error: "Failed to export widget" });
   }
 });
 
 // POST track widget impression
-router.post('/:id/track', (req, res) => {
+router.post("/:id/track", (req, res) => {
   try {
     const widget = db.getById(req.params.id);
     if (!widget) {
-      return res.status(404).json({ error: 'Widget not found' });
+      return res.status(404).json({ error: "Widget not found" });
     }
 
     // Get referrer domain from headers
     const rawReferrer = req.headers.referer || req.headers.referrer || null;
     analyticsDb.recordHit(req.params.id, rawReferrer);
 
-    res.json({ message: 'Impression tracked successfully' });
+    res.json({ message: "Impression tracked successfully" });
   } catch (err) {
-    console.error('Tracking Error:', err.message);
-    res.status(500).json({ error: 'Failed to track widget impression' });
+    console.error("Tracking Error:", err.message);
+    res.status(500).json({ error: "Failed to track widget impression" });
   }
 });
 
 // GET widget analytics report
-router.get('/:id/analytics', (req, res) => {
+router.get("/:id/analytics", (req, res) => {
   try {
     const widget = db.getById(req.params.id);
     if (!widget) {
-      return res.status(404).json({ error: 'Widget not found' });
+      return res.status(404).json({ error: "Widget not found" });
     }
 
     // Perform widget ownership verification if user-auth is enabled on private widgets
     if (widget.userId) {
       const user = getOptionalUser(req);
       if (!user || user.id !== widget.userId) {
-        return res.status(403).json({ error: 'Access denied: private analytics' });
+        return res
+          .status(403)
+          .json({ error: "Access denied: private analytics" });
       }
     }
 
     const report = analyticsDb.getAnalytics(req.params.id);
     res.json(report);
   } catch (err) {
-    console.error('Analytics Fetch Error:', err.message);
-    res.status(500).json({ error: 'Failed to fetch widget analytics' });
+    console.error("Analytics Fetch Error:", err.message);
+    res.status(500).json({ error: "Failed to fetch widget analytics" });
   }
 });
 

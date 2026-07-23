@@ -1,13 +1,13 @@
-const fs = require('fs');
-const path = require('path');
-const { v4: uuidv4 } = require('uuid');
+const fs = require("fs");
+const path = require("path");
+const { v4: uuidv4 } = require("uuid");
 
-const DB_FILE = path.join(__dirname, 'widgets.json');
+const DB_FILE = path.join(__dirname, "widgets.json");
 
 // Helper to initialize the DB file with an empty list if it doesn't exist
 function initDB() {
   if (!fs.existsSync(DB_FILE)) {
-    fs.writeFileSync(DB_FILE, JSON.stringify([], null, 2), 'utf8');
+    fs.writeFileSync(DB_FILE, JSON.stringify([], null, 2), "utf8");
   }
 }
 
@@ -15,10 +15,10 @@ function initDB() {
 function getAll() {
   initDB();
   try {
-    const data = fs.readFileSync(DB_FILE, 'utf8');
+    const data = fs.readFileSync(DB_FILE, "utf8");
     return JSON.parse(data);
   } catch (err) {
-    console.error('Error reading database file:', err);
+    console.error("Error reading database file:", err);
     return [];
   }
 }
@@ -27,10 +27,10 @@ function getAll() {
 function saveAll(widgets) {
   initDB();
   try {
-    fs.writeFileSync(DB_FILE, JSON.stringify(widgets, null, 2), 'utf8');
+    fs.writeFileSync(DB_FILE, JSON.stringify(widgets, null, 2), "utf8");
     return true;
   } catch (err) {
-    console.error('Error writing to database file:', err);
+    console.error("Error writing to database file:", err);
     return false;
   }
 }
@@ -38,7 +38,7 @@ function saveAll(widgets) {
 // Get single widget by ID
 function getById(id) {
   const widgets = getAll();
-  return widgets.find(w => w.id === id);
+  return widgets.find((w) => w.id === id);
 }
 
 // Create a new widget configuration
@@ -51,7 +51,7 @@ function create(widgetData) {
     name: widgetData.name || `My ${widgetData.type} Widget`,
     config: widgetData.config || {},
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
   };
   widgets.push(newWidget);
   saveAll(widgets);
@@ -61,14 +61,17 @@ function create(widgetData) {
 // Update an existing widget configuration
 function update(id, widgetData) {
   const widgets = getAll();
-  const index = widgets.findIndex(w => w.id === id);
+  const index = widgets.findIndex((w) => w.id === id);
   if (index === -1) return null;
 
   widgets[index] = {
     ...widgets[index],
     name: widgetData.name !== undefined ? widgetData.name : widgets[index].name,
-    config: widgetData.config !== undefined ? { ...widgets[index].config, ...widgetData.config } : widgets[index].config,
-    updatedAt: new Date().toISOString()
+    config:
+      widgetData.config !== undefined
+        ? { ...widgets[index].config, ...widgetData.config }
+        : widgets[index].config,
+    updatedAt: new Date().toISOString(),
   };
 
   saveAll(widgets);
@@ -78,7 +81,7 @@ function update(id, widgetData) {
 // Delete a widget by ID
 function remove(id) {
   const widgets = getAll();
-  const filtered = widgets.filter(w => w.id !== id);
+  const filtered = widgets.filter((w) => w.id !== id);
   if (widgets.length === filtered.length) return false;
   saveAll(filtered);
   return true;
@@ -89,5 +92,5 @@ module.exports = {
   getById,
   create,
   update,
-  delete: remove
+  delete: remove,
 };

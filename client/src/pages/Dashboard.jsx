@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { widgetRegistry } from '../widgets';
-import * as LucideIcons from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { widgetRegistry } from "../widgets";
+import * as LucideIcons from "lucide-react";
 
 export default function Dashboard({ navigate, token, user }) {
   const [widgets, setWidgets] = useState([]);
@@ -17,15 +17,15 @@ export default function Dashboard({ navigate, token, user }) {
     try {
       const headers = {};
       if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
+        headers["Authorization"] = `Bearer ${token}`;
       }
-      const res = await fetch('/api/widgets', { headers });
+      const res = await fetch("/api/widgets", { headers });
       if (res.ok) {
         const data = await res.json();
         setWidgets(data);
       }
     } catch (err) {
-      console.error('Error fetching widgets:', err);
+      console.error("Error fetching widgets:", err);
     } finally {
       setLoading(false);
     }
@@ -33,19 +33,22 @@ export default function Dashboard({ navigate, token, user }) {
 
   const handleDelete = async (id, e) => {
     e.stopPropagation(); // Avoid triggering card click
-    if (!confirm('Are you sure you want to delete this widget?')) return;
+    if (!confirm("Are you sure you want to delete this widget?")) return;
 
     try {
       const headers = {};
       if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
+        headers["Authorization"] = `Bearer ${token}`;
       }
-      const res = await fetch(`/api/widgets/${id}`, { method: 'DELETE', headers });
+      const res = await fetch(`/api/widgets/${id}`, {
+        method: "DELETE",
+        headers,
+      });
       if (res.ok) {
-        setWidgets(widgets.filter(w => w.id !== id));
+        setWidgets(widgets.filter((w) => w.id !== id));
       }
     } catch (err) {
-      console.error('Error deleting widget:', err);
+      console.error("Error deleting widget:", err);
     }
   };
 
@@ -70,33 +73,60 @@ export default function Dashboard({ navigate, token, user }) {
           <h1>My Widgets</h1>
           <p>Create, customize, and embed lightweight widgets anywhere.</p>
         </div>
-        <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
+        <button
+          className="btn btn-primary"
+          onClick={() => setIsModalOpen(true)}
+        >
           <LucideIcons.Plus size={18} />
           <span>New Widget</span>
         </button>
       </div>
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-secondary)' }}>
+        <div
+          style={{
+            textAlign: "center",
+            padding: "4rem",
+            color: "var(--text-secondary)",
+          }}
+        >
           <p>Loading your dashboard...</p>
         </div>
       ) : widgets.length === 0 ? (
         // Empty State
-        <div className="card" style={{ 
-          alignItems: 'center', 
-          justifyContent: 'center', 
-          padding: '4rem 2rem', 
-          textAlign: 'center',
-          borderStyle: 'dashed'
-        }}>
-          <div className="card-icon-wrapper" style={{ marginBottom: '1.5rem', padding: '1.25rem' }}>
+        <div
+          className="card"
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "4rem 2rem",
+            textAlign: "center",
+            borderStyle: "dashed",
+          }}
+        >
+          <div
+            className="card-icon-wrapper"
+            style={{ marginBottom: "1.5rem", padding: "1.25rem" }}
+          >
             <LucideIcons.Layers size={40} />
           </div>
-          <h2 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>No widgets created yet</h2>
-          <p style={{ color: 'var(--text-secondary)', maxWidth: '400px', marginBottom: '2rem' }}>
-            Get started by building your first widget! Customize it with colors, data sources, and styles.
+          <h2 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
+            No widgets created yet
+          </h2>
+          <p
+            style={{
+              color: "var(--text-secondary)",
+              maxWidth: "400px",
+              marginBottom: "2rem",
+            }}
+          >
+            Get started by building your first widget! Customize it with colors,
+            data sources, and styles.
           </p>
-          <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
+          <button
+            className="btn btn-primary"
+            onClick={() => setIsModalOpen(true)}
+          >
             <LucideIcons.Plus size={18} />
             <span>Create First Widget</span>
           </button>
@@ -106,16 +136,16 @@ export default function Dashboard({ navigate, token, user }) {
         <div className="grid">
           {widgets.map((widget) => {
             const registryItem = widgetRegistry[widget.type] || {
-              name: 'Unknown Widget',
-              icon: 'HelpCircle',
-              description: ''
+              name: "Unknown Widget",
+              icon: "HelpCircle",
+              description: "",
             };
-            
+
             return (
-              <div 
-                key={widget.id} 
+              <div
+                key={widget.id}
                 className="card"
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: "pointer" }}
                 onClick={() => navigate(`/edit/${widget.id}`)}
               >
                 <div>
@@ -123,22 +153,25 @@ export default function Dashboard({ navigate, token, user }) {
                     <div className="card-icon-wrapper">
                       {renderIcon(registryItem.icon)}
                     </div>
-                    <div style={{ display: 'flex', gap: '0.25rem' }}>
-                      <button 
-                        className="btn btn-secondary" 
-                        style={{ padding: '0.4rem' }}
+                    <div style={{ display: "flex", gap: "0.25rem" }}>
+                      <button
+                        className="btn btn-secondary"
+                        style={{ padding: "0.4rem" }}
                         onClick={(e) => copyEmbedCode(widget.id, e)}
                         title="Copy Embed Code"
                       >
                         {copiedId === widget.id ? (
-                          <LucideIcons.Check size={16} style={{ color: 'var(--success)' }} />
+                          <LucideIcons.Check
+                            size={16}
+                            style={{ color: "var(--success)" }}
+                          />
                         ) : (
                           <LucideIcons.Code size={16} />
                         )}
                       </button>
-                      <button 
-                        className="btn btn-danger" 
-                        style={{ padding: '0.4rem' }}
+                      <button
+                        className="btn btn-danger"
+                        style={{ padding: "0.4rem" }}
                         onClick={(e) => handleDelete(widget.id, e)}
                         title="Delete Widget"
                       >
@@ -148,24 +181,26 @@ export default function Dashboard({ navigate, token, user }) {
                   </div>
 
                   {/* Widget Thumbnail Preview */}
-                  <div style={{
-                    width: '100%',
-                    height: '120px',
-                    borderRadius: '8px',
-                    overflow: 'hidden',
-                    marginBottom: '1rem',
-                    border: '1px solid var(--border-color)',
-                    background: 'var(--bg-main)',
-                    position: 'relative'
-                  }}>
-                    <iframe 
-                      src={`/widget/render/${widget.id}`} 
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "120px",
+                      borderRadius: "8px",
+                      overflow: "hidden",
+                      marginBottom: "1rem",
+                      border: "1px solid var(--border-color)",
+                      background: "var(--bg-main)",
+                      position: "relative",
+                    }}
+                  >
+                    <iframe
+                      src={`/widget/render/${widget.id}`}
                       title={widget.name}
                       style={{
-                        width: '100%',
-                        height: '100%',
-                        border: 'none',
-                        pointerEvents: 'none'
+                        width: "100%",
+                        height: "100%",
+                        border: "none",
+                        pointerEvents: "none",
                       }}
                       scrolling="no"
                     />
@@ -173,38 +208,50 @@ export default function Dashboard({ navigate, token, user }) {
 
                   <div>
                     <h3 className="card-title">{widget.name}</h3>
-                    <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center', marginBottom: '0.5rem' }}>
-                      <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "0.8rem",
+                        alignItems: "center",
+                        marginBottom: "0.5rem",
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: "0.8rem",
+                          color: "var(--text-muted)",
+                        }}
+                      >
                         Type: {registryItem.name}
                       </span>
-                      <span style={{ 
-                        fontSize: '0.75rem', 
-                        background: 'rgba(99, 102, 241, 0.15)', 
-                        color: '#818cf8', 
-                        padding: '0.1rem 0.4rem', 
-                        borderRadius: '4px',
-                        fontWeight: '600',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.25rem'
-                      }}>
+                      <span
+                        style={{
+                          fontSize: "0.75rem",
+                          background: "rgba(99, 102, 241, 0.15)",
+                          color: "#818cf8",
+                          padding: "0.1rem 0.4rem",
+                          borderRadius: "4px",
+                          fontWeight: "600",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "0.25rem",
+                        }}
+                      >
                         <LucideIcons.Eye size={12} />
                         <span>{widget.views || 0} views</span>
                       </span>
                     </div>
-                    <p className="card-desc">
-                      {registryItem.description}
-                    </p>
+                    <p className="card-desc">{registryItem.description}</p>
                   </div>
                 </div>
 
-                <div className="card-actions" style={{ width: '100%' }}>
-                  <button 
-                    className="btn btn-secondary" 
-                    style={{ width: '100%', justifyContent: 'center' }}
+                <div className="card-actions" style={{ width: "100%" }}>
+                  <button
+                    className="btn btn-secondary"
+                    style={{ width: "100%", justifyContent: "center" }}
                     onClick={(e) => {
                       e.stopPropagation();
-                      window.open(`/widget/render/${widget.id}`, '_blank');
+                      window.open(`/widget/render/${widget.id}`, "_blank");
                     }}
                   >
                     <LucideIcons.ExternalLink size={14} />
@@ -223,7 +270,10 @@ export default function Dashboard({ navigate, token, user }) {
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h2>Select Widget Type</h2>
-              <button className="modal-close" onClick={() => setIsModalOpen(false)}>
+              <button
+                className="modal-close"
+                onClick={() => setIsModalOpen(false)}
+              >
                 <LucideIcons.X size={20} />
               </button>
             </div>
@@ -231,15 +281,18 @@ export default function Dashboard({ navigate, token, user }) {
               {Object.keys(widgetRegistry).map((type) => {
                 const item = widgetRegistry[type];
                 return (
-                  <div 
-                    key={type} 
+                  <div
+                    key={type}
                     className="selector-option"
                     onClick={() => {
                       setIsModalOpen(false);
                       navigate(`/create/${type}`);
                     }}
                   >
-                    <div className="card-icon-wrapper" style={{ color: 'var(--accent-primary)' }}>
+                    <div
+                      className="card-icon-wrapper"
+                      style={{ color: "var(--accent-primary)" }}
+                    >
                       {renderIcon(item.icon, 24)}
                     </div>
                     <div className="selector-info">

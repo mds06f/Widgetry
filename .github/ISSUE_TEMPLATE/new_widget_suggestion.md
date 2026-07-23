@@ -14,6 +14,7 @@ Describe what the widget does and what it will render.
 
 **Customization Options (Config)**
 What options should the user be able to customize in the Editor? E.g.:
+
 - [ ] Text Color
 - [ ] Background Color/Gradient
 - [ ] Custom API Keys / Feeds
