@@ -116,6 +116,7 @@ export const widgetRegistry = {
       hoverAnimation: "none",
       textShadow: "none",
       cspDirective: "default-src 'self' 'unsafe-inline' https:;",
+      outboundWebhookUrl: "",
       showDate: false,
     },
   },
@@ -142,6 +143,7 @@ export const widgetRegistry = {
       hoverAnimation: "none",
       textShadow: "none",
       cspDirective: "default-src 'self' 'unsafe-inline' https:;",
+      outboundWebhookUrl: "",
     },
   },
   weather: {
@@ -165,6 +167,7 @@ export const widgetRegistry = {
       hoverAnimation: "none",
       textShadow: "none",
       cspDirective: "default-src 'self' 'unsafe-inline' https:;",
+      outboundWebhookUrl: "",
     },
   },
   countdown: {
@@ -192,6 +195,7 @@ export const widgetRegistry = {
       hoverAnimation: "none",
       textShadow: "none",
       cspDirective: "default-src 'self' 'unsafe-inline' https:;",
+      outboundWebhookUrl: "",
     },
   },
   todo: {
@@ -214,6 +218,7 @@ export const widgetRegistry = {
       hoverAnimation: "none",
       textShadow: "none",
       cspDirective: "default-src 'self' 'unsafe-inline' https:;",
+      outboundWebhookUrl: "",
     },
   },
   spotify: {
@@ -242,6 +247,7 @@ export const widgetRegistry = {
       hoverAnimation: "none",
       textShadow: "none",
       cspDirective: "default-src 'self' 'unsafe-inline' https:;",
+      outboundWebhookUrl: "",
     },
   },
   githubstats: {
@@ -265,6 +271,7 @@ export const widgetRegistry = {
       hoverAnimation: "none",
       textShadow: "none",
       cspDirective: "default-src 'self' 'unsafe-inline' https:;",
+      outboundWebhookUrl: "",
     },
   },
   cryptoticker: {

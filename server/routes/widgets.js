@@ -89,6 +89,38 @@ router.get("/:id/csp", (req, res) => {
   }
 });
 
+// POST trigger outbound webhook to custom target URL
+router.post("/:id/trigger-webhook", async (req, res) => {
+  try {
+    const widget = db.getById(req.params.id);
+    if (!widget) {
+      return res.status(404).json({ error: "Widget not found" });
+    }
+
+    const targetUrl = widget.config?.outboundWebhookUrl || req.body?.webhookUrl;
+    if (!targetUrl) {
+      return res.status(400).json({ error: "No outbound webhook URL configured" });
+    }
+
+    const payload = {
+      event: req.body?.event || "widget_event",
+      widgetId: widget.id,
+      widgetName: widget.name,
+      timestamp: new Date().toISOString(),
+      data: req.body?.data || {},
+    };
+
+    try {
+      await axios.post(targetUrl, payload, { timeout: 5000 });
+      res.json({ success: true, deliveredTo: targetUrl, payload });
+    } catch (err) {
+      res.status(502).json({ error: "Failed to deliver webhook payload", details: err.message });
+    }
+  } catch (err) {
+    res.status(500).json({ error: "Server error handling outbound webhook" });
+  }
+});
+
 // POST create widget (can be associated with user)
 router.post("/", (req, res) => {
   try {
