@@ -484,4 +484,25 @@ router.get("/:id/analytics", (req, res) => {
   }
 });
 
+// POST share widget across team / organization scope
+router.post("/:id/share-org", (req, res) => {
+  try {
+    const { orgId, accessLevel = "view" } = req.body;
+    const widget = db.getById(req.params.id);
+    if (!widget) {
+      return res.status(404).json({ error: "Widget not found" });
+    }
+
+    const updatedConfig = {
+      ...(widget.config || {}),
+      sharedOrgId: orgId,
+      orgAccessLevel: accessLevel,
+    };
+    const updated = db.update(req.params.id, { config: updatedConfig });
+    res.json({ message: "Widget successfully shared with organization", widget: updated });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to share widget with organization" });
+  }
+});
+
 module.exports = router;
