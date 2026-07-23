@@ -40,7 +40,24 @@ import StockTickerWidgetConfig from "./StockTicker/StockTickerWidgetConfig";
 import PollWidgetView from "./Poll/PollWidgetView";
 import PollWidgetConfig from "./Poll/PollWidgetConfig";
 
+import WhiteboardWidgetView from "./Whiteboard/WhiteboardWidgetView";
+import WhiteboardWidgetConfig from "./Whiteboard/WhiteboardWidgetConfig";
+
 export const widgetRegistry = {
+  whiteboard: {
+    name: "Interactive Whiteboard",
+    description: "Draw and sketch freehand canvas drawings interactively.",
+    icon: "Edit3",
+    view: WhiteboardWidgetView,
+    config: WhiteboardWidgetConfig,
+    defaultConfig: {
+      brushColor: "#6366f1",
+      brushSize: 4,
+      backgroundColor: "#0f172a",
+      borderRadius: "12px",
+      customCSS: "",
+    },
+  },
   poll: {
     name: "Interactive Poll",
     description: "Render quick voting options and live percentage progress bars.",
