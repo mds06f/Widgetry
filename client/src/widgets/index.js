@@ -55,6 +55,7 @@ export const widgetRegistry = {
       customCSS: "",
       darkMode: false,
       hoverAnimation: "none",
+      showDate: false,
     },
   },
   quote: {

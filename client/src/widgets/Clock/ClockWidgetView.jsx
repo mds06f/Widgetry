@@ -23,6 +23,7 @@ export default function ClockWidgetView({ config }) {
     customCSS = "",
     darkMode = false,
     hoverAnimation = "none",
+    showDate = false,
   } = config;
 
   const hoverClass =
@@ -55,6 +56,9 @@ export default function ClockWidgetView({ config }) {
 
   const timeString = `${displayHours}:${minutes}${showSeconds ? `:${seconds}` : ""}${ampm}`;
 
+  const dateOptions = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
+  const dateString = time.toLocaleDateString(undefined, dateOptions);
+
   return (
     <>
       {safeCSS ? <style>{safeCSS}</style> : null}
@@ -83,11 +87,24 @@ export default function ClockWidgetView({ config }) {
           width: "100%",
           height: "100vh",
           display: "flex",
+          flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
         }}
       >
-        {timeString}
+        <div>{timeString}</div>
+        {showDate && (
+          <div
+            style={{
+              fontSize: "0.45em",
+              fontWeight: "normal",
+              opacity: 0.85,
+              marginTop: "0.25em",
+            }}
+          >
+            {dateString}
+          </div>
+        )}
       </div>
     </>
   );

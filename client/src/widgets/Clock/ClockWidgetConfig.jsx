@@ -39,6 +39,18 @@ export default function ClockWidgetConfig({ config, onChange }) {
       </div>
 
       <div className="config-field toggle-field">
+        <label>Show Date</label>
+        <label className="toggle-switch">
+          <input
+            type="checkbox"
+            checked={config.showDate === true}
+            onChange={(e) => handleUpdate("showDate", e.target.checked)}
+          />
+          <span className="slider"></span>
+        </label>
+      </div>
+
+      <div className="config-field toggle-field">
         <label>Dark Mode</label>
         <label className="toggle-switch">
           <input
