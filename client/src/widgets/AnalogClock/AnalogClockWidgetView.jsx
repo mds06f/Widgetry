@@ -1,26 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { GRADIENTS } from '../index';
+import React, { useState, useEffect } from "react";
+import { GRADIENTS } from "../index";
 
 export default function AnalogClockWidgetView({ config }) {
   const {
-    hourHandColor = '#ffffff',
-    minuteHandColor = '#ffffff',
-    secondHandColor = '#ff4d4d',
-    faceColor = 'rgba(0,0,0,0.2)',
+    hourHandColor = "#ffffff",
+    minuteHandColor = "#ffffff",
+    secondHandColor = "#ff4d4d",
+    faceColor = "rgba(0,0,0,0.2)",
     showNumbers = true,
     showTicks = true,
-    textColor = '#ffffff',
-    backgroundStyle = 'gradient',
-    backgroundColor = '#1b2542',
-    gradientName = 'cosmic',
-    backgroundImageUrl = '',
-    borderRadius = '12px',
-    customCSS = ''
+    textColor = "#ffffff",
+    backgroundStyle = "gradient",
+    backgroundColor = "#1b2542",
+    gradientName = "cosmic",
+    backgroundImageUrl = "",
+    borderRadius = "12px",
+    customCSS = "",
   } = config;
 
   const [time, setTime] = useState(new Date());
 
-  const safeCSS = customCSS.replace(/<\/style>/gi, '');
+  const safeCSS = customCSS.replace(/<\/style>/gi, "");
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -41,21 +41,21 @@ export default function AnalogClockWidgetView({ config }) {
   // Build backgrounds
   const containerStyle = {
     color: textColor,
-    fontFamily: 'Outfit, sans-serif',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100vh',
-    width: '100%',
-    boxSizing: 'border-box',
-    padding: '1.5rem',
+    fontFamily: "Outfit, sans-serif",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100vh",
+    width: "100%",
+    boxSizing: "border-box",
+    padding: "1.5rem",
     borderRadius: borderRadius,
-    position: 'relative',
-    overflow: 'hidden'
+    position: "relative",
+    overflow: "hidden",
   };
 
-  if (backgroundStyle === 'gradient') {
+  if (backgroundStyle === "gradient") {
     containerStyle.background = GRADIENTS[gradientName] || GRADIENTS.cosmic;
   } else {
     containerStyle.backgroundColor = backgroundColor;
@@ -63,9 +63,9 @@ export default function AnalogClockWidgetView({ config }) {
 
   if (backgroundImageUrl) {
     containerStyle.backgroundImage = `url(${backgroundImageUrl})`;
-    containerStyle.backgroundSize = 'cover';
-    containerStyle.backgroundPosition = 'center';
-    containerStyle.backgroundRepeat = 'no-repeat';
+    containerStyle.backgroundSize = "cover";
+    containerStyle.backgroundPosition = "center";
+    containerStyle.backgroundRepeat = "no-repeat";
   }
 
   // Draw ticks
@@ -85,7 +85,7 @@ export default function AnalogClockWidgetView({ config }) {
           strokeWidth={isMajor ? "2" : "1"}
           opacity={isMajor ? "0.85" : "0.5"}
           transform={`rotate(${angle} 100 100)`}
-        />
+        />,
       );
     }
   }
@@ -108,10 +108,10 @@ export default function AnalogClockWidgetView({ config }) {
           fontWeight="700"
           textAnchor="middle"
           opacity="0.9"
-          style={{ userSelect: 'none' }}
+          style={{ userSelect: "none" }}
         >
           {i}
-        </text>
+        </text>,
       );
     }
   }
@@ -124,7 +124,7 @@ export default function AnalogClockWidgetView({ config }) {
           width="180"
           height="180"
           viewBox="0 0 200 200"
-          style={{ filter: 'drop-shadow(0px 8px 16px rgba(0,0,0,0.25))' }}
+          style={{ filter: "drop-shadow(0px 8px 16px rgba(0,0,0,0.25))" }}
         >
           {/* Clock Dial face */}
           <circle
@@ -191,12 +191,7 @@ export default function AnalogClockWidgetView({ config }) {
             fill={secondHandColor}
             className="clock-center-dot"
           />
-          <circle
-            cx="100"
-            cy="100"
-            r="2"
-            fill="#ffffff"
-          />
+          <circle cx="100" cy="100" r="2" fill="#ffffff" />
         </svg>
       </div>
     </>

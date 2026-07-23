@@ -57,13 +57,16 @@ widgetry/
 ## ⚡ Quick Start & Installation
 
 ### 1. Prerequisites
+
 Before setting up the project, make sure you have the following installed:
+
 - **Node.js** (v18.0.0 or higher)
 - **npm** (v9.0.0 or higher)
 
 ### 2. Set Up the Repository
 
 Clone the project to your local machine:
+
 ```bash
 # Clone the repository
 git clone <your-fork-url>
@@ -78,11 +81,13 @@ npm run install:all
 ### 3. Run Development Servers
 
 Run the frontend client and the backend server concurrently in development mode:
+
 ```bash
 npm run dev
 ```
 
 The CLI will run the servers on:
+
 - 💻 **Frontend client**: `http://localhost:5173`
 - ⚙️ **Backend API server**: `http://localhost:5001`
 - 📡 **Vite proxy config**: Automatically proxies `/api/*` from the frontend to the backend server.
@@ -92,10 +97,17 @@ The CLI will run the servers on:
 ## 🧩 How to Embed Widgets
 
 Once you create a widget using the dashboard visual customizer and click **Save Widget**:
+
 1. Copy the generated `<iframe>` code snippet from the visual customizer panel.
 2. The embed code points to:
    ```html
-   <iframe src="http://localhost:5173/widget/render/<widget-id>" width="100%" height="200" style="border:none;border-radius:12px;" scrolling="no"></iframe>
+   <iframe
+     src="http://localhost:5173/widget/render/<widget-id>"
+     width="100%"
+     height="200"
+     style="border:none;border-radius:12px;"
+     scrolling="no"
+   ></iframe>
    ```
 3. When embedded, the custom router detects `/widget/render/` paths and yields a layout-free sandbox viewport displaying only the raw widget view (without navbar, borders, or buttons).
 
@@ -106,10 +118,10 @@ Once you create a widget using the dashboard visual customizer and click **Save 
 We love contributions! Widgetry is designed specifically to be beginner-friendly for learning Full-stack development, React configuration forms, API proxies, and local databases.
 
 To get started:
+
 1. Review our [Good First Issues & Feature Roadmap](./ISSUES.md) to pick an open task.
 2. Follow our detailed, step-by-step onboarding guide in [CONTRIBUTING.md](./CONTRIBUTING.md) to understand how to write and register your own custom widget component.
 3. **Workflow Rules**:
    - Always branch off from the `development` branch (e.g. `git checkout -b feature/my-feature development`).
    - Create clean, focused commits.
    - Open your Pull Request (PR) targeting the `development` branch.
-

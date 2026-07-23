@@ -1,8 +1,8 @@
-const express = require('express');
-const cors = require('cors');
-const path = require('path');
-const widgetRoutes = require('./routes/widgets');
-const authRoutes = require('./routes/auth');
+const express = require("express");
+const cors = require("cors");
+const path = require("path");
+const widgetRoutes = require("./routes/widgets");
+const authRoutes = require("./routes/auth");
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -12,50 +12,52 @@ app.use(cors());
 app.use(express.json());
 
 // Load API routes
-app.use('/api/widgets', widgetRoutes);
-app.use('/api/auth', authRoutes);
+app.use("/api/widgets", widgetRoutes);
+app.use("/api/auth", authRoutes);
 
 // Serve Static Assets in Production
-const clientBuildPath = path.join(__dirname, '../client/dist');
+const clientBuildPath = path.join(__dirname, "../client/dist");
 app.use(express.static(clientBuildPath));
 
 // Fallback to React index.html for unknown web paths (useful for direct deep linking in built state)
-app.get('*', (req, res, next) => {
-  if (req.path.startsWith('/api')) {
+app.get("*", (req, res, next) => {
+  if (req.path.startsWith("/api")) {
     return next(); // Don't serve HTML on API calls
   }
-  res.sendFile(path.join(clientBuildPath, 'index.html'), (err) => {
+  res.sendFile(path.join(clientBuildPath, "index.html"), (err) => {
     if (err) {
       // If client build isn't created yet or static serving fails, send a default message
-      res.status(200).send('API Server is running. Frontend build not detected.');
+      res
+        .status(200)
+        .send("API Server is running. Frontend build not detected.");
     }
   });
 });
 
-const http = require('http');
-const socketIo = require('socket.io');
+const http = require("http");
+const socketIo = require("socket.io");
 
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE']
-  }
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  },
 });
 
 // Expose io on app object for other routers (e.g. webhooks)
-app.set('io', io);
+app.set("io", io);
 
 // Socket.io Real-time Collaboration Logic
-io.on('connection', (socket) => {
+io.on("connection", (socket) => {
   // Join a widget room
-  socket.on('join-widget', (widgetId) => {
+  socket.on("join-widget", (widgetId) => {
     socket.join(widgetId);
   });
 
   // Broadcast layout/config changes to other collaborators in room
-  socket.on('edit-config', ({ widgetId, name, config }) => {
-    socket.to(widgetId).emit('config-updated', { name, config });
+  socket.on("edit-config", ({ widgetId, name, config }) => {
+    socket.to(widgetId).emit("config-updated", { name, config });
   });
 });
 

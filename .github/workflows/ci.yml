@@ -2,26 +2,26 @@ name: CI Build Check
 
 on:
   push:
-    branches: [ main, master, development ]
+    branches: [main, master, development]
   pull_request:
-    branches: [ main, master, development ]
+    branches: [main, master, development]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-node: '20'
-        cache: 'npm'
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-node: "20"
+          cache: "npm"
 
-    - name: Install All Dependencies
-      run: npm run install:all
+      - name: Install All Dependencies
+        run: npm run install:all
 
-    - name: Build Frontend Client
-      run: npm run build --prefix client
+      - name: Build Frontend Client
+        run: npm run build --prefix client

@@ -5,31 +5,38 @@
   --bg-input: #1a223f;
   --border-color: #26335e;
   --border-focus: #4f46e5;
-  
+
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
-  
+
   --accent-primary: #6366f1;
   --accent-secondary: #a855f7;
-  --accent-gradient: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
-  
+  --accent-gradient: linear-gradient(
+    135deg,
+    var(--accent-primary) 0%,
+    var(--accent-secondary) 100%
+  );
+
   --success: #10b981;
   --danger: #ef4444;
   --warning: #f59e0b;
-  
+
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-md:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg:
+    0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.15);
-  
+
   --radius-sm: 6px;
   --radius-md: 12px;
   --radius-lg: 18px;
   --radius-full: 9999px;
-  
-  --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+
+  --font-sans:
+    "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
 }
 
 * {
@@ -196,7 +203,7 @@ a {
 }
 
 .card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -382,7 +389,11 @@ a {
 }
 
 .preview-frame-wrapper {
-  background: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.05) 0%, rgba(0, 0, 0, 0.2) 90%);
+  background: radial-gradient(
+    circle at 10% 20%,
+    rgba(99, 102, 241, 0.05) 0%,
+    rgba(0, 0, 0, 0.2) 90%
+  );
   border: 1px dashed var(--border-color);
   border-radius: var(--radius-lg);
   padding: 2.5rem;
@@ -501,7 +512,6 @@ a {
   border-color: var(--border-focus);
 }
 
-
 .config-field input[type="color"] {
   -webkit-appearance: none;
   border: none;
@@ -556,7 +566,7 @@ a {
   right: 0;
   bottom: 0;
   background-color: var(--bg-input);
-  transition: .3s;
+  transition: 0.3s;
   border-radius: 24px;
   border: 1px solid var(--border-color);
 }
@@ -569,7 +579,7 @@ a {
   left: 3px;
   bottom: 3px;
   background-color: var(--text-secondary);
-  transition: .3s;
+  transition: 0.3s;
   border-radius: 50%;
 }
 
@@ -585,13 +595,23 @@ input:checked + .slider:before {
 
 /* Keyframes */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 /* Standalone Widget Styles */
@@ -618,7 +638,10 @@ input:checked + .slider:before {
   border-radius: var(--radius-sm);
   cursor: pointer;
   border: 2px solid transparent;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .gradient-option:hover {
@@ -628,6 +651,8 @@ input:checked + .slider:before {
 
 .gradient-option.active {
   border-color: white;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.6), 0 2px 8px rgba(0, 0, 0, 0.4);
+  box-shadow:
+    0 0 0 3px rgba(99, 102, 241, 0.6),
+    0 2px 8px rgba(0, 0, 0, 0.4);
   transform: scale(1.05);
 }

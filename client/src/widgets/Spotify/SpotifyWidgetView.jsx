@@ -1,67 +1,73 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { GRADIENTS } from '../index';
-import { Play, Pause, SkipBack, SkipForward, Volume2 } from 'lucide-react';
+import React, { useState, useEffect, useRef } from "react";
+import { GRADIENTS } from "../index";
+import { Play, Pause, SkipBack, SkipForward, Volume2 } from "lucide-react";
 
 const TRACK_PRESETS = {
   resonance: {
-    title: 'Resonance',
-    artist: 'HOME',
-    album: 'Odyssey',
+    title: "Resonance",
+    artist: "HOME",
+    album: "Odyssey",
     duration: 212, // 3:32
-    coverUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300&auto=format&fit=crop&q=80',
+    coverUrl:
+      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300&auto=format&fit=crop&q=80",
   },
   midnight: {
-    title: 'Midnight City',
-    artist: 'M83',
+    title: "Midnight City",
+    artist: "M83",
     album: "Hurry Up, We're Dreaming",
     duration: 243, // 4:03
-    coverUrl: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300&auto=format&fit=crop&q=80',
+    coverUrl:
+      "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300&auto=format&fit=crop&q=80",
   },
   getlucky: {
-    title: 'Get Lucky',
-    artist: 'Daft Punk ft. Pharrell Williams',
-    album: 'Random Access Memories',
+    title: "Get Lucky",
+    artist: "Daft Punk ft. Pharrell Williams",
+    album: "Random Access Memories",
     duration: 249, // 4:09
-    coverUrl: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=300&auto=format&fit=crop&q=80',
+    coverUrl:
+      "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=300&auto=format&fit=crop&q=80",
   },
   strobe: {
-    title: 'Strobe',
-    artist: 'Deadmau5',
-    album: 'For Lack of a Better Name',
+    title: "Strobe",
+    artist: "Deadmau5",
+    album: "For Lack of a Better Name",
     duration: 387, // 6:27
-    coverUrl: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=300&auto=format&fit=crop&q=80',
-  }
+    coverUrl:
+      "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=300&auto=format&fit=crop&q=80",
+  },
 };
 
 export default function SpotifyWidgetView({ config }) {
   const {
-    trackPreset = 'resonance',
-    customTitle = '',
-    customArtist = '',
-    customAlbum = '',
+    trackPreset = "resonance",
+    customTitle = "",
+    customArtist = "",
+    customAlbum = "",
     customDuration = 180,
-    customCoverUrl = '',
+    customCoverUrl = "",
     showVisualizer = true,
-    textColor = '#ffffff',
-    backgroundStyle = 'gradient',
-    backgroundColor = '#1b2542',
-    gradientName = 'darkness',
-    backgroundImageUrl = '',
-    borderRadius = '12px',
-    customCSS = ''
+    textColor = "#ffffff",
+    backgroundStyle = "gradient",
+    backgroundColor = "#1b2542",
+    gradientName = "darkness",
+    backgroundImageUrl = "",
+    borderRadius = "12px",
+    customCSS = "",
   } = config;
 
-  const safeCSS = customCSS.replace(/<\/style>/gi, '');
+  const safeCSS = customCSS.replace(/<\/style>/gi, "");
 
   // Determine active track details
   let activeTrack = TRACK_PRESETS[trackPreset] || TRACK_PRESETS.resonance;
-  if (trackPreset === 'custom') {
+  if (trackPreset === "custom") {
     activeTrack = {
-      title: customTitle || 'Untitled Track',
-      artist: customArtist || 'Unknown Artist',
-      album: customAlbum || 'Unknown Album',
+      title: customTitle || "Untitled Track",
+      artist: customArtist || "Unknown Artist",
+      album: customAlbum || "Unknown Album",
       duration: Number(customDuration) || 180,
-      coverUrl: customCoverUrl || 'https://images.unsplash.com/photo-1611339555312-e607c8352fd7?w=300&auto=format&fit=crop&q=80'
+      coverUrl:
+        customCoverUrl ||
+        "https://images.unsplash.com/photo-1611339555312-e607c8352fd7?w=300&auto=format&fit=crop&q=80",
     };
   }
 
@@ -95,7 +101,7 @@ export default function SpotifyWidgetView({ config }) {
   const formatTime = (secs) => {
     const minutes = Math.floor(secs / 60);
     const seconds = Math.floor(secs % 60);
-    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
   const handleProgressBarClick = (e) => {
@@ -110,19 +116,19 @@ export default function SpotifyWidgetView({ config }) {
   const style = {
     color: textColor,
     borderRadius: borderRadius,
-    padding: '1.25rem',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    height: '100vh',
-    width: '100%',
-    boxSizing: 'border-box',
-    fontFamily: 'Outfit, sans-serif',
-    overflow: 'hidden',
-    position: 'relative'
+    padding: "1.25rem",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    height: "100vh",
+    width: "100%",
+    boxSizing: "border-box",
+    fontFamily: "Outfit, sans-serif",
+    overflow: "hidden",
+    position: "relative",
   };
 
-  if (backgroundStyle === 'gradient') {
+  if (backgroundStyle === "gradient") {
     style.background = GRADIENTS[gradientName] || GRADIENTS.darkness;
   } else {
     style.backgroundColor = backgroundColor;
@@ -130,106 +136,128 @@ export default function SpotifyWidgetView({ config }) {
 
   if (backgroundImageUrl) {
     style.backgroundImage = `url(${backgroundImageUrl})`;
-    style.backgroundSize = 'cover';
-    style.backgroundPosition = 'center';
-    style.backgroundRepeat = 'no-repeat';
+    style.backgroundSize = "cover";
+    style.backgroundPosition = "center";
+    style.backgroundRepeat = "no-repeat";
   }
 
   // Visualizer animations setup
-  const animStyles = isPlaying ? {} : { transform: 'scaleY(0.15)', transformOrigin: 'bottom' };
+  const animStyles = isPlaying
+    ? {}
+    : { transform: "scaleY(0.15)", transformOrigin: "bottom" };
 
   return (
     <>
       {safeCSS ? <style>{safeCSS}</style> : null}
       <div style={style} className="spotify-widget-container">
-        
         {/* Main layout container */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '1.25rem',
-          width: '100%'
-        }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "1.25rem",
+            width: "100%",
+          }}
+        >
           {/* Cover Art */}
-          <div style={{
-            position: 'relative',
-            width: '80px',
-            height: '80px',
-            borderRadius: '8px',
-            overflow: 'hidden',
-            boxShadow: '0 8px 16px rgba(0,0,0,0.4)',
-            flexShrink: 0,
-            background: '#121212'
-          }}>
-            <img 
-              src={activeTrack.coverUrl} 
-              alt={activeTrack.title} 
+          <div
+            style={{
+              position: "relative",
+              width: "80px",
+              height: "80px",
+              borderRadius: "8px",
+              overflow: "hidden",
+              boxShadow: "0 8px 16px rgba(0,0,0,0.4)",
+              flexShrink: 0,
+              background: "#121212",
+            }}
+          >
+            <img
+              src={activeTrack.coverUrl}
+              alt={activeTrack.title}
               style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover'
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
               }}
             />
           </div>
 
           {/* Track Details & Visualizer */}
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            flex: 1,
-            minWidth: 0
-          }}>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'between',
-              alignItems: 'flex-start',
-              width: '100%',
-              gap: '0.5rem'
-            }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              flex: 1,
+              minWidth: 0,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "between",
+                alignItems: "flex-start",
+                width: "100%",
+                gap: "0.5rem",
+              }}
+            >
               <div style={{ flex: 1, minWidth: 0 }}>
-                <h4 style={{
-                  fontSize: '1rem',
-                  fontWeight: '700',
-                  margin: 0,
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}>
+                <h4
+                  style={{
+                    fontSize: "1rem",
+                    fontWeight: "700",
+                    margin: 0,
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
                   {activeTrack.title}
                 </h4>
-                <p style={{
-                  fontSize: '0.8rem',
-                  fontWeight: '500',
-                  opacity: 0.8,
-                  margin: '2px 0 0 0',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}>
+                <p
+                  style={{
+                    fontSize: "0.8rem",
+                    fontWeight: "500",
+                    opacity: 0.8,
+                    margin: "2px 0 0 0",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
                   {activeTrack.artist}
                 </p>
-                <p style={{
-                  fontSize: '0.7rem',
-                  fontWeight: '400',
-                  opacity: 0.6,
-                  margin: '1px 0 0 0',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}>
+                <p
+                  style={{
+                    fontSize: "0.7rem",
+                    fontWeight: "400",
+                    opacity: 0.6,
+                    margin: "1px 0 0 0",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
                   {activeTrack.album}
                 </p>
               </div>
 
               {/* Spotify Icon */}
-              <div style={{
-                color: '#1DB954',
-                filter: 'drop-shadow(0 0 4px rgba(29, 185, 84, 0.4))',
-                flexShrink: 0
-              }}>
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                  <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424c-.18.295-.565.387-.86.207-2.377-1.454-5.37-1.783-8.893-1.007-.336.075-.67-.14-.744-.477-.074-.336.14-.67.477-.743 3.847-.88 7.15-.502 9.813 1.13.294.18.387.563.207.86zm1.224-2.72c-.226.367-.707.487-1.074.26-2.72-1.672-6.87-2.157-10.076-1.182-.413.125-.848-.107-.973-.52-.125-.413.108-.847.52-.973 3.666-1.114 8.228-.574 11.343 1.344.367.227.488.708.26 1.073zm.106-2.833C14.733 8.87 9.497 8.694 6.46 9.616c-.482.146-.99-.13-1.136-.613-.146-.483.13-.99.613-1.136 3.5-1.06 9.288-.86 12.96 1.32.434.257.576.816.32 1.25-.257.433-.816.575-1.25.32z"/>
+              <div
+                style={{
+                  color: "#1DB954",
+                  filter: "drop-shadow(0 0 4px rgba(29, 185, 84, 0.4))",
+                  flexShrink: 0,
+                }}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  fill="currentColor"
+                >
+                  <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424c-.18.295-.565.387-.86.207-2.377-1.454-5.37-1.783-8.893-1.007-.336.075-.67-.14-.744-.477-.074-.336.14-.67.477-.743 3.847-.88 7.15-.502 9.813 1.13.294.18.387.563.207.86zm1.224-2.72c-.226.367-.707.487-1.074.26-2.72-1.672-6.87-2.157-10.076-1.182-.413.125-.848-.107-.973-.52-.125-.413.108-.847.52-.973 3.666-1.114 8.228-.574 11.343 1.344.367.227.488.708.26 1.073zm.106-2.833C14.733 8.87 9.497 8.694 6.46 9.616c-.482.146-.99-.13-1.136-.613-.146-.483.13-.99.613-1.136 3.5-1.06 9.288-.86 12.96 1.32.434.257.576.816.32 1.25-.257.433-.816.575-1.25.32z" />
                 </svg>
               </div>
             </div>
@@ -237,81 +265,99 @@ export default function SpotifyWidgetView({ config }) {
         </div>
 
         {/* Controls, Progress, and Visualizer */}
-        <div style={{
-          marginTop: '1rem',
-          display: 'flex',
-          flexDirection: 'column',
-          width: '100%',
-          gap: '0.75rem'
-        }}>
+        <div
+          style={{
+            marginTop: "1rem",
+            display: "flex",
+            flexDirection: "column",
+            width: "100%",
+            gap: "0.75rem",
+          }}
+        >
           {/* Progress Bar Container */}
-          <div style={{ width: '100%' }}>
-            <div 
+          <div style={{ width: "100%" }}>
+            <div
               onClick={handleProgressBarClick}
               style={{
-                width: '100%',
-                height: '4px',
-                background: 'rgba(255, 255, 255, 0.2)',
-                borderRadius: '999px',
-                cursor: 'pointer',
-                position: 'relative'
+                width: "100%",
+                height: "4px",
+                background: "rgba(255, 255, 255, 0.2)",
+                borderRadius: "999px",
+                cursor: "pointer",
+                position: "relative",
               }}
             >
-              <div style={{
-                width: `${(progress / activeTrack.duration) * 100}%`,
-                height: '100%',
-                background: '#1DB954',
-                borderRadius: '999px',
-                position: 'absolute',
-                top: 0,
-                left: 0
-              }} />
+              <div
+                style={{
+                  width: `${(progress / activeTrack.duration) * 100}%`,
+                  height: "100%",
+                  background: "#1DB954",
+                  borderRadius: "999px",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                }}
+              />
             </div>
 
             {/* Time labels */}
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              fontSize: '0.7rem',
-              fontWeight: '500',
-              opacity: 0.6,
-              marginTop: '4px'
-            }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                fontSize: "0.7rem",
+                fontWeight: "500",
+                opacity: 0.6,
+                marginTop: "4px",
+              }}
+            >
               <span>{formatTime(progress)}</span>
               <span>{formatTime(activeTrack.duration)}</span>
             </div>
           </div>
 
           {/* Controls Footer Row */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            width: '100%'
-          }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              width: "100%",
+            }}
+          >
             {/* Visualizer inside the controls area */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'flex-end',
-              gap: '3px',
-              height: '24px',
-              width: '40px',
-              opacity: showVisualizer ? 1 : 0,
-              transition: 'opacity 0.2s'
-            }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "flex-end",
+                gap: "3px",
+                height: "24px",
+                width: "40px",
+                opacity: showVisualizer ? 1 : 0,
+                transition: "opacity 0.2s",
+              }}
+            >
               {[1, 2, 3, 4, 5].map((i) => {
-                const animationDuration = ['0.8s', '1.2s', '0.9s', '1.1s', '0.7s'][i - 1];
+                const animationDuration = [
+                  "0.8s",
+                  "1.2s",
+                  "0.9s",
+                  "1.1s",
+                  "0.7s",
+                ][i - 1];
                 return (
                   <div
                     key={i}
                     style={{
-                      width: '3px',
-                      height: '100%',
-                      background: '#1DB954',
-                      borderRadius: '3px',
-                      animation: isPlaying ? `spotifyBounce ${animationDuration} ease-in-out infinite alternate` : 'none',
+                      width: "3px",
+                      height: "100%",
+                      background: "#1DB954",
+                      borderRadius: "3px",
+                      animation: isPlaying
+                        ? `spotifyBounce ${animationDuration} ease-in-out infinite alternate`
+                        : "none",
                       animationDelay: `${i * 0.15}s`,
-                      ...animStyles
+                      ...animStyles,
                     }}
                   />
                 );
@@ -326,67 +372,80 @@ export default function SpotifyWidgetView({ config }) {
             </div>
 
             {/* Core Play/Pause controls */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '1rem',
-              transform: 'translateX(-10px)' // Center properly relative to visualizer
-            }}>
-              <button 
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "1rem",
+                transform: "translateX(-10px)", // Center properly relative to visualizer
+              }}
+            >
+              <button
                 onClick={() => setProgress(0)}
                 style={{
-                  background: 'none',
-                  border: 'none',
-                  color: 'inherit',
-                  cursor: 'pointer',
-                  padding: '4px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  opacity: 0.8
+                  background: "none",
+                  border: "none",
+                  color: "inherit",
+                  cursor: "pointer",
+                  padding: "4px",
+                  display: "flex",
+                  alignItems: "center",
+                  opacity: 0.8,
                 }}
                 title="Restart"
               >
                 <SkipBack size={16} fill="currentColor" />
               </button>
 
-              <button 
+              <button
                 onClick={() => setIsPlaying(!isPlaying)}
                 style={{
                   background: textColor,
-                  border: 'none',
-                  color: backgroundStyle === 'solid' ? backgroundColor : '#121212',
-                  cursor: 'pointer',
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
-                  transition: 'transform 0.2s',
-                  transform: 'scale(1)'
+                  border: "none",
+                  color:
+                    backgroundStyle === "solid" ? backgroundColor : "#121212",
+                  cursor: "pointer",
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
+                  transition: "transform 0.2s",
+                  transform: "scale(1)",
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.06)'}
-                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.transform = "scale(1.06)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.transform = "scale(1)")
+                }
               >
                 {isPlaying ? (
                   <Pause size={18} fill="currentColor" />
                 ) : (
-                  <Play size={18} fill="currentColor" style={{ marginLeft: '2px' }} />
+                  <Play
+                    size={18}
+                    fill="currentColor"
+                    style={{ marginLeft: "2px" }}
+                  />
                 )}
               </button>
 
-              <button 
-                onClick={() => setProgress(Math.min(activeTrack.duration, progress + 10))}
+              <button
+                onClick={() =>
+                  setProgress(Math.min(activeTrack.duration, progress + 10))
+                }
                 style={{
-                  background: 'none',
-                  border: 'none',
-                  color: 'inherit',
-                  cursor: 'pointer',
-                  padding: '4px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  opacity: 0.8
+                  background: "none",
+                  border: "none",
+                  color: "inherit",
+                  cursor: "pointer",
+                  padding: "4px",
+                  display: "flex",
+                  alignItems: "center",
+                  opacity: 0.8,
                 }}
                 title="Skip 10s"
               >
@@ -395,24 +454,26 @@ export default function SpotifyWidgetView({ config }) {
             </div>
 
             {/* Volume Control Icon */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-              opacity: 0.7
-            }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "4px",
+                opacity: 0.7,
+              }}
+            >
               <Volume2 size={14} />
-              <input 
-                type="range" 
-                min="0" 
-                max="100" 
+              <input
+                type="range"
+                min="0"
+                max="100"
                 value={volume}
                 onChange={(e) => setVolume(e.target.value)}
                 style={{
-                  width: '50px',
-                  height: '3px',
-                  accentColor: '#1DB954',
-                  cursor: 'pointer'
+                  width: "50px",
+                  height: "3px",
+                  accentColor: "#1DB954",
+                  cursor: "pointer",
                 }}
               />
             </div>
