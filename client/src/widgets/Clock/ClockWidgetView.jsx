@@ -21,7 +21,15 @@ export default function ClockWidgetView({ config }) {
     borderColor = "transparent",
     borderWidth = "0px",
     customCSS = "",
+    darkMode = false,
   } = config;
+
+  const effectiveBgColor = darkMode
+    ? "#111827"
+    : backgroundColor;
+  const effectiveTextColor = darkMode
+    ? "#f9fafb"
+    : textColor;
 
   // Sanitize: strip any </style> tags to prevent style-block breakout
   const safeCSS = customCSS.replace(/<\/style>/gi, "");
@@ -45,15 +53,16 @@ export default function ClockWidgetView({ config }) {
     <>
       {safeCSS ? <style>{safeCSS}</style> : null}
       <div
+        className={darkMode ? "dark-mode" : "light-mode"}
         style={{
-          color: textColor,
+          color: effectiveTextColor,
           fontSize: fontSize,
           fontFamily:
             fontFamily === "monospace"
               ? "JetBrains Mono, monospace"
               : "Outfit, sans-serif",
           fontWeight: "bold",
-          backgroundColor: backgroundColor,
+          backgroundColor: effectiveBgColor,
           backgroundImage: backgroundImageUrl
             ? `url(${backgroundImageUrl})`
             : undefined,

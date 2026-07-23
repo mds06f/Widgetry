@@ -53,6 +53,7 @@ export const widgetRegistry = {
       borderColor: "transparent",
       borderWidth: "0px",
       customCSS: "",
+      darkMode: false,
     },
   },
   quote: {
@@ -74,6 +75,7 @@ export const widgetRegistry = {
       borderRadius: "12px",
       showAuthor: true,
       customCSS: "",
+      darkMode: false,
     },
   },
   weather: {
@@ -93,6 +95,7 @@ export const widgetRegistry = {
       backgroundImageUrl: "",
       borderRadius: "12px",
       customCSS: "",
+      darkMode: false,
     },
   },
   countdown: {
@@ -116,6 +119,7 @@ export const widgetRegistry = {
       backgroundImageUrl: "",
       borderRadius: "12px",
       customCSS: "",
+      darkMode: false,
     },
   },
   todo: {
@@ -134,6 +138,7 @@ export const widgetRegistry = {
       backgroundImageUrl: "",
       borderRadius: "12px",
       customCSS: "",
+      darkMode: false,
     },
   },
   spotify: {
@@ -158,6 +163,7 @@ export const widgetRegistry = {
       backgroundImageUrl: "",
       borderRadius: "12px",
       customCSS: "",
+      darkMode: false,
     },
   },
   githubstats: {
@@ -177,6 +183,7 @@ export const widgetRegistry = {
       backgroundImageUrl: "",
       borderRadius: "12px",
       customCSS: "",
+      darkMode: false,
     },
   },
   cryptoticker: {
@@ -196,6 +203,7 @@ export const widgetRegistry = {
       backgroundImageUrl: "",
       borderRadius: "12px",
       customCSS: "",
+      darkMode: false,
     },
   },
   analogclock: {
@@ -218,6 +226,7 @@ export const widgetRegistry = {
       backgroundImageUrl: "",
       borderRadius: "12px",
       customCSS: "",
+      darkMode: false,
     },
   },
   trivia: {
@@ -236,6 +245,7 @@ export const widgetRegistry = {
       backgroundImageUrl: "",
       borderRadius: "12px",
       customCSS: "",
+      darkMode: false,
     },
   },
   pomodoro: {
@@ -255,6 +265,7 @@ export const widgetRegistry = {
       backgroundImageUrl: "",
       borderRadius: "12px",
       customCSS: "",
+      darkMode: false,
     },
   },
   grid: {
@@ -274,6 +285,7 @@ export const widgetRegistry = {
       gradientName: "darkness",
       borderRadius: "12px",
       customCSS: "",
+      darkMode: false,
     },
   },
 };

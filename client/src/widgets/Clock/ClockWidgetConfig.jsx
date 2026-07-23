@@ -38,6 +38,18 @@ export default function ClockWidgetConfig({ config, onChange }) {
         </label>
       </div>
 
+      <div className="config-field toggle-field">
+        <label>Dark Mode</label>
+        <label className="toggle-switch">
+          <input
+            type="checkbox"
+            checked={config.darkMode === true}
+            onChange={(e) => handleUpdate("darkMode", e.target.checked)}
+          />
+          <span className="slider"></span>
+        </label>
+      </div>
+
       <div className="config-field">
         <label>Font Size</label>
         <select
