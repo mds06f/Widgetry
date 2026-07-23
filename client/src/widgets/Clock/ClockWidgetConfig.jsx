@@ -102,12 +102,17 @@ export default function ClockWidgetConfig({ config, onChange }) {
       </div>
 
       <div className="config-field">
-        <label>Font Style</label>
+        <label>Font Style (Google Fonts)</label>
         <select
           value={config.fontFamily || "Outfit"}
           onChange={(e) => handleUpdate("fontFamily", e.target.value)}
         >
-          <option value="Outfit">Modern Sans (Outfit)</option>
+          <option value="Outfit">Outfit (Sans)</option>
+          <option value="Roboto">Roboto (Google Font)</option>
+          <option value="Inter">Inter (Google Font)</option>
+          <option value="Poppins">Poppins (Google Font)</option>
+          <option value="Montserrat">Montserrat (Google Font)</option>
+          <option value="Playfair Display">Playfair Display (Serif)</option>
           <option value="monospace">Digital Coding (Monospace)</option>
         </select>
       </div>

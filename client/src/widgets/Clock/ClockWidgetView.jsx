@@ -67,8 +67,14 @@ export default function ClockWidgetView({ config }) {
   const dateOptions = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
   const dateString = time.toLocaleDateString(undefined, dateOptions);
 
+  const fontUrl =
+    fontFamily && fontFamily !== "monospace"
+      ? `https://fonts.googleapis.com/css2?family=${encodeURIComponent(fontFamily)}:wght@400;600;700&display=swap`
+      : null;
+
   return (
     <>
+      {fontUrl ? <link rel="stylesheet" href={fontUrl} /> : null}
       {safeCSS ? <style>{safeCSS}</style> : null}
       <div
         className={`${darkMode ? "dark-mode" : "light-mode"} ${hoverClass}`}
@@ -79,7 +85,7 @@ export default function ClockWidgetView({ config }) {
           fontFamily:
             fontFamily === "monospace"
               ? "JetBrains Mono, monospace"
-              : "Outfit, sans-serif",
+              : `'${fontFamily}', sans-serif`,
           fontWeight: "bold",
           backgroundColor: effectiveBgColor,
           backgroundImage: backgroundImageUrl
