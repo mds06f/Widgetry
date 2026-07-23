@@ -51,6 +51,19 @@ export default function ClockWidgetConfig({ config, onChange }) {
       </div>
 
       <div className="config-field">
+        <label>Hover Animation</label>
+        <select
+          value={config.hoverAnimation || "none"}
+          onChange={(e) => handleUpdate("hoverAnimation", e.target.value)}
+        >
+          <option value="none">None</option>
+          <option value="scale">Scale Up</option>
+          <option value="fade">Fade Pulse</option>
+          <option value="glow">Glow Effect</option>
+        </select>
+      </div>
+
+      <div className="config-field">
         <label>Font Size</label>
         <select
           value={config.fontSize || "36px"}

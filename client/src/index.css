@@ -656,3 +656,25 @@ input:checked + .slider:before {
     0 2px 8px rgba(0, 0, 0, 0.4);
   transform: scale(1.05);
 }
+
+/* Interactive Hover Animations */
+.hover-anim-scale {
+  transition: transform 0.25s ease !important;
+}
+.hover-anim-scale:hover {
+  transform: scale(1.04) !important;
+}
+
+.hover-anim-fade {
+  transition: opacity 0.25s ease !important;
+}
+.hover-anim-fade:hover {
+  opacity: 0.85 !important;
+}
+
+.hover-anim-glow {
+  transition: box-shadow 0.25s ease !important;
+}
+.hover-anim-glow:hover {
+  box-shadow: 0 0 25px rgba(99, 102, 241, 0.5) !important;
+}

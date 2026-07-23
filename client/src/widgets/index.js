@@ -54,6 +54,7 @@ export const widgetRegistry = {
       borderWidth: "0px",
       customCSS: "",
       darkMode: false,
+      hoverAnimation: "none",
     },
   },
   quote: {
@@ -76,6 +77,7 @@ export const widgetRegistry = {
       showAuthor: true,
       customCSS: "",
       darkMode: false,
+      hoverAnimation: "none",
     },
   },
   weather: {
@@ -96,6 +98,7 @@ export const widgetRegistry = {
       borderRadius: "12px",
       customCSS: "",
       darkMode: false,
+      hoverAnimation: "none",
     },
   },
   countdown: {
@@ -120,6 +123,7 @@ export const widgetRegistry = {
       borderRadius: "12px",
       customCSS: "",
       darkMode: false,
+      hoverAnimation: "none",
     },
   },
   todo: {
@@ -139,6 +143,7 @@ export const widgetRegistry = {
       borderRadius: "12px",
       customCSS: "",
       darkMode: false,
+      hoverAnimation: "none",
     },
   },
   spotify: {
@@ -164,6 +169,7 @@ export const widgetRegistry = {
       borderRadius: "12px",
       customCSS: "",
       darkMode: false,
+      hoverAnimation: "none",
     },
   },
   githubstats: {
@@ -184,6 +190,7 @@ export const widgetRegistry = {
       borderRadius: "12px",
       customCSS: "",
       darkMode: false,
+      hoverAnimation: "none",
     },
   },
   cryptoticker: {
@@ -204,6 +211,7 @@ export const widgetRegistry = {
       borderRadius: "12px",
       customCSS: "",
       darkMode: false,
+      hoverAnimation: "none",
     },
   },
   analogclock: {
@@ -227,6 +235,7 @@ export const widgetRegistry = {
       borderRadius: "12px",
       customCSS: "",
       darkMode: false,
+      hoverAnimation: "none",
     },
   },
   trivia: {
@@ -246,6 +255,7 @@ export const widgetRegistry = {
       borderRadius: "12px",
       customCSS: "",
       darkMode: false,
+      hoverAnimation: "none",
     },
   },
   pomodoro: {
@@ -266,6 +276,7 @@ export const widgetRegistry = {
       borderRadius: "12px",
       customCSS: "",
       darkMode: false,
+      hoverAnimation: "none",
     },
   },
   grid: {

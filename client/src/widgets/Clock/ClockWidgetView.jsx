@@ -22,7 +22,13 @@ export default function ClockWidgetView({ config }) {
     borderWidth = "0px",
     customCSS = "",
     darkMode = false,
+    hoverAnimation = "none",
   } = config;
+
+  const hoverClass =
+    hoverAnimation && hoverAnimation !== "none"
+      ? `hover-anim-${hoverAnimation}`
+      : "";
 
   const effectiveBgColor = darkMode
     ? "#111827"
@@ -53,7 +59,7 @@ export default function ClockWidgetView({ config }) {
     <>
       {safeCSS ? <style>{safeCSS}</style> : null}
       <div
-        className={darkMode ? "dark-mode" : "light-mode"}
+        className={`${darkMode ? "dark-mode" : "light-mode"} ${hoverClass}`}
         style={{
           color: effectiveTextColor,
           fontSize: fontSize,
