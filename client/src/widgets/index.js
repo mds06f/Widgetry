@@ -43,7 +43,24 @@ import PollWidgetConfig from "./Poll/PollWidgetConfig";
 import WhiteboardWidgetView from "./Whiteboard/WhiteboardWidgetView";
 import WhiteboardWidgetConfig from "./Whiteboard/WhiteboardWidgetConfig";
 
+import CustomScriptWidgetView from "./CustomScript/CustomScriptWidgetView";
+import CustomScriptWidgetConfig from "./CustomScript/CustomScriptWidgetConfig";
+
 export const widgetRegistry = {
+  customscript: {
+    name: "Custom Script Injector",
+    description: "Write custom HTML, CSS, and JS to build sandboxed custom widgets.",
+    icon: "Code",
+    view: CustomScriptWidgetView,
+    config: CustomScriptWidgetConfig,
+    defaultConfig: {
+      htmlCode: "<div class='custom-card'>Hello Custom Widget!</div>",
+      cssCode: ".custom-card {\n  color: #6366f1;\n  font-weight: bold;\n}",
+      jsCode: "",
+      borderRadius: "12px",
+      customCSS: "",
+    },
+  },
   whiteboard: {
     name: "Interactive Whiteboard",
     description: "Draw and sketch freehand canvas drawings interactively.",
