@@ -37,7 +37,27 @@ import GridWidgetConfig from "./Grid/GridWidgetConfig";
 import StockTickerWidgetView from "./StockTicker/StockTickerWidgetView";
 import StockTickerWidgetConfig from "./StockTicker/StockTickerWidgetConfig";
 
+import PollWidgetView from "./Poll/PollWidgetView";
+import PollWidgetConfig from "./Poll/PollWidgetConfig";
+
 export const widgetRegistry = {
+  poll: {
+    name: "Interactive Poll",
+    description: "Render quick voting options and live percentage progress bars.",
+    icon: "Vote",
+    view: PollWidgetView,
+    config: PollWidgetConfig,
+    defaultConfig: {
+      question: "What is your favorite frontend framework?",
+      optionsString: "React, Vue, Svelte, Angular",
+      textColor: "#ffffff",
+      backgroundStyle: "gradient",
+      backgroundColor: "#1b2542",
+      gradientName: "cosmic",
+      borderRadius: "12px",
+      customCSS: "",
+    },
+  },
   stockticker: {
     name: "Stock Market Ticker",
     description: "A stock price index widget tracking active market tickers.",
