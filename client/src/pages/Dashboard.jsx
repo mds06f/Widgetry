@@ -5,8 +5,14 @@ import * as LucideIcons from "lucide-react";
 export default function Dashboard({ navigate, token, user }) {
   const [widgets, setWidgets] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [copiedId, setCopiedId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredWidgets = widgets.filter((w) => {
+    const query = searchQuery.toLowerCase();
+    const nameMatch = w.name ? w.name.toLowerCase().includes(query) : false;
+    const typeMatch = w.type ? w.type.toLowerCase().includes(query) : false;
+    return nameMatch || typeMatch;
+  });
 
   // Fetch widgets on load and when token changes
   useEffect(() => {
@@ -82,6 +88,29 @@ export default function Dashboard({ navigate, token, user }) {
         </button>
       </div>
 
+      {widgets.length > 0 && (
+        <div style={{ marginBottom: "1.5rem", position: "relative" }}>
+          <LucideIcons.Search
+            size={18}
+            style={{
+              position: "absolute",
+              left: "14px",
+              top: "50%",
+              transform: "translateY(-50%)",
+              color: "var(--text-secondary)",
+            }}
+          />
+          <input
+            type="text"
+            className="input"
+            placeholder="Search widgets by name or type..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ paddingLeft: "42px", width: "100%" }}
+          />
+        </div>
+      )}
+
       {loading ? (
         <div
           style={{
@@ -131,10 +160,14 @@ export default function Dashboard({ navigate, token, user }) {
             <span>Create First Widget</span>
           </button>
         </div>
+      ) : filteredWidgets.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "3rem", color: "var(--text-secondary)" }}>
+          <p>No widgets found matching "{searchQuery}"</p>
+        </div>
       ) : (
         // Widgets Grid
         <div className="grid">
-          {widgets.map((widget) => {
+          {filteredWidgets.map((widget) => {
             const registryItem = widgetRegistry[widget.type] || {
               name: "Unknown Widget",
               icon: "HelpCircle",
