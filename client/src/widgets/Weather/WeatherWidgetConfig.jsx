@@ -42,6 +42,29 @@ export default function WeatherWidgetConfig({ config, onChange }) {
       </div>
 
       <div className="config-field">
+        <label>Multi-City Slideshow (comma separated)</label>
+        <input
+          type="text"
+          className="input"
+          value={config.citiesList || ""}
+          onChange={(e) => handleUpdate("citiesList", e.target.value)}
+          placeholder="e.g. Paris, London, Tokyo"
+        />
+      </div>
+
+      <div className="config-field toggle-field">
+        <label>Enable Multi-City Slideshow</label>
+        <label className="toggle-switch">
+          <input
+            type="checkbox"
+            checked={config.enableSlideshow === true}
+            onChange={(e) => handleUpdate("enableSlideshow", e.target.checked)}
+          />
+          <span className="slider"></span>
+        </label>
+      </div>
+
+      <div className="config-field">
         <label>Temperature Unit</label>
         <select
           value={config.unit || "C"}
