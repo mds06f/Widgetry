@@ -1,9 +1,9 @@
 ---
-name: "🐛 Bug Report"
+name: '🐛 Bug Report'
 about: Report a bug or issue in the application to help us improve.
-title: "[BUG] "
+title: '[BUG] '
 labels: bug
-assignees: ""
+assignees: ''
 ---
 
 **Describe the bug**

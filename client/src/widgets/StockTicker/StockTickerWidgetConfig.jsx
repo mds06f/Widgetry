@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export default function StockTickerWidgetConfig({ config, onChange }) {
   const handleUpdate = (key, value) => {
@@ -17,8 +17,8 @@ export default function StockTickerWidgetConfig({ config, onChange }) {
         <input
           type="text"
           className="input"
-          value={config.symbol || "AAPL"}
-          onChange={(e) => handleUpdate("symbol", e.target.value.toUpperCase())}
+          value={config.symbol || 'AAPL'}
+          onChange={(e) => handleUpdate('symbol', e.target.value.toUpperCase())}
           placeholder="e.g. AAPL, GOOGL, TSLA"
         />
       </div>
@@ -28,8 +28,8 @@ export default function StockTickerWidgetConfig({ config, onChange }) {
         <input
           type="text"
           className="input"
-          value={config.companyName || "Apple Inc."}
-          onChange={(e) => handleUpdate("companyName", e.target.value)}
+          value={config.companyName || 'Apple Inc.'}
+          onChange={(e) => handleUpdate('companyName', e.target.value)}
           placeholder="e.g. Apple Inc."
         />
       </div>
@@ -40,8 +40,8 @@ export default function StockTickerWidgetConfig({ config, onChange }) {
           type="number"
           step="0.01"
           className="input"
-          value={config.basePrice || "185.50"}
-          onChange={(e) => handleUpdate("basePrice", e.target.value)}
+          value={config.basePrice || '185.50'}
+          onChange={(e) => handleUpdate('basePrice', e.target.value)}
         />
       </div>
 
@@ -50,8 +50,8 @@ export default function StockTickerWidgetConfig({ config, onChange }) {
         <input
           type="text"
           className="input"
-          value={config.changePercent || "+2.45%"}
-          onChange={(e) => handleUpdate("changePercent", e.target.value)}
+          value={config.changePercent || '+2.45%'}
+          onChange={(e) => handleUpdate('changePercent', e.target.value)}
         />
       </div>
 
@@ -59,37 +59,37 @@ export default function StockTickerWidgetConfig({ config, onChange }) {
         <label>Text Color</label>
         <input
           type="color"
-          value={config.textColor || "#ffffff"}
-          onChange={(e) => handleUpdate("textColor", e.target.value)}
+          value={config.textColor || '#ffffff'}
+          onChange={(e) => handleUpdate('textColor', e.target.value)}
         />
       </div>
 
       <div className="config-field">
         <label>Background Style</label>
         <select
-          value={config.backgroundStyle || "gradient"}
-          onChange={(e) => handleUpdate("backgroundStyle", e.target.value)}
+          value={config.backgroundStyle || 'gradient'}
+          onChange={(e) => handleUpdate('backgroundStyle', e.target.value)}
         >
           <option value="solid">Solid Color</option>
           <option value="gradient">Gradient Preset</option>
         </select>
       </div>
 
-      {config.backgroundStyle === "solid" ? (
+      {config.backgroundStyle === 'solid' ? (
         <div className="config-field">
           <label>Background Color</label>
           <input
             type="color"
-            value={config.backgroundColor || "#1b2542"}
-            onChange={(e) => handleUpdate("backgroundColor", e.target.value)}
+            value={config.backgroundColor || '#1b2542'}
+            onChange={(e) => handleUpdate('backgroundColor', e.target.value)}
           />
         </div>
       ) : (
         <div className="config-field">
           <label>Gradient Preset</label>
           <select
-            value={config.gradientName || "darkness"}
-            onChange={(e) => handleUpdate("gradientName", e.target.value)}
+            value={config.gradientName || 'darkness'}
+            onChange={(e) => handleUpdate('gradientName', e.target.value)}
           >
             <option value="darkness">Darkness</option>
             <option value="obsidian">Obsidian</option>

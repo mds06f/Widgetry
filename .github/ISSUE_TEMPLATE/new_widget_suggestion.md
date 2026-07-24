@@ -1,9 +1,9 @@
 ---
-name: "🧩 New Widget Suggestion"
+name: '🧩 New Widget Suggestion'
 about: Suggest a new widget type for developers to build (e.g. RSS Feed, Spotify, Calendar).
-title: "[WIDGET] "
+title: '[WIDGET] '
 labels: new-widget, good first issue
-assignees: ""
+assignees: ''
 ---
 
 **Proposed Widget Name**

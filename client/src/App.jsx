@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
-import Dashboard from "./pages/Dashboard";
-import WidgetEditor from "./pages/WidgetEditor";
-import WidgetRender from "./pages/WidgetRender";
-import AuthModal from "./components/AuthModal";
-import { Layers, LogIn, LogOut, User } from "lucide-react";
+import React, { useState, useEffect } from 'react';
+import Dashboard from './pages/Dashboard';
+import WidgetEditor from './pages/WidgetEditor';
+import WidgetRender from './pages/WidgetRender';
+import AuthModal from './components/AuthModal';
+import { Layers, LogIn, LogOut, User } from 'lucide-react';
 
 export default function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
   const [token, setToken] = useState(
-    localStorage.getItem("widgetry_token") || null,
+    localStorage.getItem('widgetry_token') || null,
   );
   const [user, setUser] = useState(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -18,33 +18,33 @@ export default function App() {
       setCurrentPath(window.location.pathname);
     };
 
-    window.addEventListener("popstate", handleLocationChange);
+    window.addEventListener('popstate', handleLocationChange);
     // Listen for custom navigate events
-    window.addEventListener("navigate", handleLocationChange);
+    window.addEventListener('navigate', handleLocationChange);
 
     return () => {
-      window.removeEventListener("popstate", handleLocationChange);
-      window.removeEventListener("navigate", handleLocationChange);
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('navigate', handleLocationChange);
     };
   }, []);
 
   // Fetch current user details on mount/token change
   useEffect(() => {
     if (token) {
-      fetch("/api/auth/me", {
+      fetch('/api/auth/me', {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => {
           if (res.ok) {
             return res.json();
           }
-          throw new Error("Unauthorized");
+          throw new Error('Unauthorized');
         })
         .then((data) => {
           setUser(data);
         })
         .catch(() => {
-          localStorage.removeItem("widgetry_token");
+          localStorage.removeItem('widgetry_token');
           setToken(null);
           setUser(null);
         });
@@ -55,8 +55,8 @@ export default function App() {
 
   // Simple navigate function
   const navigate = (path) => {
-    window.history.pushState({}, "", path);
-    window.dispatchEvent(new Event("navigate"));
+    window.history.pushState({}, '', path);
+    window.dispatchEvent(new Event('navigate'));
   };
 
   const handleAuthSuccess = (newToken, newUser) => {
@@ -65,17 +65,17 @@ export default function App() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("widgetry_token");
+    localStorage.removeItem('widgetry_token');
     setToken(null);
     setUser(null);
-    navigate("/");
+    navigate('/');
   };
 
   // Route matching helpers
-  const isDashboard = currentPath === "/";
-  const isCreate = currentPath.startsWith("/create/");
-  const isEdit = currentPath.startsWith("/edit/");
-  const isRender = currentPath.startsWith("/widget/render/");
+  const isDashboard = currentPath === '/';
+  const isCreate = currentPath.startsWith('/create/');
+  const isEdit = currentPath.startsWith('/edit/');
+  const isRender = currentPath.startsWith('/widget/render/');
 
   // Parse path parameters
   let pageComponent = null;
@@ -83,7 +83,7 @@ export default function App() {
   if (isDashboard) {
     pageComponent = <Dashboard navigate={navigate} token={token} user={user} />;
   } else if (isCreate) {
-    const type = currentPath.split("/")[2];
+    const type = currentPath.split('/')[2];
     pageComponent = (
       <WidgetEditor
         navigate={navigate}
@@ -94,7 +94,7 @@ export default function App() {
       />
     );
   } else if (isEdit) {
-    const id = currentPath.split("/")[2];
+    const id = currentPath.split('/')[2];
     pageComponent = (
       <WidgetEditor
         navigate={navigate}
@@ -105,17 +105,17 @@ export default function App() {
       />
     );
   } else if (isRender) {
-    const id = currentPath.split("/")[3];
+    const id = currentPath.split('/')[3];
     pageComponent = <WidgetRender id={id} />;
   } else {
     // 404 Fallback
     pageComponent = (
-      <div style={{ textAlign: "center", padding: "4rem" }}>
+      <div style={{ textAlign: 'center', padding: '4rem' }}>
         <h2>404 - Page Not Found</h2>
         <button
           className="btn btn-primary"
-          style={{ marginTop: "1rem" }}
-          onClick={() => navigate("/")}
+          style={{ marginTop: '1rem' }}
+          onClick={() => navigate('/')}
         >
           Go to Dashboard
         </button>
@@ -133,43 +133,43 @@ export default function App() {
       <header className="navbar">
         <div
           className="logo"
-          style={{ cursor: "pointer" }}
-          onClick={() => navigate("/")}
+          style={{ cursor: 'pointer' }}
+          onClick={() => navigate('/')}
         >
-          <Layers size={28} style={{ color: "#6366f1" }} />
+          <Layers size={28} style={{ color: '#6366f1' }} />
           <span>Widgetry</span>
         </div>
 
-        <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
-          <button className="btn btn-secondary" onClick={() => navigate("/")}>
+        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+          <button className="btn btn-secondary" onClick={() => navigate('/')}>
             Dashboard
           </button>
 
           {user ? (
             <div
-              style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}
+              style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}
             >
               <div
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.4rem",
-                  fontSize: "0.85rem",
-                  background: "rgba(255, 255, 255, 0.05)",
-                  padding: "0.4rem 0.8rem",
-                  borderRadius: "8px",
-                  border: "1px solid rgba(255, 255, 255, 0.05)",
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  fontSize: '0.85rem',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  padding: '0.4rem 0.8rem',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255, 255, 255, 0.05)',
                 }}
               >
-                <User size={14} style={{ color: "#818cf8" }} />
-                <span style={{ color: "var(--text-secondary)" }}>
+                <User size={14} style={{ color: '#818cf8' }} />
+                <span style={{ color: 'var(--text-secondary)' }}>
                   {user.email}
                 </span>
               </div>
               <button
                 className="btn btn-secondary"
                 onClick={handleLogout}
-                style={{ gap: "0.4rem" }}
+                style={{ gap: '0.4rem' }}
               >
                 <LogOut size={14} />
                 <span>Logout</span>
@@ -179,7 +179,7 @@ export default function App() {
             <button
               className="btn btn-primary"
               onClick={() => setIsAuthOpen(true)}
-              style={{ gap: "0.4rem" }}
+              style={{ gap: '0.4rem' }}
             >
               <LogIn size={14} />
               <span>Login / Signup</span>

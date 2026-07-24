@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { widgetRegistry } from "../widgets";
+import React, { useState, useEffect } from 'react';
+import { widgetRegistry } from '../widgets';
 
 export default function WidgetRender({ id }) {
   const [widget, setWidget] = useState(null);
@@ -10,7 +10,7 @@ export default function WidgetRender({ id }) {
     if (id) {
       fetchWidget(id);
       // Track impression hit
-      fetch(`/api/widgets/${id}/track`, { method: "POST" }).catch(() => {});
+      fetch(`/api/widgets/${id}/track`, { method: 'POST' }).catch(() => {});
     }
   }, [id]);
 
@@ -21,11 +21,11 @@ export default function WidgetRender({ id }) {
         const data = await res.json();
         setWidget(data);
       } else {
-        setError("Widget not found");
+        setError('Widget not found');
       }
     } catch (err) {
-      console.error("Error rendering widget:", err);
-      setError("Connection error");
+      console.error('Error rendering widget:', err);
+      setError('Connection error');
     } finally {
       setLoading(false);
     }
@@ -35,10 +35,10 @@ export default function WidgetRender({ id }) {
     return (
       <div
         style={{
-          color: "#94a3b8",
-          fontSize: "0.85rem",
-          fontFamily: "sans-serif",
-          padding: "10px",
+          color: '#94a3b8',
+          fontSize: '0.85rem',
+          fontFamily: 'sans-serif',
+          padding: '10px',
         }}
       >
         Loading widget...
@@ -50,11 +50,11 @@ export default function WidgetRender({ id }) {
     return (
       <div
         style={{
-          color: "#ef4444",
-          fontSize: "0.85rem",
-          fontFamily: "sans-serif",
-          padding: "10px",
-          fontWeight: "bold",
+          color: '#ef4444',
+          fontSize: '0.85rem',
+          fontFamily: 'sans-serif',
+          padding: '10px',
+          fontWeight: 'bold',
         }}
       >
         ⚠️ {error}
@@ -67,10 +67,10 @@ export default function WidgetRender({ id }) {
     return (
       <div
         style={{
-          color: "#ef4444",
-          fontSize: "0.85rem",
-          fontFamily: "sans-serif",
-          padding: "10px",
+          color: '#ef4444',
+          fontSize: '0.85rem',
+          fontFamily: 'sans-serif',
+          padding: '10px',
         }}
       >
         Unsupported widget type

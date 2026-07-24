@@ -1,23 +1,23 @@
-const fs = require("fs");
-const path = require("path");
-const { v4: uuidv4 } = require("uuid");
-const bcrypt = require("bcryptjs");
+const fs = require('fs');
+const path = require('path');
+const { v4: uuidv4 } = require('uuid');
+const bcrypt = require('bcryptjs');
 
-const DB_FILE = path.join(__dirname, "users.json");
+const DB_FILE = path.join(__dirname, 'users.json');
 
 function initDB() {
   if (!fs.existsSync(DB_FILE)) {
-    fs.writeFileSync(DB_FILE, JSON.stringify([], null, 2), "utf8");
+    fs.writeFileSync(DB_FILE, JSON.stringify([], null, 2), 'utf8');
   }
 }
 
 function getAll() {
   initDB();
   try {
-    const data = fs.readFileSync(DB_FILE, "utf8");
+    const data = fs.readFileSync(DB_FILE, 'utf8');
     return JSON.parse(data);
   } catch (err) {
-    console.error("Error reading users database file:", err);
+    console.error('Error reading users database file:', err);
     return [];
   }
 }
@@ -25,10 +25,10 @@ function getAll() {
 function saveAll(users) {
   initDB();
   try {
-    fs.writeFileSync(DB_FILE, JSON.stringify(users, null, 2), "utf8");
+    fs.writeFileSync(DB_FILE, JSON.stringify(users, null, 2), 'utf8');
     return true;
   } catch (err) {
-    console.error("Error writing to users database file:", err);
+    console.error('Error writing to users database file:', err);
     return false;
   }
 }
