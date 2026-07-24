@@ -49,14 +49,14 @@ Create a new folder in `client/src/widgets/` using PascalCase (e.g., `MyWidget`)
 This component receives a `config` object as a prop and renders the HTML/CSS representing the widget.
 
 ```jsx
-import React from "react";
+import React from 'react';
 
 export default function MyWidgetView({ config }) {
   // Extract custom configuration options set by the user
   const {
-    text = "Hello World",
-    textColor = "#ffffff",
-    fontSize = "24px",
+    text = 'Hello World',
+    textColor = '#ffffff',
+    fontSize = '24px',
   } = config;
 
   return (
@@ -64,11 +64,11 @@ export default function MyWidgetView({ config }) {
       style={{
         color: textColor,
         fontSize: fontSize,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-        textAlign: "center",
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        textAlign: 'center',
       }}
     >
       {text}
@@ -82,7 +82,7 @@ export default function MyWidgetView({ config }) {
 This component renders the input forms in the editor. When fields are changed, it calls `onChange` with the updated configuration.
 
 ```jsx
-import React from "react";
+import React from 'react';
 
 export default function MyWidgetConfig({ config, onChange }) {
   const handleChange = (key, value) => {
@@ -97,8 +97,8 @@ export default function MyWidgetConfig({ config, onChange }) {
         <label>Display Text</label>
         <input
           type="text"
-          value={config.text || ""}
-          onChange={(e) => handleChange("text", e.target.value)}
+          value={config.text || ''}
+          onChange={(e) => handleChange('text', e.target.value)}
         />
       </div>
 
@@ -106,8 +106,8 @@ export default function MyWidgetConfig({ config, onChange }) {
         <label>Text Color</label>
         <input
           type="color"
-          value={config.textColor || "#ffffff"}
-          onChange={(e) => handleChange("textColor", e.target.value)}
+          value={config.textColor || '#ffffff'}
+          onChange={(e) => handleChange('textColor', e.target.value)}
         />
       </div>
     </div>
@@ -120,21 +120,21 @@ export default function MyWidgetConfig({ config, onChange }) {
 Open `client/src/widgets/index.js` and register your new widget:
 
 ```javascript
-import MyWidgetView from "./MyWidget/MyWidgetView";
-import MyWidgetConfig from "./MyWidget/MyWidgetConfig";
+import MyWidgetView from './MyWidget/MyWidgetView';
+import MyWidgetConfig from './MyWidget/MyWidgetConfig';
 
 export const widgetRegistry = {
   // Existing widgets...
   mywidget: {
-    name: "Custom Text Widget",
-    description: "Displays customized typography",
-    icon: "Type", // Name of Lucide icon
+    name: 'Custom Text Widget',
+    description: 'Displays customized typography',
+    icon: 'Type', // Name of Lucide icon
     view: MyWidgetView,
     config: MyWidgetConfig,
     defaultConfig: {
-      text: "Hello World",
-      textColor: "#ffffff",
-      fontSize: "24px",
+      text: 'Hello World',
+      textColor: '#ffffff',
+      fontSize: '24px',
     },
   },
 };

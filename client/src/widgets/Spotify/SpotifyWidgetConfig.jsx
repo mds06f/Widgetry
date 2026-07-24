@@ -1,5 +1,5 @@
-import React from "react";
-import { GRADIENTS } from "../index";
+import React from 'react';
+import { GRADIENTS } from '../index';
 
 export default function SpotifyWidgetConfig({ config, onChange }) {
   const handleUpdate = (key, value) => {
@@ -16,8 +16,8 @@ export default function SpotifyWidgetConfig({ config, onChange }) {
       <div className="config-field">
         <label>Select Track Preset</label>
         <select
-          value={config.trackPreset || "resonance"}
-          onChange={(e) => handleUpdate("trackPreset", e.target.value)}
+          value={config.trackPreset || 'resonance'}
+          onChange={(e) => handleUpdate('trackPreset', e.target.value)}
         >
           <option value="resonance">🌌 HOME - Resonance</option>
           <option value="midnight">🌆 M83 - Midnight City</option>
@@ -27,24 +27,24 @@ export default function SpotifyWidgetConfig({ config, onChange }) {
         </select>
       </div>
 
-      {config.trackPreset === "custom" && (
+      {config.trackPreset === 'custom' && (
         <div
           style={{
-            borderLeft: "2px solid var(--accent-primary)",
-            paddingLeft: "0.75rem",
-            display: "flex",
-            flexDirection: "column",
-            gap: "0.75rem",
-            marginTop: "0.25rem",
-            marginBottom: "0.5rem",
+            borderLeft: '2px solid var(--accent-primary)',
+            paddingLeft: '0.75rem',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.75rem',
+            marginTop: '0.25rem',
+            marginBottom: '0.5rem',
           }}
         >
           <div className="config-field">
             <label>Song Title</label>
             <input
               type="text"
-              value={config.customTitle || ""}
-              onChange={(e) => handleUpdate("customTitle", e.target.value)}
+              value={config.customTitle || ''}
+              onChange={(e) => handleUpdate('customTitle', e.target.value)}
               placeholder="e.g. Blinding Lights"
             />
           </div>
@@ -52,8 +52,8 @@ export default function SpotifyWidgetConfig({ config, onChange }) {
             <label>Artist Name</label>
             <input
               type="text"
-              value={config.customArtist || ""}
-              onChange={(e) => handleUpdate("customArtist", e.target.value)}
+              value={config.customArtist || ''}
+              onChange={(e) => handleUpdate('customArtist', e.target.value)}
               placeholder="e.g. The Weeknd"
             />
           </div>
@@ -61,8 +61,8 @@ export default function SpotifyWidgetConfig({ config, onChange }) {
             <label>Album Name</label>
             <input
               type="text"
-              value={config.customAlbum || ""}
-              onChange={(e) => handleUpdate("customAlbum", e.target.value)}
+              value={config.customAlbum || ''}
+              onChange={(e) => handleUpdate('customAlbum', e.target.value)}
               placeholder="e.g. After Hours"
             />
           </div>
@@ -70,8 +70,8 @@ export default function SpotifyWidgetConfig({ config, onChange }) {
             <label>Cover Art URL</label>
             <input
               type="text"
-              value={config.customCoverUrl || ""}
-              onChange={(e) => handleUpdate("customCoverUrl", e.target.value)}
+              value={config.customCoverUrl || ''}
+              onChange={(e) => handleUpdate('customCoverUrl', e.target.value)}
               placeholder="https://images.unsplash.com/photo-..."
             />
           </div>
@@ -80,7 +80,7 @@ export default function SpotifyWidgetConfig({ config, onChange }) {
             <input
               type="number"
               value={config.customDuration || 180}
-              onChange={(e) => handleUpdate("customDuration", e.target.value)}
+              onChange={(e) => handleUpdate('customDuration', e.target.value)}
               placeholder="180"
               min="10"
               max="3600"
@@ -95,7 +95,7 @@ export default function SpotifyWidgetConfig({ config, onChange }) {
           <input
             type="checkbox"
             checked={config.showVisualizer !== false}
-            onChange={(e) => handleUpdate("showVisualizer", e.target.checked)}
+            onChange={(e) => handleUpdate('showVisualizer', e.target.checked)}
           />
           <span className="slider"></span>
         </label>
@@ -104,30 +104,30 @@ export default function SpotifyWidgetConfig({ config, onChange }) {
       <div className="config-field">
         <label>Background Style</label>
         <select
-          value={config.backgroundStyle || "gradient"}
-          onChange={(e) => handleUpdate("backgroundStyle", e.target.value)}
+          value={config.backgroundStyle || 'gradient'}
+          onChange={(e) => handleUpdate('backgroundStyle', e.target.value)}
         >
           <option value="gradient">Gradient Presets</option>
           <option value="solid">Solid Background Color</option>
         </select>
       </div>
 
-      {config.backgroundStyle === "solid" ? (
+      {config.backgroundStyle === 'solid' ? (
         <div className="config-row">
           <div className="config-field">
             <label>Background Color</label>
             <input
               type="color"
-              value={config.backgroundColor || "#1b2542"}
-              onChange={(e) => handleUpdate("backgroundColor", e.target.value)}
+              value={config.backgroundColor || '#1b2542'}
+              onChange={(e) => handleUpdate('backgroundColor', e.target.value)}
             />
           </div>
           <div className="config-field">
             <label>Text Color</label>
             <input
               type="color"
-              value={config.textColor || "#ffffff"}
-              onChange={(e) => handleUpdate("textColor", e.target.value)}
+              value={config.textColor || '#ffffff'}
+              onChange={(e) => handleUpdate('textColor', e.target.value)}
             />
           </div>
         </div>
@@ -138,9 +138,9 @@ export default function SpotifyWidgetConfig({ config, onChange }) {
             {Object.keys(GRADIENTS).map((key) => (
               <div
                 key={key}
-                className={`gradient-option ${config.gradientName === key ? "active" : ""}`}
+                className={`gradient-option ${config.gradientName === key ? 'active' : ''}`}
                 style={{ background: GRADIENTS[key] }}
-                onClick={() => handleUpdate("gradientName", key)}
+                onClick={() => handleUpdate('gradientName', key)}
                 title={key}
               />
             ))}
@@ -152,8 +152,8 @@ export default function SpotifyWidgetConfig({ config, onChange }) {
         <label>Background Image URL</label>
         <input
           type="text"
-          value={config.backgroundImageUrl || ""}
-          onChange={(e) => handleUpdate("backgroundImageUrl", e.target.value)}
+          value={config.backgroundImageUrl || ''}
+          onChange={(e) => handleUpdate('backgroundImageUrl', e.target.value)}
           placeholder="https://images.unsplash.com/photo-..."
         />
       </div>
@@ -161,8 +161,8 @@ export default function SpotifyWidgetConfig({ config, onChange }) {
       <div className="config-field">
         <label>Card Corner Rounding</label>
         <select
-          value={config.borderRadius || "12px"}
-          onChange={(e) => handleUpdate("borderRadius", e.target.value)}
+          value={config.borderRadius || '12px'}
+          onChange={(e) => handleUpdate('borderRadius', e.target.value)}
         >
           <option value="0px">Sharp Corners (0px)</option>
           <option value="6px">Subtle (6px)</option>
@@ -178,7 +178,7 @@ export default function SpotifyWidgetConfig({ config, onChange }) {
             type="checkbox"
             checked={config.showPlaybackControls !== false}
             onChange={(e) =>
-              handleUpdate("showPlaybackControls", e.target.checked)
+              handleUpdate('showPlaybackControls', e.target.checked)
             }
           />
           <span className="slider"></span>
@@ -188,12 +188,12 @@ export default function SpotifyWidgetConfig({ config, onChange }) {
       <div className="config-field">
         <label>Custom CSS</label>
         <textarea
-          value={config.customCSS || ""}
-          onChange={(e) => handleUpdate("customCSS", e.target.value)}
+          value={config.customCSS || ''}
+          onChange={(e) => handleUpdate('customCSS', e.target.value)}
           placeholder={`/* Scope styles to this spotify widget */\nimg {\n  border: 2px solid #1DB954 !important;\n}`}
           rows={6}
         />
-        <small style={{ color: "var(--text-muted)", fontSize: "0.75rem" }}>
+        <small style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>
           CSS is scoped to this widget's iframe — use standard selectors freely.
         </small>
       </div>

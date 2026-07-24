@@ -1,17 +1,17 @@
-const jwt = require("jsonwebtoken");
-const JWT_SECRET = process.env.JWT_SECRET || "super_secret_widgetry_key";
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_widgetry_key';
 
 module.exports = function authMiddleware(req, res, next) {
-  const authHeader = req.header("Authorization");
+  const authHeader = req.header('Authorization');
   if (!authHeader) {
     return res
       .status(401)
-      .json({ error: "No authorization token, access denied" });
+      .json({ error: 'No authorization token, access denied' });
   }
 
-  const tokenParts = authHeader.split(" ");
-  if (tokenParts.length !== 2 || tokenParts[0] !== "Bearer") {
-    return res.status(401).json({ error: "Token format is Bearer <token>" });
+  const tokenParts = authHeader.split(' ');
+  if (tokenParts.length !== 2 || tokenParts[0] !== 'Bearer') {
+    return res.status(401).json({ error: 'Token format is Bearer <token>' });
   }
 
   const token = tokenParts[1];
@@ -21,6 +21,6 @@ module.exports = function authMiddleware(req, res, next) {
     req.user = decoded;
     next();
   } catch (err) {
-    res.status(401).json({ error: "Token is not valid" });
+    res.status(401).json({ error: 'Token is not valid' });
   }
 };

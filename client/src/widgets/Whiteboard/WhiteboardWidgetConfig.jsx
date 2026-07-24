@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export default function WhiteboardWidgetConfig({ config, onChange }) {
   const handleUpdate = (key, value) => {
@@ -16,8 +16,8 @@ export default function WhiteboardWidgetConfig({ config, onChange }) {
         <label>Default Brush Color</label>
         <input
           type="color"
-          value={config.brushColor || "#6366f1"}
-          onChange={(e) => handleUpdate("brushColor", e.target.value)}
+          value={config.brushColor || '#6366f1'}
+          onChange={(e) => handleUpdate('brushColor', e.target.value)}
         />
       </div>
 
@@ -27,7 +27,7 @@ export default function WhiteboardWidgetConfig({ config, onChange }) {
           type="number"
           className="input"
           value={config.brushSize || 4}
-          onChange={(e) => handleUpdate("brushSize", Number(e.target.value))}
+          onChange={(e) => handleUpdate('brushSize', Number(e.target.value))}
         />
       </div>
 
@@ -35,8 +35,8 @@ export default function WhiteboardWidgetConfig({ config, onChange }) {
         <label>Canvas Background</label>
         <input
           type="color"
-          value={config.backgroundColor || "#0f172a"}
-          onChange={(e) => handleUpdate("backgroundColor", e.target.value)}
+          value={config.backgroundColor || '#0f172a'}
+          onChange={(e) => handleUpdate('backgroundColor', e.target.value)}
         />
       </div>
     </div>

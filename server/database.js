@@ -1,13 +1,13 @@
-const fs = require("fs");
-const path = require("path");
-const { v4: uuidv4 } = require("uuid");
+const fs = require('fs');
+const path = require('path');
+const { v4: uuidv4 } = require('uuid');
 
-const DB_FILE = path.join(__dirname, "widgets.json");
+const DB_FILE = path.join(__dirname, 'widgets.json');
 
 // Helper to initialize the DB file with an empty list if it doesn't exist
 function initDB() {
   if (!fs.existsSync(DB_FILE)) {
-    fs.writeFileSync(DB_FILE, JSON.stringify([], null, 2), "utf8");
+    fs.writeFileSync(DB_FILE, JSON.stringify([], null, 2), 'utf8');
   }
 }
 
@@ -15,10 +15,10 @@ function initDB() {
 function getAll() {
   initDB();
   try {
-    const data = fs.readFileSync(DB_FILE, "utf8");
+    const data = fs.readFileSync(DB_FILE, 'utf8');
     return JSON.parse(data);
   } catch (err) {
-    console.error("Error reading database file:", err);
+    console.error('Error reading database file:', err);
     return [];
   }
 }
@@ -27,10 +27,10 @@ function getAll() {
 function saveAll(widgets) {
   initDB();
   try {
-    fs.writeFileSync(DB_FILE, JSON.stringify(widgets, null, 2), "utf8");
+    fs.writeFileSync(DB_FILE, JSON.stringify(widgets, null, 2), 'utf8');
     return true;
   } catch (err) {
-    console.error("Error writing to database file:", err);
+    console.error('Error writing to database file:', err);
     return false;
   }
 }

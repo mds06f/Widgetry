@@ -1,22 +1,22 @@
-const fs = require("fs");
-const path = require("path");
-const { v4: uuidv4 } = require("uuid");
+const fs = require('fs');
+const path = require('path');
+const { v4: uuidv4 } = require('uuid');
 
-const DB_FILE = path.join(__dirname, "hits.json");
+const DB_FILE = path.join(__dirname, 'hits.json');
 
 function initDB() {
   if (!fs.existsSync(DB_FILE)) {
-    fs.writeFileSync(DB_FILE, JSON.stringify([], null, 2), "utf8");
+    fs.writeFileSync(DB_FILE, JSON.stringify([], null, 2), 'utf8');
   }
 }
 
 function getAll() {
   initDB();
   try {
-    const data = fs.readFileSync(DB_FILE, "utf8");
+    const data = fs.readFileSync(DB_FILE, 'utf8');
     return JSON.parse(data);
   } catch (err) {
-    console.error("Error reading hits database file:", err);
+    console.error('Error reading hits database file:', err);
     return [];
   }
 }
@@ -24,10 +24,10 @@ function getAll() {
 function saveAll(hits) {
   initDB();
   try {
-    fs.writeFileSync(DB_FILE, JSON.stringify(hits, null, 2), "utf8");
+    fs.writeFileSync(DB_FILE, JSON.stringify(hits, null, 2), 'utf8');
     return true;
   } catch (err) {
-    console.error("Error writing to hits database file:", err);
+    console.error('Error writing to hits database file:', err);
     return false;
   }
 }
@@ -36,8 +36,8 @@ function recordHit(widgetId, rawReferrer) {
   const hits = getAll();
 
   // Clean referrer to domain name
-  let referrer = "Direct / Unknown";
-  if (rawReferrer && rawReferrer !== "null") {
+  let referrer = 'Direct / Unknown';
+  if (rawReferrer && rawReferrer !== 'null') {
     try {
       const url = new URL(rawReferrer);
       referrer = url.hostname;

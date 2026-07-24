@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export default function CustomScriptWidgetConfig({ config, onChange }) {
   const handleUpdate = (key, value) => {
@@ -16,8 +16,11 @@ export default function CustomScriptWidgetConfig({ config, onChange }) {
         <label>HTML Markup</label>
         <textarea
           rows={4}
-          value={config.htmlCode || "<div class='custom-card'>Hello Custom Widget!</div>"}
-          onChange={(e) => handleUpdate("htmlCode", e.target.value)}
+          value={
+            config.htmlCode ||
+            "<div class='custom-card'>Hello Custom Widget!</div>"
+          }
+          onChange={(e) => handleUpdate('htmlCode', e.target.value)}
           placeholder="<div>...</div>"
         />
       </div>
@@ -26,8 +29,11 @@ export default function CustomScriptWidgetConfig({ config, onChange }) {
         <label>CSS Styling</label>
         <textarea
           rows={4}
-          value={config.cssCode || ".custom-card {\n  color: #6366f1;\n  font-weight: bold;\n}"}
-          onChange={(e) => handleUpdate("cssCode", e.target.value)}
+          value={
+            config.cssCode ||
+            '.custom-card {\n  color: #6366f1;\n  font-weight: bold;\n}'
+          }
+          onChange={(e) => handleUpdate('cssCode', e.target.value)}
           placeholder=".custom-card { ... }"
         />
       </div>
@@ -36,8 +42,8 @@ export default function CustomScriptWidgetConfig({ config, onChange }) {
         <label>JavaScript Logic</label>
         <textarea
           rows={4}
-          value={config.jsCode || "// Custom JS logic"}
-          onChange={(e) => handleUpdate("jsCode", e.target.value)}
+          value={config.jsCode || '// Custom JS logic'}
+          onChange={(e) => handleUpdate('jsCode', e.target.value)}
           placeholder="console.log('Widget loaded');"
         />
       </div>
