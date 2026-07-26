@@ -55,6 +55,15 @@ export default function WhiteboardWidgetView({ config = {} }) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   };
 
+  const downloadCanvas = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const link = document.createElement('a');
+    link.download = 'whiteboard-drawing.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  };
+
   return (
     <>
       {safeCSS ? <style>{safeCSS}</style> : null}
@@ -101,21 +110,38 @@ export default function WhiteboardWidgetView({ config = {} }) {
               style={{ width: '80px' }}
             />
           </div>
-          <button
-            onClick={clearCanvas}
-            style={{
-              padding: '4px 10px',
-              borderRadius: '6px',
-              background: '#ef4444',
-              color: '#ffffff',
-              border: 'none',
-              cursor: 'pointer',
-              fontSize: '12px',
-              fontWeight: '600',
-            }}
-          >
-            Clear
-          </button>
+          <div style={{ display: 'flex', gap: '6px' }}>
+            <button
+              onClick={downloadCanvas}
+              style={{
+                padding: '4px 10px',
+                borderRadius: '6px',
+                background: '#6366f1',
+                color: '#ffffff',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: '600',
+              }}
+            >
+              Download
+            </button>
+            <button
+              onClick={clearCanvas}
+              style={{
+                padding: '4px 10px',
+                borderRadius: '6px',
+                background: '#ef4444',
+                color: '#ffffff',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: '600',
+              }}
+            >
+              Clear
+            </button>
+          </div>
         </div>
 
         <canvas

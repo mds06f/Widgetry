@@ -43,6 +43,7 @@ export default function TodoWidgetView({ config }) {
 
   const [items, setItems] = useState(() => loadItems(storageKey));
   const [draft, setDraft] = useState('');
+  const [filter, setFilter] = useState('all'); // 'all' | 'active' | 'completed'
 
   // Persist whenever items change
   useEffect(() => {
@@ -77,6 +78,12 @@ export default function TodoWidgetView({ config }) {
   };
 
   const completedCount = items.filter((i) => i.done).length;
+
+  const visibleItems = items.filter((item) => {
+    if (filter === 'active') return !item.done;
+    if (filter === 'completed') return item.done;
+    return true;
+  });
 
   // Build background style
   const containerStyle = {
@@ -134,7 +141,7 @@ export default function TodoWidgetView({ config }) {
           </div>
 
           {/* Add input row */}
-          <div style={{ display: 'flex', gap: '0.4rem' }}>
+          <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '0.5rem' }}>
             <input
               type="text"
               value={draft}
@@ -172,6 +179,30 @@ export default function TodoWidgetView({ config }) {
               +
             </button>
           </div>
+
+          {/* Filter Tabs */}
+          <div style={{ display: 'flex', gap: '0.3rem', marginTop: '0.4rem' }}>
+            {['all', 'active', 'completed'].map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                style={{
+                  background: filter === f ? 'rgba(255,255,255,0.2)' : 'transparent',
+                  border: 'none',
+                  borderRadius: '4px',
+                  color: textColor,
+                  opacity: filter === f ? 1 : 0.6,
+                  cursor: 'pointer',
+                  fontSize: '0.7rem',
+                  fontWeight: '600',
+                  padding: '0.15rem 0.4rem',
+                  textTransform: 'capitalize',
+                }}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Items list */}
@@ -182,7 +213,7 @@ export default function TodoWidgetView({ config }) {
             padding: '0.5rem 0.6rem',
           }}
         >
-          {items.length === 0 ? (
+          {visibleItems.length === 0 ? (
             <div
               style={{
                 height: '100%',
@@ -196,10 +227,10 @@ export default function TodoWidgetView({ config }) {
               }}
             >
               <span style={{ fontSize: '1.6rem' }}>✅</span>
-              <span>Nothing to do yet!</span>
+              <span>No tasks found!</span>
             </div>
           ) : (
-            items.map((item) => (
+            visibleItems.map((item) => (
               <div
                 key={item.id}
                 style={{

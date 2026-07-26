@@ -58,6 +58,8 @@ export default function QuoteWidgetView({ config }) {
     customCSS = '',
   } = config;
 
+  const [copied, setCopied] = React.useState(false);
+
   // Sanitize: strip any </style> tags to prevent style-block breakout
   const safeCSS = customCSS.replace(/<\/style>/gi, '');
 
@@ -72,6 +74,13 @@ export default function QuoteWidgetView({ config }) {
   }
   const quoteIndex = Math.abs(hash) % list.length;
   const quote = list[quoteIndex];
+
+  const handleCopy = () => {
+    const textToCopy = `"${quote.text}" — ${quote.author}`;
+    navigator.clipboard.writeText(textToCopy);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   // Build styling
   const style = {
@@ -88,6 +97,7 @@ export default function QuoteWidgetView({ config }) {
     width: '100%',
     boxSizing: 'border-box',
     fontFamily: 'Outfit, sans-serif',
+    position: 'relative',
   };
 
   if (backgroundStyle === 'gradient') {
@@ -123,11 +133,30 @@ export default function QuoteWidgetView({ config }) {
               opacity: 0.8,
               fontWeight: '300',
               fontStyle: 'italic',
+              marginBottom: '1rem',
             }}
           >
             — {quote.author}
           </span>
         )}
+
+        <button
+          onClick={handleCopy}
+          style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            border: '1px solid rgba(255, 255, 255, 0.25)',
+            borderRadius: '20px',
+            color: textColor,
+            cursor: 'pointer',
+            fontSize: '0.72rem',
+            fontWeight: '600',
+            padding: '0.25rem 0.75rem',
+            fontFamily: 'Outfit, sans-serif',
+            transition: 'all 0.15s ease',
+          }}
+        >
+          {copied ? '✓ Copied!' : '📋 Copy Quote'}
+        </button>
       </div>
     </>
   );
