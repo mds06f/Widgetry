@@ -18,6 +18,7 @@ export default function PomodoroWidgetView({ config }) {
   const [mode, setMode] = useState('work'); // 'work' or 'break'
   const [isActive, setIsActive] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(workDuration * 60);
+  const [completedSessions, setCompletedSessions] = useState(0);
 
   const safeCSS = customCSS.replace(/<\/style>/gi, '');
   const timerRef = useRef(null);
@@ -37,7 +38,10 @@ export default function PomodoroWidgetView({ config }) {
             clearInterval(timerRef.current);
             setIsActive(false);
             playAlertSound();
-            // Switch modes
+            // Switch modes & increment tally if work session finished
+            if (mode === 'work') {
+              setCompletedSessions((count) => count + 1);
+            }
             const nextMode = mode === 'work' ? 'break' : 'work';
             setMode(nextMode);
             return (nextMode === 'work' ? workDuration : breakDuration) * 60;
@@ -260,6 +264,18 @@ export default function PomodoroWidgetView({ config }) {
           >
             Skip ➔
           </button>
+        </div>
+
+        {/* Completed Sessions Tally */}
+        <div
+          style={{
+            marginTop: '1rem',
+            fontSize: '0.75rem',
+            opacity: 0.8,
+            fontWeight: '600',
+          }}
+        >
+          🍅 {completedSessions} {completedSessions === 1 ? 'Session' : 'Sessions'} Completed
         </div>
       </div>
     </>
