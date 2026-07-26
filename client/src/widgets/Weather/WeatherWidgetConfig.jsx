@@ -75,6 +75,18 @@ export default function WeatherWidgetConfig({ config, onChange }) {
         </select>
       </div>
 
+      <div className="config-field toggle-field">
+        <label>Show Humidity & Wind Speed</label>
+        <label className="toggle-switch">
+          <input
+            type="checkbox"
+            checked={config.showDetails === true}
+            onChange={(e) => handleUpdate('showDetails', e.target.checked)}
+          />
+          <span className="slider"></span>
+        </label>
+      </div>
+
       <div className="config-field">
         <label>Background Style</label>
         <select

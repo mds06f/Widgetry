@@ -32,6 +32,7 @@ export default function WeatherWidgetView({ config }) {
     citiesList = '',
     enableSlideshow = false,
     unit = 'C',
+    showDetails = false,
     textColor = '#ffffff',
     backgroundColor = '#131a30',
     backgroundStyle = 'gradient',
@@ -193,6 +194,21 @@ export default function WeatherWidgetView({ config }) {
         <div style={{ fontSize: '0.9rem', fontWeight: '500', opacity: 0.8 }}>
           {data.condition}
         </div>
+        {showDetails && (
+          <div
+            style={{
+              display: 'flex',
+              gap: '1rem',
+              marginTop: '0.75rem',
+              fontSize: '0.75rem',
+              opacity: 0.85,
+              fontWeight: '600',
+            }}
+          >
+            {data.humidity != null && <span>💧 Humidity: {data.humidity}%</span>}
+            {data.windSpeed != null && <span>💨 Wind: {data.windSpeed} km/h</span>}
+          </div>
+        )}
       </div>
     </>
   );
