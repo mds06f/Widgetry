@@ -29,6 +29,16 @@ export default function CountdownWidgetConfig({ config, onChange }) {
         />
       </div>
 
+      <div className="config-field">
+        <label>Target Reached Message</label>
+        <input
+          type="text"
+          value={config.completionMessage || ''}
+          onChange={(e) => handleUpdate('completionMessage', e.target.value)}
+          placeholder="e.g. 🎉 Event Has Arrived!"
+        />
+      </div>
+
       <h3 style={{ marginTop: '0.5rem' }}>Display Units</h3>
 
       <div className="config-field toggle-field">

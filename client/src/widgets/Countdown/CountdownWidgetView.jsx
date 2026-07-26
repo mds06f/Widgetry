@@ -7,6 +7,7 @@ export default function CountdownWidgetView({ config }) {
   const {
     targetDate = '',
     label = 'Countdown',
+    completionMessage = "🎉 Time's Up!",
     showDays = true,
     showHours = true,
     showMinutes = true,
@@ -145,7 +146,7 @@ export default function CountdownWidgetView({ config }) {
           </div>
         ) : timeLeft?.expired ? (
           <div style={{ fontSize: '1.5rem', fontWeight: '700' }}>
-            🎉 Time's Up!
+            {completionMessage || "🎉 Time's Up!"}
           </div>
         ) : timeLeft ? (
           <div
