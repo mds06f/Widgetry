@@ -224,6 +224,19 @@ router.get('/:id/history', (req, res) => {
   }
 });
 
+// GET public marketplace widget presets
+router.get('/marketplace/public', (req, res) => {
+  try {
+    const widgets = db.getAll();
+    const publicPresets = widgets.filter(
+      (w) => w.isPublic === true || !w.userId,
+    );
+    res.json(publicPresets);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch marketplace presets' });
+  }
+});
+
 // DELETE widget
 router.delete('/:id', (req, res) => {
   try {
