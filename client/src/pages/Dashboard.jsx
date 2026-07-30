@@ -6,6 +6,7 @@ export default function Dashboard({ navigate, token, user }) {
   const [widgets, setWidgets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [draggedWidgetId, setDraggedWidgetId] = useState(null);
 
   const filteredWidgets = widgets.filter((w) => {
     const query = searchQuery.toLowerCase();
@@ -13,6 +14,38 @@ export default function Dashboard({ navigate, token, user }) {
     const typeMatch = w.type ? w.type.toLowerCase().includes(query) : false;
     return nameMatch || typeMatch;
   });
+
+  const handleDragStart = (id) => {
+    setDraggedWidgetId(id);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = async (targetId) => {
+    if (!draggedWidgetId || draggedWidgetId === targetId) return;
+    const dragIdx = widgets.findIndex((w) => w.id === draggedWidgetId);
+    const targetIdx = widgets.findIndex((w) => w.id === targetId);
+    if (dragIdx === -1 || targetIdx === -1) return;
+
+    const reordered = [...widgets];
+    const [moved] = reordered.splice(dragIdx, 1);
+    reordered.splice(targetIdx, 0, moved);
+    setWidgets(reordered);
+    setDraggedWidgetId(null);
+
+    try {
+      const orderedIds = reordered.map((w) => w.id);
+      await fetch('/api/widgets/reorder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderedIds }),
+      });
+    } catch (err) {
+      console.error('Error saving widget order:', err);
+    }
+  };
 
   // Fetch widgets on load and when token changes
   useEffect(() => {
@@ -249,7 +282,11 @@ export default function Dashboard({ navigate, token, user }) {
               <div
                 key={widget.id}
                 className="card"
-                style={{ cursor: 'pointer' }}
+                draggable
+                onDragStart={() => handleDragStart(widget.id)}
+                onDragOver={handleDragOver}
+                onDrop={() => handleDrop(widget.id)}
+                style={{ cursor: 'grab' }}
                 onClick={() => navigate(`/edit/${widget.id}`)}
               >
                 <div>

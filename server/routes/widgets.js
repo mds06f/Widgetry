@@ -52,6 +52,28 @@ router.get('/', (req, res) => {
   }
 });
 
+// POST /api/widgets/reorder - Update ordering of widgets
+router.post('/reorder', (req, res) => {
+  try {
+    const { orderedIds } = req.body;
+    if (!Array.isArray(orderedIds)) {
+      return res.status(400).json({ error: 'orderedIds array is required' });
+    }
+    const widgets = db.getAll();
+    const updated = widgets.map((w) => {
+      const idx = orderedIds.indexOf(w.id);
+      if (idx !== -1) {
+        return { ...w, position: idx };
+      }
+      return w;
+    });
+    db.saveAll(updated);
+    res.json({ success: true, message: 'Widget order updated' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to reorder widgets' });
+  }
+});
+
 // GET widget by ID
 router.get('/:id', (req, res) => {
   try {
