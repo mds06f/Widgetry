@@ -24,3 +24,15 @@ module.exports = function authMiddleware(req, res, next) {
     res.status(401).json({ error: 'Token is not valid' });
   }
 };
+
+function checkRole(allowedRoles = ['Owner', 'Admin', 'Editor']) {
+  return (req, res, next) => {
+    const userRole = req.user?.role || 'Owner';
+    if (!allowedRoles.includes(userRole)) {
+      return res.status(403).json({ error: 'Access denied: insufficient organization role permissions' });
+    }
+    next();
+  };
+}
+
+module.exports.checkRole = checkRole;
