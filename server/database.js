@@ -87,10 +87,36 @@ function remove(id) {
   return true;
 }
 
+// Async query abstractions for SQLite/Prisma ORM migration
+async function getAllAsync() {
+  return Promise.resolve(getAll());
+}
+
+async function getByIdAsync(id) {
+  return Promise.resolve(getById(id));
+}
+
+async function createAsync(widgetData) {
+  return Promise.resolve(create(widgetData));
+}
+
+async function updateAsync(id, widgetData) {
+  return Promise.resolve(update(id, widgetData));
+}
+
+async function removeAsync(id) {
+  return Promise.resolve(remove(id));
+}
+
 module.exports = {
   getAll,
   getById,
   create,
   update,
   delete: remove,
+  getAllAsync,
+  getByIdAsync,
+  createAsync,
+  updateAsync,
+  removeAsync,
 };
