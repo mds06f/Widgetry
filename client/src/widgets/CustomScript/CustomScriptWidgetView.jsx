@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { executeInSandbox } from '../../utils/sandboxBridge';
 
 export default function CustomScriptWidgetView({ config = {} }) {
   const {
@@ -9,8 +10,15 @@ export default function CustomScriptWidgetView({ config = {} }) {
     customCSS = '',
   } = config;
 
+  const [sandboxError, setSandboxError] = useState(null);
   const safeCSS = (cssCode + '\n' + customCSS).replace(/<\/style>/gi, '');
-  const safeJS = jsCode.replace(/<\/script>/gi, '');
+
+  useEffect(() => {
+    if (!jsCode.trim()) return;
+    executeInSandbox(jsCode)
+      .then(() => setSandboxError(null))
+      .catch((err) => setSandboxError(err.message));
+  }, [jsCode]);
 
   return (
     <>
@@ -22,14 +30,20 @@ export default function CustomScriptWidgetView({ config = {} }) {
           borderRadius,
           padding: '16px',
           display: 'flex',
+          flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
           boxSizing: 'border-box',
           fontFamily: 'Outfit, sans-serif',
         }}
-        dangerouslySetInnerHTML={{ __html: htmlCode }}
-      />
-      {safeJS ? <script dangerouslySetInnerHTML={{ __html: safeJS }} /> : null}
+      >
+        <div dangerouslySetInnerHTML={{ __html: htmlCode }} />
+        {sandboxError && (
+          <div style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '0.5rem' }}>
+            ⚠️ Sandbox Error: {sandboxError}
+          </div>
+        )}
+      </div>
     </>
   );
 }
