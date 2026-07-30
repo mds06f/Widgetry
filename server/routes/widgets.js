@@ -4,6 +4,7 @@ const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const db = require('../database');
 const analyticsDb = require('../database_analytics');
+const { apiCache } = require('../middleware/cache');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_widgetry_key';
 
@@ -217,8 +218,8 @@ router.delete('/:id', (req, res) => {
   }
 });
 
-// GET weather proxy endpoint
-router.get('/proxy/weather', async (req, res) => {
+// GET weather proxy endpoint (cached for 5 minutes)
+router.get('/proxy/weather', apiCache(5 * 60 * 1000), async (req, res) => {
   const city = req.query.city || 'San Francisco';
   try {
     // 1. Geocode city name to lat/long using Open-Meteo Geocoding API
