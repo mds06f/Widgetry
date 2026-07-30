@@ -84,7 +84,40 @@ function getAnalytics(widgetId) {
   };
 }
 
+function getDetailedAnalytics(widgetId) {
+  const stats = getAnalytics(widgetId);
+  const hits = getAll().filter((h) => h.widgetId === widgetId);
+  
+  // Calculate daily view breakdown for past 7 days
+  const now = new Date();
+  const dailyBreakdown = {};
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    const dateStr = d.toISOString().split('T')[0];
+    dailyBreakdown[dateStr] = 0;
+  }
+
+  hits.forEach((h) => {
+    const dateStr = h.timestamp ? h.timestamp.split('T')[0] : null;
+    if (dateStr && dailyBreakdown[dateStr] !== undefined) {
+      dailyBreakdown[dateStr]++;
+    }
+  });
+
+  return {
+    totalViews: stats.totalViews,
+    topReferrer: stats.referrers.length > 0 ? stats.referrers[0].domain : 'None',
+    referrers: stats.referrers,
+    dailyBreakdown: Object.keys(dailyBreakdown).map((date) => ({
+      date,
+      views: dailyBreakdown[date],
+    })),
+  };
+}
+
 module.exports = {
   recordHit,
   getAnalytics,
+  getDetailedAnalytics,
 };
