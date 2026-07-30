@@ -188,10 +188,39 @@ router.put('/:id', (req, res) => {
       }
     }
 
-    const updated = db.update(req.params.id, { name, config });
+    // Append version history snapshot before updating
+    const history = widget.history || [];
+    const newHistory = [
+      ...history,
+      {
+        versionId: `v_${Date.now()}`,
+        name: widget.name,
+        config: JSON.parse(JSON.stringify(widget.config || {})),
+        timestamp: new Date().toISOString(),
+      },
+    ];
+
+    const updated = db.update(req.params.id, {
+      name,
+      config,
+      history: newHistory,
+    });
     res.json(updated);
   } catch (err) {
     res.status(500).json({ error: 'Failed to update widget' });
+  }
+});
+
+// GET widget version history
+router.get('/:id/history', (req, res) => {
+  try {
+    const widget = db.getById(req.params.id);
+    if (!widget) {
+      return res.status(404).json({ error: 'Widget not found' });
+    }
+    res.json(widget.history || []);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch widget history' });
   }
 });
 
