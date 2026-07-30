@@ -3,6 +3,7 @@ const cors = require('cors');
 const path = require('path');
 const widgetRoutes = require('./routes/widgets');
 const authRoutes = require('./routes/auth');
+const { handleGraphQL } = require('./graphql');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -14,6 +15,7 @@ app.use(express.json());
 // Load API routes
 app.use('/api/widgets', widgetRoutes);
 app.use('/api/auth', authRoutes);
+app.post('/graphql', handleGraphQL);
 
 // Serve Static Assets in Production
 const clientBuildPath = path.join(__dirname, '../client/dist');
