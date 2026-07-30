@@ -251,6 +251,32 @@ router.get('/:id/analytics/summary', (req, res) => {
   }
 });
 
+// GET server-side rendered SVG image endpoint for static markdown/email embeds
+router.get('/render/:id.svg', (req, res) => {
+  try {
+    const widget = db.getById(req.params.id);
+    if (!widget) {
+      return res.status(404).send('<svg xmlns="http://www.w3.org/2000/svg"><text y="20">Widget not found</text></svg>');
+    }
+
+    const title = widget.name || 'Widget';
+    const type = widget.type || 'Standard';
+
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200" viewBox="0 0 400 200">
+      <rect width="100%" height="100%" rx="12" fill="#1b2542"/>
+      <text x="20" y="40" fill="#6366f1" font-family="sans-serif" font-size="14" font-weight="bold">${type.toUpperCase()}</text>
+      <text x="20" y="80" fill="#ffffff" font-family="sans-serif" font-size="20" font-weight="bold">${title}</text>
+      <text x="20" y="160" fill="#94a3b8" font-family="sans-serif" font-size="12">Powered by Widgetry Platform</text>
+    </svg>`;
+
+    res.setHeader('Content-Type', 'image/svg+xml');
+    res.setHeader('Cache-Control', 'max-age=60');
+    res.send(svg);
+  } catch (err) {
+    res.status(500).send('<svg xmlns="http://www.w3.org/2000/svg"><text y="20">Rendering Error</text></svg>');
+  }
+});
+
 // DELETE widget
 router.delete('/:id', (req, res) => {
   try {
