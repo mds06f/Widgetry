@@ -91,6 +91,7 @@ export default function WidgetRender({ id }) {
         border: widget.config.borderWidth && widget.config.borderWidth !== '0px' && widget.config.borderStyle && widget.config.borderStyle !== 'none'
           ? `${widget.config.borderWidth} ${widget.config.borderStyle} ${widget.config.borderColor || 'transparent'}`
           : 'none',
+        opacity: widget.config.opacity !== undefined ? widget.config.opacity : 1.0,
       }}
     >
       <ViewComponent config={widget.config} />

@@ -322,6 +322,18 @@ export default function WidgetEditor({
                 />
               </div>
             )}
+            <div className="config-field">
+              <label>Widget Opacity ({Math.round((config.opacity !== undefined ? config.opacity : 1) * 100)}%)</label>
+              <input
+                type="range"
+                min="0.1"
+                max="1.0"
+                step="0.05"
+                value={config.opacity !== undefined ? config.opacity : 1.0}
+                onChange={(e) => handleConfigChange({ ...config, opacity: parseFloat(e.target.value) })}
+                style={{ width: '100%', accentColor: '#6366f1' }}
+              />
+            </div>
           </div>
         </div>
 
@@ -358,6 +370,7 @@ export default function WidgetEditor({
                 border: config.borderWidth && config.borderWidth !== '0px' && config.borderStyle && config.borderStyle !== 'none'
                   ? `${config.borderWidth} ${config.borderStyle} ${config.borderColor || 'transparent'}`
                   : 'none',
+                opacity: config.opacity !== undefined ? config.opacity : 1.0,
               }}
             >
               {/* Render the View component live with current config state */}
