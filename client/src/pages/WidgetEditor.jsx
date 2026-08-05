@@ -280,6 +280,15 @@ export default function WidgetEditor({
                 placeholder="My Custom Widget"
               />
             </div>
+            <div className="config-field">
+              <label>Hover Tooltip Text</label>
+              <input
+                type="text"
+                value={config.tooltipText || ''}
+                onChange={(e) => handleConfigChange({ ...config, tooltipText: e.target.value })}
+                placeholder="Tooltip text shown on hover"
+              />
+            </div>
           </div>
 
           <div className="config-group">
@@ -372,6 +381,7 @@ export default function WidgetEditor({
                   : 'none',
                 opacity: config.opacity !== undefined ? config.opacity : 1.0,
               }}
+              title={config.tooltipText || ''}
             >
               {/* Render the View component live with current config state */}
               <ViewComponent config={config} />

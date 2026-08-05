@@ -93,6 +93,7 @@ export default function WidgetRender({ id }) {
           : 'none',
         opacity: widget.config.opacity !== undefined ? widget.config.opacity : 1.0,
       }}
+      title={widget.config.tooltipText || ''}
     >
       <ViewComponent config={widget.config} />
     </div>
