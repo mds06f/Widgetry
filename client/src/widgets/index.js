@@ -46,7 +46,37 @@ import WhiteboardWidgetConfig from './Whiteboard/WhiteboardWidgetConfig';
 import CustomScriptWidgetView from './CustomScript/CustomScriptWidgetView';
 import CustomScriptWidgetConfig from './CustomScript/CustomScriptWidgetConfig';
 
+import TextBannerWidgetView from './TextBanner/TextBannerWidgetView';
+import TextBannerWidgetConfig from './TextBanner/TextBannerWidgetConfig';
+
 export const widgetRegistry = {
+  textbanner: {
+    name: 'Text Banner',
+    description: 'A beautiful customizable simple text banner widget.',
+    icon: 'Type',
+    view: TextBannerWidgetView,
+    config: TextBannerWidgetConfig,
+    defaultConfig: {
+      text: 'Welcome to Widgetry!',
+      fontSize: '24px',
+      fontWeight: 'bold',
+      alignment: 'center',
+      letterSpacing: 'normal',
+      fontFamily: 'Outfit',
+      textColor: '#ffffff',
+      backgroundStyle: 'gradient',
+      backgroundColor: '#1e293b',
+      gradientName: 'sunset',
+      backgroundImageUrl: '',
+      borderRadius: '12px',
+      customCSS: '',
+      darkMode: false,
+      hoverAnimation: 'none',
+      textShadow: 'none',
+      cspDirective: "default-src 'self' 'unsafe-inline' https:;",
+      outboundWebhookUrl: '',
+    },
+  },
   customscript: {
     name: 'Custom Script Injector',
     description:
