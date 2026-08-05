@@ -80,5 +80,26 @@ export default function WidgetRender({ id }) {
 
   const ViewComponent = typeDetails.view;
 
-  return <ViewComponent config={widget.config} />;
+  return (
+    <div
+      className={widget.config.customScrollbar ? 'custom-scrollbar' : ''}
+      style={{
+        width: '100%',
+        height: '100vh',
+        boxSizing: 'border-box',
+        overflow: 'hidden',
+        borderRadius: widget.config.borderRadius || '12px',
+        border: widget.config.borderWidth && widget.config.borderWidth !== '0px' && widget.config.borderStyle && widget.config.borderStyle !== 'none'
+          ? `${widget.config.borderWidth} ${widget.config.borderStyle} ${widget.config.borderColor || 'transparent'}`
+          : 'none',
+        opacity: widget.config.opacity !== undefined ? widget.config.opacity : 1.0,
+        boxShadow: widget.config.glowEnable
+          ? `0 0 ${widget.config.glowBlur || '10px'} ${widget.config.glowColor || '#6366f1'}`
+          : 'none',
+      }}
+      title={widget.config.tooltipText || ''}
+    >
+      <ViewComponent config={widget.config} />
+    </div>
+  );
 }

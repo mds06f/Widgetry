@@ -24,6 +24,7 @@ export default function ClockWidgetView({ config }) {
     darkMode = false,
     hoverAnimation = 'none',
     showDate = false,
+    dateFormat = 'MM/DD/YYYY',
     textShadow = 'none',
   } = config;
 
@@ -60,13 +61,20 @@ export default function ClockWidgetView({ config }) {
 
   const timeString = `${displayHours}:${minutes}${showSeconds ? `:${seconds}` : ''}${ampm}`;
 
-  const dateOptions = {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
+  const getFormattedDate = () => {
+    const day = String(time.getDate()).padStart(2, '0');
+    const month = String(time.getMonth() + 1).padStart(2, '0');
+    const year = time.getFullYear();
+
+    if (dateFormat === 'DD/MM/YYYY') {
+      return `${day}/${month}/${year}`;
+    }
+    if (dateFormat === 'YYYY-MM-DD') {
+      return `${year}-${month}-${day}`;
+    }
+    return `${month}/${day}/${year}`;
   };
-  const dateString = time.toLocaleDateString(undefined, dateOptions);
+  const dateString = getFormattedDate();
 
   const fontUrl =
     fontFamily && fontFamily !== 'monospace'
@@ -95,8 +103,7 @@ export default function ClockWidgetView({ config }) {
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-          border: `${borderWidth} solid ${borderColor}`,
-          borderRadius: '8px',
+          border: 'none',
           padding: '10px 20px',
           textAlign: 'center',
           userSelect: 'none',

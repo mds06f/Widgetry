@@ -280,6 +280,116 @@ export default function WidgetEditor({
                 placeholder="My Custom Widget"
               />
             </div>
+            <div className="config-field">
+              <label>Hover Tooltip Text</label>
+              <input
+                type="text"
+                value={config.tooltipText || ''}
+                onChange={(e) => handleConfigChange({ ...config, tooltipText: e.target.value })}
+                placeholder="Tooltip text shown on hover"
+              />
+            </div>
+          </div>
+
+          <div className="config-group">
+            <h3>Border & Frame</h3>
+            <div className="config-row">
+              <div className="config-field">
+                <label>Border Style</label>
+                <select
+                  value={config.borderStyle || 'none'}
+                  onChange={(e) => handleConfigChange({ ...config, borderStyle: e.target.value })}
+                >
+                  <option value="none">None</option>
+                  <option value="solid">Solid</option>
+                  <option value="dashed">Dashed</option>
+                  <option value="dotted">Dotted</option>
+                  <option value="double">Double</option>
+                </select>
+              </div>
+              <div className="config-field">
+                <label>Border Width</label>
+                <select
+                  value={config.borderWidth || '0px'}
+                  onChange={(e) => handleConfigChange({ ...config, borderWidth: e.target.value })}
+                >
+                  <option value="0px">None (0px)</option>
+                  <option value="1px">Thin (1px)</option>
+                  <option value="2px">Medium (2px)</option>
+                  <option value="4px">Thick (4px)</option>
+                  <option value="8px">Extra Thick (8px)</option>
+                </select>
+              </div>
+            </div>
+            {config.borderStyle && config.borderStyle !== 'none' && (
+              <div className="config-field">
+                <label>Border Color</label>
+                <input
+                  type="color"
+                  value={config.borderColor || '#ffffff'}
+                  onChange={(e) => handleConfigChange({ ...config, borderColor: e.target.value })}
+                />
+              </div>
+            )}
+            <div className="config-field">
+              <label>Widget Opacity ({Math.round((config.opacity !== undefined ? config.opacity : 1) * 100)}%)</label>
+              <input
+                type="range"
+                min="0.1"
+                max="1.0"
+                step="0.05"
+                value={config.opacity !== undefined ? config.opacity : 1.0}
+                onChange={(e) => handleConfigChange({ ...config, opacity: parseFloat(e.target.value) })}
+                style={{ width: '100%', accentColor: '#6366f1' }}
+              />
+            </div>
+            <div className="config-field toggle-field">
+              <label>Enable Border Glow</label>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  checked={config.glowEnable === true}
+                  onChange={(e) => handleConfigChange({ ...config, glowEnable: e.target.checked })}
+                />
+                <span className="slider"></span>
+              </label>
+            </div>
+            {config.glowEnable && (
+              <div className="config-row">
+                <div className="config-field">
+                  <label>Glow Color</label>
+                  <input
+                    type="color"
+                    value={config.glowColor || '#6366f1'}
+                    onChange={(e) => handleConfigChange({ ...config, glowColor: e.target.value })}
+                  />
+                </div>
+                <div className="config-field">
+                  <label>Glow Blur ({config.glowBlur || '10px'})</label>
+                  <select
+                    value={config.glowBlur || '10px'}
+                    onChange={(e) => handleConfigChange({ ...config, glowBlur: e.target.value })}
+                  >
+                    <option value="5px">Subtle (5px)</option>
+                    <option value="10px">Medium (10px)</option>
+                    <option value="20px">Strong (20px)</option>
+                    <option value="30px">Intense (30px)</option>
+                    <option value="40px">Extra Intense (40px)</option>
+                  </select>
+                </div>
+              </div>
+            )}
+            <div className="config-field toggle-field">
+              <label>Custom Scrollbar</label>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  checked={config.customScrollbar === true}
+                  onChange={(e) => handleConfigChange({ ...config, customScrollbar: e.target.checked })}
+                />
+                <span className="slider"></span>
+              </label>
+            </div>
           </div>
         </div>
 
@@ -308,15 +418,21 @@ export default function WidgetEditor({
           <div className="preview-title">Live Interactive Preview</div>
           <div className="preview-frame-wrapper">
             <div
+              className={config.customScrollbar ? 'custom-scrollbar' : ''}
               style={{
                 width: '100%',
                 height: '200px',
                 overflow: 'hidden',
                 borderRadius: config.borderRadius || '12px',
-                border: config.borderWidth
-                  ? `${config.borderWidth} solid ${config.borderColor}`
+                border: config.borderWidth && config.borderWidth !== '0px' && config.borderStyle && config.borderStyle !== 'none'
+                  ? `${config.borderWidth} ${config.borderStyle} ${config.borderColor || 'transparent'}`
+                  : 'none',
+                opacity: config.opacity !== undefined ? config.opacity : 1.0,
+                boxShadow: config.glowEnable
+                  ? `0 0 ${config.glowBlur || '10px'} ${config.glowColor || '#6366f1'}`
                   : 'none',
               }}
+              title={config.tooltipText || ''}
             >
               {/* Render the View component live with current config state */}
               <ViewComponent config={config} />
@@ -681,6 +797,33 @@ export default function WidgetEditor({
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {copied && (
+        <div
+          className="toast-animation"
+          style={{
+            position: 'fixed',
+            bottom: '2rem',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            background: 'rgba(16, 185, 129, 0.95)',
+            backdropFilter: 'blur(8px)',
+            color: '#ffffff',
+            padding: '0.75rem 1.5rem',
+            borderRadius: '50px',
+            boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 0 15px rgba(16, 185, 129, 0.4)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            fontWeight: '600',
+            fontSize: '0.9rem',
+          }}
+        >
+          <LucideIcons.CheckCircle2 size={16} />
+          <span>Embed code copied to clipboard!</span>
         </div>
       )}
     </div>

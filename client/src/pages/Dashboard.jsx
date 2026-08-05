@@ -6,14 +6,35 @@ export default function Dashboard({ navigate, token, user }) {
   const [widgets, setWidgets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState('newest');
+  const [copiedId, setCopiedId] = useState(null);
   const [draggedWidgetId, setDraggedWidgetId] = useState(null);
 
-  const filteredWidgets = widgets.filter((w) => {
-    const query = searchQuery.toLowerCase();
-    const nameMatch = w.name ? w.name.toLowerCase().includes(query) : false;
-    const typeMatch = w.type ? w.type.toLowerCase().includes(query) : false;
-    return nameMatch || typeMatch;
-  });
+  const filteredAndSortedWidgets = widgets
+    .filter((w) => {
+      const query = searchQuery.toLowerCase();
+      const nameMatch = w.name ? w.name.toLowerCase().includes(query) : false;
+      const typeMatch = w.type ? w.type.toLowerCase().includes(query) : false;
+      return nameMatch || typeMatch;
+    })
+    .sort((a, b) => {
+      if (sortBy === 'name-asc') {
+        return (a.name || '').localeCompare(b.name || '');
+      }
+      if (sortBy === 'name-desc') {
+        return (b.name || '').localeCompare(a.name || '');
+      }
+      if (sortBy === 'oldest') {
+        return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+      }
+      if (sortBy === 'views-desc') {
+        return (b.views || 0) - (a.views || 0);
+      }
+      if (sortBy === 'views-asc') {
+        return (a.views || 0) - (b.views || 0);
+      }
+      return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+    });
 
   const handleDragStart = (id) => {
     setDraggedWidgetId(id);
@@ -187,25 +208,43 @@ export default function Dashboard({ navigate, token, user }) {
       </div>
 
       {widgets.length > 0 && (
-        <div style={{ marginBottom: '1.5rem', position: 'relative' }}>
-          <LucideIcons.Search
-            size={18}
-            style={{
-              position: 'absolute',
-              left: '14px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              color: 'var(--text-secondary)',
-            }}
-          />
-          <input
-            type="text"
-            className="input"
-            placeholder="Search widgets by name or type..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{ paddingLeft: '42px', width: '100%' }}
-          />
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+          <div style={{ position: 'relative', flex: 1, minWidth: '240px' }}>
+            <LucideIcons.Search
+              size={18}
+              style={{
+                position: 'absolute',
+                left: '14px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: 'var(--text-secondary)',
+              }}
+            />
+            <input
+              type="text"
+              className="input"
+              placeholder="Search widgets by name or type..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{ paddingLeft: '42px', width: '100%' }}
+            />
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>Sort by:</label>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="input"
+              style={{ width: '180px', padding: '0.5rem 1rem' }}
+            >
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="name-asc">Name (A-Z)</option>
+              <option value="name-desc">Name (Z-A)</option>
+              <option value="views-desc">Most Viewed</option>
+              <option value="views-asc">Least Viewed</option>
+            </select>
+          </div>
         </div>
       )}
 
@@ -258,7 +297,7 @@ export default function Dashboard({ navigate, token, user }) {
             <span>Create First Widget</span>
           </button>
         </div>
-      ) : filteredWidgets.length === 0 ? (
+      ) : filteredAndSortedWidgets.length === 0 ? (
         <div
           style={{
             textAlign: 'center',
@@ -271,7 +310,7 @@ export default function Dashboard({ navigate, token, user }) {
       ) : (
         // Widgets Grid
         <div className="grid">
-          {filteredWidgets.map((widget) => {
+          {filteredAndSortedWidgets.map((widget) => {
             const registryItem = widgetRegistry[widget.type] || {
               name: 'Unknown Widget',
               icon: 'HelpCircle',
@@ -445,6 +484,33 @@ export default function Dashboard({ navigate, token, user }) {
               })}
             </div>
           </div>
+        </div>
+      )}
+
+      {copiedId && (
+        <div
+          className="toast-animation"
+          style={{
+            position: 'fixed',
+            bottom: '2rem',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            background: 'rgba(16, 185, 129, 0.95)',
+            backdropFilter: 'blur(8px)',
+            color: '#ffffff',
+            padding: '0.75rem 1.5rem',
+            borderRadius: '50px',
+            boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 0 15px rgba(16, 185, 129, 0.4)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            fontWeight: '600',
+            fontSize: '0.9rem',
+          }}
+        >
+          <LucideIcons.CheckCircle2 size={16} />
+          <span>Embed code copied to clipboard!</span>
         </div>
       )}
     </div>

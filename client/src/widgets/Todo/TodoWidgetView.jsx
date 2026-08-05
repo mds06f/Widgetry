@@ -308,8 +308,8 @@ export default function TodoWidgetView({ config }) {
           )}
         </div>
 
-        {/* Footer — only shown when there are completed items */}
-        {completedCount > 0 && (
+        {/* Footer — shown when there are any items */}
+        {items.length > 0 && (
           <div
             style={{
               padding: '0.5rem 1rem',
@@ -322,24 +322,50 @@ export default function TodoWidgetView({ config }) {
             }}
           >
             <span style={{ fontSize: '0.72rem', opacity: 0.6 }}>
-              {completedCount} of {items.length} done
+              {items.filter(i => !i.done).length} active left
             </span>
-            <button
-              onClick={clearCompleted}
-              style={{
-                background: 'rgba(239, 68, 68, 0.2)',
-                border: '1px solid rgba(239, 68, 68, 0.4)',
-                borderRadius: '5px',
-                color: '#fca5a5',
-                cursor: 'pointer',
-                fontSize: '0.7rem',
-                padding: '0.2rem 0.5rem',
-                fontFamily: 'Outfit, sans-serif',
-                transition: 'background 0.15s',
-              }}
-            >
-              Clear done
-            </button>
+            <div style={{ display: 'flex', gap: '0.35rem' }}>
+              {completedCount > 0 && (
+                <button
+                  onClick={clearCompleted}
+                  style={{
+                    background: 'rgba(239, 68, 68, 0.1)',
+                    border: '1px solid rgba(239, 68, 68, 0.25)',
+                    borderRadius: '5px',
+                    color: '#fca5a5',
+                    cursor: 'pointer',
+                    fontSize: '0.7rem',
+                    padding: '0.2rem 0.5rem',
+                    fontFamily: 'Outfit, sans-serif',
+                    transition: 'all 0.15s',
+                  }}
+                  title="Remove completed items"
+                >
+                  Clear Done
+                </button>
+              )}
+              <button
+                onClick={() => {
+                  if (confirm('Clear all tasks from this list?')) {
+                    setItems([]);
+                  }
+                }}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  borderRadius: '5px',
+                  color: textColor,
+                  cursor: 'pointer',
+                  fontSize: '0.7rem',
+                  padding: '0.2rem 0.5rem',
+                  fontFamily: 'Outfit, sans-serif',
+                  transition: 'all 0.15s',
+                }}
+                title="Wipe entire task list"
+              >
+                Clear All
+              </button>
+            </div>
           </div>
         )}
       </div>
