@@ -137,6 +137,7 @@ export const widgetRegistry = {
       cspDirective: "default-src 'self' 'unsafe-inline' https:;",
       outboundWebhookUrl: '',
       showDate: false,
+      dateFormat: 'MM/DD/YYYY',
     },
   },
   quote: {

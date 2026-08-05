@@ -50,6 +50,20 @@ export default function ClockWidgetConfig({ config, onChange }) {
         </label>
       </div>
 
+      {config.showDate && (
+        <div className="config-field">
+          <label>Date Format</label>
+          <select
+            value={config.dateFormat || 'MM/DD/YYYY'}
+            onChange={(e) => handleUpdate('dateFormat', e.target.value)}
+          >
+            <option value="MM/DD/YYYY">MM/DD/YYYY (US)</option>
+            <option value="DD/MM/YYYY">DD/MM/YYYY (EU)</option>
+            <option value="YYYY-MM-DD">YYYY-MM-DD (ISO)</option>
+          </select>
+        </div>
+      )}
+
       <div className="config-field toggle-field">
         <label>Dark Mode</label>
         <label className="toggle-switch">
