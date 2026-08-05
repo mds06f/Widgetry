@@ -92,6 +92,9 @@ export default function WidgetRender({ id }) {
           ? `${widget.config.borderWidth} ${widget.config.borderStyle} ${widget.config.borderColor || 'transparent'}`
           : 'none',
         opacity: widget.config.opacity !== undefined ? widget.config.opacity : 1.0,
+        boxShadow: widget.config.glowEnable
+          ? `0 0 ${widget.config.glowBlur || '10px'} ${widget.config.glowColor || '#6366f1'}`
+          : 'none',
       }}
       title={widget.config.tooltipText || ''}
     >

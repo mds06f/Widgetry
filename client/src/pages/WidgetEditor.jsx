@@ -343,6 +343,42 @@ export default function WidgetEditor({
                 style={{ width: '100%', accentColor: '#6366f1' }}
               />
             </div>
+            <div className="config-field toggle-field">
+              <label>Enable Border Glow</label>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  checked={config.glowEnable === true}
+                  onChange={(e) => handleConfigChange({ ...config, glowEnable: e.target.checked })}
+                />
+                <span className="slider"></span>
+              </label>
+            </div>
+            {config.glowEnable && (
+              <div className="config-row">
+                <div className="config-field">
+                  <label>Glow Color</label>
+                  <input
+                    type="color"
+                    value={config.glowColor || '#6366f1'}
+                    onChange={(e) => handleConfigChange({ ...config, glowColor: e.target.value })}
+                  />
+                </div>
+                <div className="config-field">
+                  <label>Glow Blur ({config.glowBlur || '10px'})</label>
+                  <select
+                    value={config.glowBlur || '10px'}
+                    onChange={(e) => handleConfigChange({ ...config, glowBlur: e.target.value })}
+                  >
+                    <option value="5px">Subtle (5px)</option>
+                    <option value="10px">Medium (10px)</option>
+                    <option value="20px">Strong (20px)</option>
+                    <option value="30px">Intense (30px)</option>
+                    <option value="40px">Extra Intense (40px)</option>
+                  </select>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -380,6 +416,9 @@ export default function WidgetEditor({
                   ? `${config.borderWidth} ${config.borderStyle} ${config.borderColor || 'transparent'}`
                   : 'none',
                 opacity: config.opacity !== undefined ? config.opacity : 1.0,
+                boxShadow: config.glowEnable
+                  ? `0 0 ${config.glowBlur || '10px'} ${config.glowColor || '#6366f1'}`
+                  : 'none',
               }}
               title={config.tooltipText || ''}
             >
