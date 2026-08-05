@@ -787,6 +787,33 @@ export default function WidgetEditor({
           </div>
         </div>
       )}
+
+      {copied && (
+        <div
+          className="toast-animation"
+          style={{
+            position: 'fixed',
+            bottom: '2rem',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            background: 'rgba(16, 185, 129, 0.95)',
+            backdropFilter: 'blur(8px)',
+            color: '#ffffff',
+            padding: '0.75rem 1.5rem',
+            borderRadius: '50px',
+            boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 0 15px rgba(16, 185, 129, 0.4)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            fontWeight: '600',
+            fontSize: '0.9rem',
+          }}
+        >
+          <LucideIcons.CheckCircle2 size={16} />
+          <span>Embed code copied to clipboard!</span>
+        </div>
+      )}
     </div>
   );
 }
