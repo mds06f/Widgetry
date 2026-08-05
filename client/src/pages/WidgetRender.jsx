@@ -82,6 +82,7 @@ export default function WidgetRender({ id }) {
 
   return (
     <div
+      className={widget.config.customScrollbar ? 'custom-scrollbar' : ''}
       style={{
         width: '100%',
         height: '100vh',

@@ -379,6 +379,17 @@ export default function WidgetEditor({
                 </div>
               </div>
             )}
+            <div className="config-field toggle-field">
+              <label>Custom Scrollbar</label>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  checked={config.customScrollbar === true}
+                  onChange={(e) => handleConfigChange({ ...config, customScrollbar: e.target.checked })}
+                />
+                <span className="slider"></span>
+              </label>
+            </div>
           </div>
         </div>
 
@@ -407,6 +418,7 @@ export default function WidgetEditor({
           <div className="preview-title">Live Interactive Preview</div>
           <div className="preview-frame-wrapper">
             <div
+              className={config.customScrollbar ? 'custom-scrollbar' : ''}
               style={{
                 width: '100%',
                 height: '200px',
