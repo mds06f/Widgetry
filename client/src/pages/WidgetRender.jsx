@@ -80,5 +80,20 @@ export default function WidgetRender({ id }) {
 
   const ViewComponent = typeDetails.view;
 
-  return <ViewComponent config={widget.config} />;
+  return (
+    <div
+      style={{
+        width: '100%',
+        height: '100vh',
+        boxSizing: 'border-box',
+        overflow: 'hidden',
+        borderRadius: widget.config.borderRadius || '12px',
+        border: widget.config.borderWidth && widget.config.borderWidth !== '0px' && widget.config.borderStyle && widget.config.borderStyle !== 'none'
+          ? `${widget.config.borderWidth} ${widget.config.borderStyle} ${widget.config.borderColor || 'transparent'}`
+          : 'none',
+      }}
+    >
+      <ViewComponent config={widget.config} />
+    </div>
+  );
 }

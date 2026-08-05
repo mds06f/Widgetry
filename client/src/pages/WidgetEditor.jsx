@@ -281,6 +281,48 @@ export default function WidgetEditor({
               />
             </div>
           </div>
+
+          <div className="config-group">
+            <h3>Border & Frame</h3>
+            <div className="config-row">
+              <div className="config-field">
+                <label>Border Style</label>
+                <select
+                  value={config.borderStyle || 'none'}
+                  onChange={(e) => handleConfigChange({ ...config, borderStyle: e.target.value })}
+                >
+                  <option value="none">None</option>
+                  <option value="solid">Solid</option>
+                  <option value="dashed">Dashed</option>
+                  <option value="dotted">Dotted</option>
+                  <option value="double">Double</option>
+                </select>
+              </div>
+              <div className="config-field">
+                <label>Border Width</label>
+                <select
+                  value={config.borderWidth || '0px'}
+                  onChange={(e) => handleConfigChange({ ...config, borderWidth: e.target.value })}
+                >
+                  <option value="0px">None (0px)</option>
+                  <option value="1px">Thin (1px)</option>
+                  <option value="2px">Medium (2px)</option>
+                  <option value="4px">Thick (4px)</option>
+                  <option value="8px">Extra Thick (8px)</option>
+                </select>
+              </div>
+            </div>
+            {config.borderStyle && config.borderStyle !== 'none' && (
+              <div className="config-field">
+                <label>Border Color</label>
+                <input
+                  type="color"
+                  value={config.borderColor || '#ffffff'}
+                  onChange={(e) => handleConfigChange({ ...config, borderColor: e.target.value })}
+                />
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Dynamic widget config fields */}
@@ -313,8 +355,8 @@ export default function WidgetEditor({
                 height: '200px',
                 overflow: 'hidden',
                 borderRadius: config.borderRadius || '12px',
-                border: config.borderWidth
-                  ? `${config.borderWidth} solid ${config.borderColor}`
+                border: config.borderWidth && config.borderWidth !== '0px' && config.borderStyle && config.borderStyle !== 'none'
+                  ? `${config.borderWidth} ${config.borderStyle} ${config.borderColor || 'transparent'}`
                   : 'none',
               }}
             >
