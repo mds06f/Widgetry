@@ -55,7 +55,36 @@ import WorldClockWidgetConfig from './WorldClock/WorldClockWidgetConfig';
 import RSSFeedWidgetView from './RSSFeed/RSSFeedWidgetView';
 import RSSFeedWidgetConfig from './RSSFeed/RSSFeedWidgetConfig';
 
+import AudioPlayerWidgetView from './AudioPlayer/AudioPlayerWidgetView';
+import AudioPlayerWidgetConfig from './AudioPlayer/AudioPlayerWidgetConfig';
+
 export const widgetRegistry = {
+  audioplayer: {
+    name: 'Sleek Audio Player',
+    description: 'Play custom audio tracks with sleek controls and volume adjusting.',
+    icon: 'Play',
+    view: AudioPlayerWidgetView,
+    config: AudioPlayerWidgetConfig,
+    defaultConfig: {
+      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+      title: 'Sample Track',
+      artist: 'Royalty Free',
+      loop: false,
+      autoplay: false,
+      textColor: '#ffffff',
+      backgroundStyle: 'gradient',
+      backgroundColor: '#0b0f19',
+      gradientName: 'cosmic',
+      backgroundImageUrl: '',
+      borderRadius: '12px',
+      customCSS: '',
+      darkMode: false,
+      hoverAnimation: 'none',
+      textShadow: 'none',
+      cspDirective: "default-src 'self' 'unsafe-inline' https:;",
+      outboundWebhookUrl: '',
+    },
+  },
   rssfeed: {
     name: 'RSS Feed Aggregator',
     description: 'Pull headlines and links from any public RSS news feed.',
