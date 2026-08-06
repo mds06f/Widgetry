@@ -49,7 +49,37 @@ import CustomScriptWidgetConfig from './CustomScript/CustomScriptWidgetConfig';
 import TextBannerWidgetView from './TextBanner/TextBannerWidgetView';
 import TextBannerWidgetConfig from './TextBanner/TextBannerWidgetConfig';
 
+import WorldClockWidgetView from './WorldClock/WorldClockWidgetView';
+import WorldClockWidgetConfig from './WorldClock/WorldClockWidgetConfig';
+
 export const widgetRegistry = {
+  worldclock: {
+    name: 'World Clock Slideshow',
+    description: 'Compare dynamic times from up to three different global timezones side-by-side.',
+    icon: 'Clock',
+    view: WorldClockWidgetView,
+    config: WorldClockWidgetConfig,
+    defaultConfig: {
+      label1: 'New York',
+      tz1: 'America/New_York',
+      label2: 'London',
+      tz2: 'Europe/London',
+      label3: 'Tokyo',
+      tz3: 'Asia/Tokyo',
+      textColor: '#ffffff',
+      backgroundStyle: 'gradient',
+      backgroundColor: '#131a30',
+      gradientName: 'sunset',
+      backgroundImageUrl: '',
+      borderRadius: '12px',
+      customCSS: '',
+      darkMode: false,
+      hoverAnimation: 'none',
+      textShadow: 'none',
+      cspDirective: "default-src 'self' 'unsafe-inline' https:;",
+      outboundWebhookUrl: '',
+    },
+  },
   textbanner: {
     name: 'Text Banner',
     description: 'A beautiful customizable simple text banner widget.',
