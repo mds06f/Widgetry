@@ -50,12 +50,38 @@ export default function TodoWidgetView({ config }) {
     saveItems(storageKey, items);
   }, [items, storageKey]);
 
+  const triggerTodoWebhook = useCallback(async (event, taskData) => {
+    const match = window.location.pathname.match(/\/widget\/render\/([^/]+)/);
+    if (!match) return;
+    const widgetId = match[1];
+
+    try {
+      await fetch(`/api/widgets/${widgetId}/trigger-webhook`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          event: event,
+          data: {
+            task: taskData,
+            timestamp: new Date().toISOString()
+          }
+        })
+      });
+    } catch (e) {
+      console.error('Failed to trigger todo webhook:', e);
+    }
+  }, []);
+
   const addItem = useCallback(() => {
     const text = draft.trim();
     if (!text) return;
-    setItems((prev) => [...prev, { id: Date.now(), text, done: false }]);
+    const newItem = { id: Date.now(), text, done: false };
+    setItems((prev) => [...prev, newItem]);
     setDraft('');
-  }, [draft]);
+    triggerTodoWebhook('todo_add', newItem);
+  }, [draft, triggerTodoWebhook]);
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') addItem();
@@ -63,18 +89,35 @@ export default function TodoWidgetView({ config }) {
 
   const toggleItem = (id) => {
     setItems((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, done: !item.done } : item,
-      ),
+      prev.map((item) => {
+        if (item.id === id) {
+          const updated = { ...item, done: !item.done };
+          triggerTodoWebhook('todo_toggle', updated);
+          return updated;
+        }
+        return item;
+      })
     );
   };
 
   const deleteItem = (id) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
+    setItems((prev) => {
+      const target = prev.find((item) => item.id === id);
+      if (target) {
+        triggerTodoWebhook('todo_delete', target);
+      }
+      return prev.filter((item) => item.id !== id);
+    });
   };
 
   const clearCompleted = () => {
-    setItems((prev) => prev.filter((item) => !item.done));
+    setItems((prev) => {
+      const completed = prev.filter((item) => item.done);
+      completed.forEach((item) => {
+        triggerTodoWebhook('todo_delete', item);
+      });
+      return prev.filter((item) => !item.done);
+    });
   };
 
   const completedCount = items.filter((i) => i.done).length;

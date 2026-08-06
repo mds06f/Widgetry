@@ -3,6 +3,7 @@ import Dashboard from './pages/Dashboard';
 import WidgetEditor from './pages/WidgetEditor';
 import WidgetRender from './pages/WidgetRender';
 import AuthModal from './components/AuthModal';
+import ProfileModal from './components/ProfileModal';
 import { Layers, LogIn, LogOut, User } from 'lucide-react';
 
 export default function App() {
@@ -12,6 +13,7 @@ export default function App() {
   );
   const [user, setUser] = useState(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   useEffect(() => {
     const handleLocationChange = () => {
@@ -150,18 +152,38 @@ export default function App() {
               style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}
             >
               <div
+                onClick={() => setIsProfileOpen(true)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.4rem',
+                  gap: '0.45rem',
                   fontSize: '0.85rem',
                   background: 'rgba(255, 255, 255, 0.05)',
                   padding: '0.4rem 0.8rem',
                   borderRadius: '8px',
                   border: '1px solid rgba(255, 255, 255, 0.05)',
+                  cursor: 'pointer',
+                  transition: 'background 0.15s ease'
                 }}
+                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.09)'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'}
+                title="Edit profile settings"
               >
-                <User size={14} style={{ color: '#818cf8' }} />
+                {user.profilePic ? (
+                  <img
+                    src={user.profilePic}
+                    alt="Avatar"
+                    style={{
+                      width: '16px',
+                      height: '16px',
+                      borderRadius: '50%',
+                      objectFit: 'cover',
+                      border: '1px solid #818cf8'
+                    }}
+                  />
+                ) : (
+                  <User size={14} style={{ color: '#818cf8' }} />
+                )}
                 <span style={{ color: 'var(--text-secondary)' }}>
                   {user.email}
                 </span>
@@ -194,6 +216,14 @@ export default function App() {
         isOpen={isAuthOpen}
         onClose={() => setIsAuthOpen(false)}
         onAuthSuccess={handleAuthSuccess}
+      />
+
+      <ProfileModal
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+        user={user}
+        token={token}
+        onProfileUpdate={(updatedUser) => setUser(updatedUser)}
       />
     </div>
   );

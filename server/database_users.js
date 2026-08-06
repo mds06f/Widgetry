@@ -87,11 +87,37 @@ async function verifyPassword(password, passwordHash) {
   return await bcrypt.compare(password, passwordHash);
 }
 
+async function update(id, updateData) {
+  const users = getAll();
+  const userIndex = users.findIndex((u) => u.id === id);
+  if (userIndex === -1) return null;
+
+  const user = users[userIndex];
+
+  if (updateData.email) {
+    user.email = updateData.email.toLowerCase();
+  }
+  if (updateData.profilePic !== undefined) {
+    user.profilePic = updateData.profilePic;
+  }
+  if (updateData.password) {
+    const salt = await bcrypt.genSalt(10);
+    user.passwordHash = await bcrypt.hash(updateData.password, salt);
+  }
+
+  users[userIndex] = user;
+  saveAll(users);
+
+  const { passwordHash: _, ...userWithoutPassword } = user;
+  return userWithoutPassword;
+}
+
 module.exports = {
   getAll,
   getById,
   getByEmail,
   create,
+  update,
   verifyPassword,
   createOrg,
 };

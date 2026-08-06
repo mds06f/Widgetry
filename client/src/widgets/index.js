@@ -49,7 +49,92 @@ import CustomScriptWidgetConfig from './CustomScript/CustomScriptWidgetConfig';
 import TextBannerWidgetView from './TextBanner/TextBannerWidgetView';
 import TextBannerWidgetConfig from './TextBanner/TextBannerWidgetConfig';
 
+import WorldClockWidgetView from './WorldClock/WorldClockWidgetView';
+import WorldClockWidgetConfig from './WorldClock/WorldClockWidgetConfig';
+
+import RSSFeedWidgetView from './RSSFeed/RSSFeedWidgetView';
+import RSSFeedWidgetConfig from './RSSFeed/RSSFeedWidgetConfig';
+
+import AudioPlayerWidgetView from './AudioPlayer/AudioPlayerWidgetView';
+import AudioPlayerWidgetConfig from './AudioPlayer/AudioPlayerWidgetConfig';
+
 export const widgetRegistry = {
+  audioplayer: {
+    name: 'Sleek Audio Player',
+    description: 'Play custom audio tracks with sleek controls and volume adjusting.',
+    icon: 'Play',
+    view: AudioPlayerWidgetView,
+    config: AudioPlayerWidgetConfig,
+    defaultConfig: {
+      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+      title: 'Sample Track',
+      artist: 'Royalty Free',
+      loop: false,
+      autoplay: false,
+      textColor: '#ffffff',
+      backgroundStyle: 'gradient',
+      backgroundColor: '#0b0f19',
+      gradientName: 'cosmic',
+      backgroundImageUrl: '',
+      borderRadius: '12px',
+      customCSS: '',
+      darkMode: false,
+      hoverAnimation: 'none',
+      textShadow: 'none',
+      cspDirective: "default-src 'self' 'unsafe-inline' https:;",
+      outboundWebhookUrl: '',
+    },
+  },
+  rssfeed: {
+    name: 'RSS Feed Aggregator',
+    description: 'Pull headlines and links from any public RSS news feed.',
+    icon: 'Rss',
+    view: RSSFeedWidgetView,
+    config: RSSFeedWidgetConfig,
+    defaultConfig: {
+      feedUrl: 'https://news.ycombinator.com/rss',
+      headerSize: '1rem',
+      textColor: '#ffffff',
+      backgroundStyle: 'solid',
+      backgroundColor: '#0f172a',
+      gradientName: 'darkness',
+      backgroundImageUrl: '',
+      borderRadius: '12px',
+      customCSS: '',
+      darkMode: false,
+      hoverAnimation: 'none',
+      textShadow: 'none',
+      cspDirective: "default-src 'self' 'unsafe-inline' https:;",
+      outboundWebhookUrl: '',
+    },
+  },
+  worldclock: {
+    name: 'World Clock Slideshow',
+    description: 'Compare dynamic times from up to three different global timezones side-by-side.',
+    icon: 'Clock',
+    view: WorldClockWidgetView,
+    config: WorldClockWidgetConfig,
+    defaultConfig: {
+      label1: 'New York',
+      tz1: 'America/New_York',
+      label2: 'London',
+      tz2: 'Europe/London',
+      label3: 'Tokyo',
+      tz3: 'Asia/Tokyo',
+      textColor: '#ffffff',
+      backgroundStyle: 'gradient',
+      backgroundColor: '#131a30',
+      gradientName: 'sunset',
+      backgroundImageUrl: '',
+      borderRadius: '12px',
+      customCSS: '',
+      darkMode: false,
+      hoverAnimation: 'none',
+      textShadow: 'none',
+      cspDirective: "default-src 'self' 'unsafe-inline' https:;",
+      outboundWebhookUrl: '',
+    },
+  },
   textbanner: {
     name: 'Text Banner',
     description: 'A beautiful customizable simple text banner widget.',
