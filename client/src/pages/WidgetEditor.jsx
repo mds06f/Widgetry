@@ -3,6 +3,111 @@ import { widgetRegistry } from '../widgets';
 import * as LucideIcons from 'lucide-react';
 import { io } from 'socket.io-client';
 
+const AnalyticsTrendChart = ({ data }) => {
+  if (!data || data.length === 0) return null;
+
+  const maxViews = Math.max(...data.map(d => d.views), 1);
+  const height = 120;
+  const width = 360;
+  const padding = 20;
+
+  const chartHeight = height - padding * 2;
+  const chartWidth = width - padding * 2;
+
+  const points = data.map((d, index) => {
+    const x = padding + (index / (data.length - 1)) * chartWidth;
+    const y = height - padding - (d.views / maxViews) * chartHeight;
+    return `${x},${y}`;
+  });
+
+  const pathD = `M ${points.join(' L ')}`;
+
+  return (
+    <div style={{
+      background: 'rgba(0, 0, 0, 0.25)',
+      padding: '1rem',
+      borderRadius: '10px',
+      border: '1px solid rgba(255,255,255,0.05)',
+      marginTop: '1.25rem',
+      marginBottom: '1.25rem'
+    }}>
+      <h4 style={{
+        fontSize: '0.85rem',
+        color: 'var(--text-secondary)',
+        marginBottom: '0.75rem',
+        textTransform: 'uppercase',
+        letterSpacing: '0.05em'
+      }}>
+        7-Day Views Trend
+      </h4>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} style={{ overflow: 'visible' }}>
+          <line x1={padding} y1={padding} x2={width - padding} y2={padding} stroke="rgba(255,255,255,0.05)" strokeDasharray="3,3" />
+          <line x1={padding} y1={height / 2} x2={width - padding} y2={height / 2} stroke="rgba(255,255,255,0.05)" strokeDasharray="3,3" />
+          <line x1={padding} y1={height - padding} x2={width - padding} y2={height - padding} stroke="rgba(255,255,255,0.1)" />
+
+          <path
+            d={`${pathD} L ${width - padding},${height - padding} L ${padding},${height - padding} Z`}
+            fill="url(#sparkline-gradient)"
+            opacity="0.15"
+          />
+
+          <path
+            d={pathD}
+            fill="none"
+            stroke="#6366f1"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+
+          {data.map((d, index) => {
+            const [x, y] = points[index].split(',');
+            return (
+              <g key={index}>
+                <circle
+                  cx={x}
+                  cy={y}
+                  r="4"
+                  fill="#818cf8"
+                  stroke="#131a30"
+                  strokeWidth="2"
+                />
+                <text
+                  x={x}
+                  y={y - 8}
+                  textAnchor="middle"
+                  fill="#fff"
+                  fontSize="8"
+                  fontWeight="bold"
+                >
+                  {d.views}
+                </text>
+                <text
+                  x={x}
+                  y={height - 4}
+                  textAnchor="middle"
+                  fill="rgba(255,255,255,0.4)"
+                  fontSize="7"
+                >
+                  {new Date(d.date).toLocaleDateString('en-US', { weekday: 'short' })}
+                </text>
+              </g>
+            );
+          })}
+
+          <defs>
+            <linearGradient id="sparkline-gradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#6366f1" />
+              <stop offset="100%" stopColor="#6366f1" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+    </div>
+  );
+};
+
 export default function WidgetEditor({
   navigate,
   initialId,
@@ -728,6 +833,10 @@ export default function WidgetEditor({
                     </div>
                   </div>
                 </div>
+
+                {analyticsData.dailyBreakdown && (
+                  <AnalyticsTrendChart data={analyticsData.dailyBreakdown} />
+                )}
 
                 {/* Referrers breakdown */}
                 <h4

@@ -683,7 +683,7 @@ router.get('/:id/analytics', (req, res) => {
       }
     }
 
-    const report = analyticsDb.getAnalytics(req.params.id);
+    const report = analyticsDb.getDetailedAnalytics(req.params.id);
     res.json(report);
   } catch (err) {
     console.error('Analytics Fetch Error:', err.message);
