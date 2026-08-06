@@ -303,6 +303,7 @@ router.delete('/:id', (req, res) => {
 // GET weather proxy endpoint (cached for 5 minutes)
 router.get('/proxy/weather', apiCache(5 * 60 * 1000), async (req, res) => {
   const city = req.query.city || 'San Francisco';
+  const unit = req.query.unit || 'C';
   try {
     // 1. Geocode city name to lat/long using Open-Meteo Geocoding API
     const geocodeUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`;
@@ -315,16 +316,22 @@ router.get('/proxy/weather', apiCache(5 * 60 * 1000), async (req, res) => {
     const { latitude, longitude, name, country } = geocodeRes.data.results[0];
 
     // 2. Fetch current weather conditions
-    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`;
+    const tempUnit = unit === 'F' ? 'fahrenheit' : 'celsius';
+    const windUnit = unit === 'F' ? 'mph' : 'kmh';
+    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&temperature_unit=${tempUnit}&wind_speed_unit=${windUnit}`;
     const weatherRes = await axios.get(weatherUrl);
 
-    if (!weatherRes.data.current_weather) {
+    if (!weatherRes.data.current) {
       return res
         .status(500)
         .json({ error: 'Failed to fetch weather conditions' });
     }
 
-    const { temperature, weathercode } = weatherRes.data.current_weather;
+    const current = weatherRes.data.current;
+    const temperature = current.temperature_2m;
+    const humidity = current.relative_humidity_2m;
+    const windSpeed = current.wind_speed_10m;
+    const weathercode = current.weather_code;
 
     // 3. Map weather codes to friendly descriptions
     // Reference: WMO weather interpretation codes
@@ -359,6 +366,8 @@ router.get('/proxy/weather', apiCache(5 * 60 * 1000), async (req, res) => {
       city: name,
       country: country || '',
       temperature,
+      humidity,
+      windSpeed,
       condition: details.condition,
       icon: details.icon,
       latitude,
