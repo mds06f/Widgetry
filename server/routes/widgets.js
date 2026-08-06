@@ -91,6 +91,39 @@ router.get('/:id', (req, res) => {
       }
     }
 
+    // Domain restrictions check
+    if (widget.config && widget.config.allowedDomains) {
+      const domains = widget.config.allowedDomains
+        .split(',')
+        .map((d) => d.trim().toLowerCase())
+        .filter(Boolean);
+
+      if (domains.length > 0) {
+        const refUrlStr = req.query.referrer || req.headers.referer;
+        if (!refUrlStr) {
+          return res.status(403).json({ error: 'Access denied: domain restriction active (no referrer found)' });
+        }
+
+        try {
+          const refUrl = new URL(refUrlStr);
+          const refHost = refUrl.hostname.toLowerCase();
+
+          const isAllowed = domains.some((domain) => {
+            return refHost === domain || refHost.endsWith('.' + domain);
+          });
+
+          const platformHost = req.headers.host ? req.headers.host.split(':')[0].toLowerCase() : 'localhost';
+          const isPlatform = refHost === platformHost || refHost === 'localhost' || refHost === '127.0.0.1';
+
+          if (!isAllowed && !isPlatform) {
+            return res.status(403).json({ error: `Access denied: domain '${refHost}' is not allowed to embed this widget` });
+          }
+        } catch (e) {
+          return res.status(403).json({ error: 'Access denied: invalid referrer URL' });
+        }
+      }
+    }
+
     res.json(widget);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch widget' });

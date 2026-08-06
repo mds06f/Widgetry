@@ -16,12 +16,14 @@ export default function WidgetRender({ id }) {
 
   const fetchWidget = async (widgetId) => {
     try {
-      const res = await fetch(`/api/widgets/${widgetId}`);
+      const parentReferrer = document.referrer ? encodeURIComponent(document.referrer) : '';
+      const res = await fetch(`/api/widgets/${widgetId}?referrer=${parentReferrer}`);
       if (res.ok) {
         const data = await res.json();
         setWidget(data);
       } else {
-        setError('Widget not found');
+        const errJson = await res.json().catch(() => ({}));
+        setError(errJson.error || 'Widget not found');
       }
     } catch (err) {
       console.error('Error rendering widget:', err);

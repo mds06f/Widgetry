@@ -391,6 +391,21 @@ export default function WidgetEditor({
               </label>
             </div>
           </div>
+          <div className="config-group">
+            <h3>Access Security</h3>
+            <div className="config-field">
+              <label>Allowed Domains (comma-separated)</label>
+              <input
+                type="text"
+                value={config.allowedDomains || ''}
+                onChange={(e) => handleConfigChange({ ...config, allowedDomains: e.target.value })}
+                placeholder="e.g. myblog.com, mysite.org"
+              />
+              <small style={{ color: 'var(--text-muted)', fontSize: '0.72rem', marginTop: '0.25rem', display: 'block' }}>
+                Leave blank to allow embedding on any website.
+              </small>
+            </div>
+          </div>
         </div>
 
         {/* Dynamic widget config fields */}
