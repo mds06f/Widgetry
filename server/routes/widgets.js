@@ -379,6 +379,59 @@ router.get('/proxy/weather', apiCache(5 * 60 * 1000), async (req, res) => {
   }
 });
 
+function parseRssXml(xmlString) {
+  const channelTitleMatch = xmlString.match(/<channel>[\s\S]*?<title>([\s\S]*?)<\/title>/i);
+  const feedTitle = channelTitleMatch ? channelTitleMatch[1].trim().replace(/<!\[CDATA\[([\s\S]*?)\]\]>/gi, '$1') : 'RSS Feed';
+
+  const items = [];
+  const itemMatches = xmlString.match(/<item>([\s\S]*?)<\/item>/gi) || [];
+
+  for (const itemXml of itemMatches.slice(0, 3)) {
+    const titleMatch = itemXml.match(/<title>([\s\S]*?)<\/title>/i);
+    const linkMatch = itemXml.match(/<link>([\s\S]*?)<\/link>/i);
+
+    let title = titleMatch ? titleMatch[1].trim() : 'No Title';
+    let link = linkMatch ? linkMatch[1].trim() : '#';
+
+    title = title.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/gi, '$1');
+    link = link.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/gi, '$1');
+
+    title = title
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#039;/g, "'");
+
+    items.push({ title, link });
+  }
+
+  return { title: feedTitle, items };
+}
+
+// GET RSS feed proxy endpoint (cached for 10 minutes)
+router.get('/proxy/rss', apiCache(10 * 60 * 1000), async (req, res) => {
+  const feedUrl = req.query.url;
+  if (!feedUrl) {
+    return res.status(400).json({ error: 'URL query parameter is required' });
+  }
+  try {
+    const response = await axios.get(feedUrl, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Widgetry/1.0' },
+      timeout: 5000,
+    });
+    const xml = response.data;
+    if (typeof xml !== 'string') {
+      return res.status(422).json({ error: 'Invalid feed content' });
+    }
+    const parsed = parseRssXml(xml);
+    res.json(parsed);
+  } catch (err) {
+    console.error('RSS Proxy Error:', err.message);
+    res.status(500).json({ error: 'Failed to fetch or parse RSS feed' });
+  }
+});
+
 // POST webhook data update
 router.post('/:id/webhook', (req, res) => {
   try {

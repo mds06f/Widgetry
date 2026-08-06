@@ -52,7 +52,33 @@ import TextBannerWidgetConfig from './TextBanner/TextBannerWidgetConfig';
 import WorldClockWidgetView from './WorldClock/WorldClockWidgetView';
 import WorldClockWidgetConfig from './WorldClock/WorldClockWidgetConfig';
 
+import RSSFeedWidgetView from './RSSFeed/RSSFeedWidgetView';
+import RSSFeedWidgetConfig from './RSSFeed/RSSFeedWidgetConfig';
+
 export const widgetRegistry = {
+  rssfeed: {
+    name: 'RSS Feed Aggregator',
+    description: 'Pull headlines and links from any public RSS news feed.',
+    icon: 'Rss',
+    view: RSSFeedWidgetView,
+    config: RSSFeedWidgetConfig,
+    defaultConfig: {
+      feedUrl: 'https://news.ycombinator.com/rss',
+      headerSize: '1rem',
+      textColor: '#ffffff',
+      backgroundStyle: 'solid',
+      backgroundColor: '#0f172a',
+      gradientName: 'darkness',
+      backgroundImageUrl: '',
+      borderRadius: '12px',
+      customCSS: '',
+      darkMode: false,
+      hoverAnimation: 'none',
+      textShadow: 'none',
+      cspDirective: "default-src 'self' 'unsafe-inline' https:;",
+      outboundWebhookUrl: '',
+    },
+  },
   worldclock: {
     name: 'World Clock Slideshow',
     description: 'Compare dynamic times from up to three different global timezones side-by-side.',
