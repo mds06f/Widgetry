@@ -108,6 +108,73 @@ const AnalyticsTrendChart = ({ data }) => {
   );
 };
 
+const STYLE_PRESETS = {
+  slate: {
+    textColor: '#f8fafc',
+    backgroundStyle: 'solid',
+    backgroundColor: '#334155',
+    borderRadius: '12px',
+    glowEnable: false,
+    borderStyle: 'solid',
+    borderWidth: '1px',
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    opacity: 1.0,
+    customScrollbar: true,
+  },
+  cyberpunk: {
+    textColor: '#00ffff',
+    backgroundStyle: 'solid',
+    backgroundColor: '#070714',
+    borderRadius: '0px',
+    glowEnable: true,
+    glowColor: '#ff007f',
+    glowBlur: '20px',
+    borderStyle: 'solid',
+    borderWidth: '2px',
+    borderColor: '#00ffff',
+    opacity: 0.95,
+    customScrollbar: true,
+    customCSS: `div { font-family: 'Courier New', monospace; text-shadow: 0 0 5px #00ffff; }`,
+  },
+  autumn: {
+    textColor: '#fef3c7',
+    backgroundStyle: 'gradient',
+    gradientName: 'sunset',
+    borderRadius: '24px',
+    glowEnable: true,
+    glowColor: '#b45309',
+    glowBlur: '10px',
+    borderStyle: 'none',
+    borderWidth: '0px',
+    opacity: 1.0,
+    customScrollbar: false,
+  },
+  glassmorphism: {
+    textColor: '#ffffff',
+    backgroundStyle: 'solid',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: '16px',
+    glowEnable: false,
+    borderStyle: 'solid',
+    borderWidth: '1px',
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    opacity: 1.0,
+    customScrollbar: true,
+    customCSS: `div { backdrop-filter: blur(12px) !important; }`,
+  },
+  darkness: {
+    textColor: '#e2e8f0',
+    backgroundStyle: 'gradient',
+    gradientName: 'darkness',
+    borderRadius: '12px',
+    glowEnable: false,
+    borderStyle: 'none',
+    borderWidth: '0px',
+    opacity: 1.0,
+    customScrollbar: true,
+  }
+};
+
 export default function WidgetEditor({
   navigate,
   initialId,
@@ -287,6 +354,27 @@ export default function WidgetEditor({
     }
   };
 
+  const getSelectedPreset = () => {
+    for (const [name, preset] of Object.entries(STYLE_PRESETS)) {
+      const isMatch = Object.keys(preset).every((key) => {
+        return config[key] === preset[key];
+      });
+      if (isMatch) return name;
+    }
+    return 'custom';
+  };
+
+  const handlePresetChange = (presetName) => {
+    if (presetName === 'custom') return;
+    const presetStyles = STYLE_PRESETS[presetName];
+    if (presetStyles) {
+      handleConfigChange({
+        ...config,
+        ...presetStyles,
+      });
+    }
+  };
+
   const handleNameChange = (newName) => {
     setWidgetName(newName);
     if (socketRef.current && widgetId) {
@@ -393,6 +481,24 @@ export default function WidgetEditor({
                 onChange={(e) => handleConfigChange({ ...config, tooltipText: e.target.value })}
                 placeholder="Tooltip text shown on hover"
               />
+            </div>
+          </div>
+
+          <div className="config-group">
+            <h3>Style Presets</h3>
+            <div className="config-field">
+              <label>Apply Style Template</label>
+              <select
+                value={getSelectedPreset()}
+                onChange={(e) => handlePresetChange(e.target.value)}
+              >
+                <option value="custom">Custom Styling (Manual)</option>
+                <option value="slate">Minimalist Slate</option>
+                <option value="cyberpunk">Neon Cyberpunk</option>
+                <option value="autumn">Autumn Forest</option>
+                <option value="glassmorphism">Frosted Glass</option>
+                <option value="darkness">Pitch Black</option>
+              </select>
             </div>
           </div>
 
