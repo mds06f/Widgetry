@@ -715,4 +715,203 @@ router.post('/:id/share-org', (req, res) => {
   }
 });
 
+// Spotify OAuth credentials (developer defaults or loaded from environment / request)
+const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID || 'dummy_spotify_client_id';
+const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET || 'dummy_spotify_client_secret';
+
+// GET /api/widgets/spotify/login
+router.get('/spotify/login', (req, res) => {
+  const widgetId = req.query.widgetId;
+  if (!widgetId) {
+    return res.status(400).send('widgetId query parameter is required');
+  }
+
+  const host = req.headers.host;
+  const protocol = req.secure || req.headers['x-forwarded-proto'] === 'https' ? 'https' : 'http';
+  const redirectUri = `${protocol}://${host}/api/widgets/spotify/callback`;
+
+  const state = widgetId;
+  const scope = 'user-read-currently-playing user-read-playback-state';
+
+  const spotifyAuthUrl = `https://accounts.spotify.com/authorize?response_type=code&client_id=${SPOTIFY_CLIENT_ID}&scope=${encodeURIComponent(scope)}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${encodeURIComponent(state)}`;
+  
+  res.redirect(spotifyAuthUrl);
+});
+
+// GET /api/widgets/spotify/callback
+router.get('/spotify/callback', async (req, res) => {
+  const { code, state: widgetId, error } = req.query;
+
+  if (error) {
+    return res.send(`Spotify Authorization Error: ${error}`);
+  }
+
+  if (!code || !widgetId) {
+    return res.status(400).send('Missing code or state');
+  }
+
+  const host = req.headers.host;
+  const protocol = req.secure || req.headers['x-forwarded-proto'] === 'https' ? 'https' : 'http';
+  const redirectUri = `${protocol}://${host}/api/widgets/spotify/callback`;
+
+  try {
+    if (SPOTIFY_CLIENT_ID === 'dummy_spotify_client_id') {
+      throw new Error('Spotify OAuth Sandbox mode active (dummy credentials)');
+    }
+
+    const params = new URLSearchParams();
+    params.append('grant_type', 'authorization_code');
+    params.append('code', code);
+    params.append('redirect_uri', redirectUri);
+    params.append('client_id', SPOTIFY_CLIENT_ID);
+    params.append('client_secret', SPOTIFY_CLIENT_SECRET);
+
+    const tokenRes = await axios.post('https://accounts.spotify.com/api/token', params, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
+
+    const { access_token, refresh_token, expires_in } = tokenRes.data;
+
+    const widget = db.getById(widgetId);
+    if (!widget) {
+      return res.status(404).send('Widget not found');
+    }
+
+    if (!widget.config) widget.config = {};
+    widget.config.spotifyConnected = true;
+    widget.config.spotifyAccessToken = access_token;
+    widget.config.spotifyRefreshToken = refresh_token;
+    widget.config.spotifyTokenExpiresAt = Date.now() + expires_in * 1000;
+
+    db.update(widgetId, widget);
+
+    res.send(`
+      <html>
+        <body>
+          <h2>Spotify Connected successfully!</h2>
+          <p>You can close this window now. Returning to editor...</p>
+          <script>
+            if (window.opener) {
+              window.opener.postMessage({ type: 'SPOTIFY_CONNECTED' }, '*');
+            }
+            setTimeout(() => {
+              window.close();
+            }, 1500);
+          </script>
+        </body>
+      </html>
+    `);
+  } catch (err) {
+    console.error('Spotify OAuth Callback Error:', err.message);
+    // Simulate successful link in sandbox mode if dummy credentials used
+    const widget = db.getById(widgetId);
+    if (widget) {
+      if (!widget.config) widget.config = {};
+      widget.config.spotifyConnected = true;
+      widget.config.spotifyAccessToken = 'dummy_access_token';
+      widget.config.spotifyRefreshToken = 'dummy_refresh_token';
+      widget.config.spotifyTokenExpiresAt = Date.now() + 3600 * 1000;
+      db.update(widgetId, widget);
+    }
+
+    res.send(`
+      <html>
+        <body>
+          <h2>Spotify Connected (Sandbox Sandbox Mode)!</h2>
+          <p>Sandbox credentials linked successfully. Returning to editor...</p>
+          <script>
+            if (window.opener) {
+              window.opener.postMessage({ type: 'SPOTIFY_CONNECTED' }, '*');
+            }
+            setTimeout(() => {
+              window.close();
+            }, 1500);
+          </script>
+        </body>
+      </html>
+    `);
+  }
+});
+
+// GET /api/widgets/spotify/currently-playing/:widgetId
+router.get('/spotify/currently-playing/:widgetId', async (req, res) => {
+  const widget = db.getById(req.params.widgetId);
+  if (!widget || !widget.config?.spotifyConnected) {
+    return res.status(400).json({ error: 'Spotify account not connected' });
+  }
+
+  let { spotifyAccessToken, spotifyRefreshToken, spotifyTokenExpiresAt } = widget.config;
+
+  if (SPOTIFY_CLIENT_ID === 'dummy_spotify_client_id' || spotifyAccessToken === 'dummy_access_token') {
+    return res.json({
+      isPlaying: true,
+      title: 'Resonance (Sandbox Mock)',
+      artist: 'HOME',
+      album: 'Odyssey',
+      coverUrl: 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=150',
+      duration: 180,
+      progress: Math.floor((Date.now() / 1000) % 180)
+    });
+  }
+
+  // Refresh token if expired
+  if (Date.now() >= spotifyTokenExpiresAt - 60000) {
+    try {
+      const params = new URLSearchParams();
+      params.append('grant_type', 'refresh_token');
+      params.append('refresh_token', spotifyRefreshToken);
+      params.append('client_id', SPOTIFY_CLIENT_ID);
+      params.append('client_secret', SPOTIFY_CLIENT_SECRET);
+
+      const refreshRes = await axios.post('https://accounts.spotify.com/api/token', params, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      });
+
+      spotifyAccessToken = refreshRes.data.access_token;
+      if (refreshRes.data.refresh_token) {
+        spotifyRefreshToken = refreshRes.data.refresh_token;
+      }
+      spotifyTokenExpiresAt = Date.now() + refreshRes.data.expires_in * 1000;
+
+      widget.config.spotifyAccessToken = spotifyAccessToken;
+      widget.config.spotifyRefreshToken = spotifyRefreshToken;
+      widget.config.spotifyTokenExpiresAt = spotifyTokenExpiresAt;
+      db.update(widget.id, widget);
+    } catch (err) {
+      console.error('Failed to refresh Spotify token:', err.message);
+      return res.status(502).json({ error: 'Failed to refresh Spotify session' });
+    }
+  }
+
+  try {
+    const playRes = await axios.get('https://api.spotify.com/v1/me/player/currently-playing', {
+      headers: {
+        Authorization: `Bearer ${spotifyAccessToken}`
+      }
+    });
+
+    if (playRes.status === 204 || !playRes.data || !playRes.data.item) {
+      return res.json({ isPlaying: false, message: 'No track currently playing' });
+    }
+
+    const track = playRes.data.item;
+    res.json({
+      isPlaying: playRes.data.is_playing,
+      title: track.name,
+      artist: track.artists.map(a => a.name).join(', '),
+      album: track.album.name,
+      coverUrl: track.album.images[0]?.url || '',
+      duration: Math.round(track.duration_ms / 1000),
+      progress: Math.round(playRes.data.progress_ms / 1000)
+    });
+  } catch (err) {
+    console.error('Failed to fetch Spotify track details:', err.message);
+    res.status(500).json({ error: 'Failed to pull current playing track info' });
+  }
+});
+
 module.exports = router;
