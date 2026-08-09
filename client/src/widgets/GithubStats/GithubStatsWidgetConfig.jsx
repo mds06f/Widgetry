@@ -35,6 +35,18 @@ export default function GithubStatsWidgetConfig({ config, onChange }) {
         </label>
       </div>
 
+      <div className="config-field toggle-field">
+        <label>Show Open Issues Count</label>
+        <label className="toggle-switch">
+          <input
+            type="checkbox"
+            checked={config.showIssues !== false}
+            onChange={(e) => handleUpdate('showIssues', e.target.checked)}
+          />
+          <span className="slider"></span>
+        </label>
+      </div>
+
       {config.showGraph !== false && (
         <div className="config-field">
           <label>Heatmap Theme</label>
