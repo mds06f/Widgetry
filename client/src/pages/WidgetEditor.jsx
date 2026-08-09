@@ -368,6 +368,12 @@ export default function WidgetEditor({
 
   const handlePresetChange = (presetName) => {
     if (presetName === 'custom') return;
+    const currentPreset = getSelectedPreset();
+    if (currentPreset === 'custom') {
+      if (!window.confirm('Applying this preset template will overwrite your current custom style configurations. Do you want to proceed?')) {
+        return;
+      }
+    }
     const presetStyles = STYLE_PRESETS[presetName];
     if (presetStyles) {
       handleConfigChange({
@@ -633,7 +639,7 @@ export default function WidgetEditor({
             className="btn btn-secondary"
             style={{ flex: 1, justifyContent: 'center' }}
             onClick={() => {
-              if (window.confirm('Are you sure you want to reset all configurations to defaults?')) {
+              if (window.confirm('Are you sure you want to reset all configurations to defaults? This will erase all custom settings, styling templates, and custom CSS details.')) {
                 handleConfigChange(typeDetails.defaultConfig || {});
               }
             }}

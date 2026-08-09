@@ -5,6 +5,7 @@ export default function GithubStatsWidgetView({ config }) {
   const {
     username = '',
     showGraph = true,
+    showIssues = true,
     textColor = '#ffffff',
     backgroundStyle = 'gradient',
     backgroundColor = '#1b2542',
@@ -42,14 +43,22 @@ export default function GithubStatsWidgetView({ config }) {
     setLoading(true);
     setError(null);
 
-    fetch(`https://api.github.com/users/${username}`)
+    const profilePromise = fetch(`https://api.github.com/users/${username}`)
       .then((res) => {
         if (!res.ok) {
           throw new Error('API limit reached or user not found');
         }
         return res.json();
-      })
-      .then((profile) => {
+      });
+
+    const issuesPromise = showIssues !== false
+      ? fetch(`https://api.github.com/search/issues?q=author:${username}+type:issue+state:open&per_page=1`)
+          .then((res) => res.ok ? res.json() : { total_count: 0 })
+          .catch(() => ({ total_count: 0 }))
+      : Promise.resolve({ total_count: 0 });
+
+    Promise.all([profilePromise, issuesPromise])
+      .then(([profile, issues]) => {
         setData({
           avatar_url: profile.avatar_url,
           name: profile.name || profile.login,
@@ -58,6 +67,7 @@ export default function GithubStatsWidgetView({ config }) {
           public_repos: profile.public_repos,
           followers: profile.followers,
           following: profile.following,
+          open_issues: issues.total_count || 0
         });
         setLoading(false);
       })
@@ -79,10 +89,11 @@ export default function GithubStatsWidgetView({ config }) {
           public_repos: (hash % 80) + 12,
           followers: ((hash * 3) % 5000) + 42,
           following: ((hash * 7) % 300) + 10,
+          open_issues: (hash % 24) + 2,
         });
         setLoading(false);
       });
-  }, [username]);
+  }, [username, showIssues]);
 
   // Generate deterministic contribution levels for grid based on username
   const generateGrid = () => {
@@ -259,6 +270,29 @@ export default function GithubStatsWidgetView({ config }) {
                   Repos
                 </span>
               </div>
+              {showIssues !== false && (
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                  }}
+                >
+                  <span style={{ fontSize: '0.9rem', fontWeight: '800' }}>
+                    {data.open_issues || 0}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: '0.6rem',
+                      opacity: 0.7,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                    }}
+                  >
+                    Issues
+                  </span>
+                </div>
+              )}
               <div
                 style={{
                   display: 'flex',
