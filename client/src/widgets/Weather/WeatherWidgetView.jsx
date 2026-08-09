@@ -33,6 +33,8 @@ export default function WeatherWidgetView({ config }) {
     enableSlideshow = false,
     unit = 'C',
     showDetails = false,
+    showHumidity = true,
+    showWindSpeed = true,
     textColor = '#ffffff',
     backgroundColor = '#131a30',
     backgroundStyle = 'gradient',
@@ -200,8 +202,8 @@ export default function WeatherWidgetView({ config }) {
               fontWeight: '600',
             }}
           >
-            {data.humidity != null && <span>💧 Humidity: {data.humidity}%</span>}
-            {data.windSpeed != null && <span>💨 Wind: {data.windSpeed} {unit === 'F' ? 'mph' : 'km/h'}</span>}
+            {showHumidity !== false && data.humidity != null && <span>💧 Humidity: {data.humidity}%</span>}
+            {showWindSpeed !== false && data.windSpeed != null && <span>💨 Wind: {data.windSpeed} {unit === 'F' ? 'mph' : 'km/h'}</span>}
           </div>
         )}
       </div>

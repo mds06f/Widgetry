@@ -190,6 +190,7 @@ export default function WidgetEditor({
   const [saving, setSaving] = useState(false);
   const [widgetId, setWidgetId] = useState(initialId || null);
   const [copied, setCopied] = useState(false);
+  const [copiedWebhook, setCopiedWebhook] = useState(false);
   const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false);
   const [analyticsData, setAnalyticsData] = useState(null);
   const [loadingAnalytics, setLoadingAnalytics] = useState(false);
@@ -750,7 +751,8 @@ export default function WidgetEditor({
                   onClick={() => {
                     const url = `${window.location.origin}/api/widgets/${widgetId}/webhook?token=${config.webhookToken}`;
                     navigator.clipboard.writeText(url);
-                    alert('Webhook URL copied!');
+                    setCopiedWebhook(true);
+                    setTimeout(() => setCopiedWebhook(false), 2000);
                   }}
                 >
                   <LucideIcons.Copy size={14} />
@@ -1066,6 +1068,33 @@ export default function WidgetEditor({
         >
           <LucideIcons.CheckCircle2 size={16} />
           <span>Embed code copied to clipboard!</span>
+        </div>
+      )}
+
+      {copiedWebhook && (
+        <div
+          className="toast-animation"
+          style={{
+            position: 'fixed',
+            bottom: '2rem',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            background: 'rgba(16, 185, 129, 0.95)',
+            backdropFilter: 'blur(8px)',
+            color: '#ffffff',
+            padding: '0.75rem 1.5rem',
+            borderRadius: '50px',
+            boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 0 15px rgba(16, 185, 129, 0.4)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            fontWeight: '600',
+            fontSize: '0.9rem',
+          }}
+        >
+          <LucideIcons.CheckCircle2 size={16} />
+          <span>Webhook URL copied to clipboard!</span>
         </div>
       )}
     </div>
