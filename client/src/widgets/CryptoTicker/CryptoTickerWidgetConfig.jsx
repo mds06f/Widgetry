@@ -58,6 +58,25 @@ export default function CryptoTickerWidgetConfig({ config, onChange }) {
         </select>
       </div>
 
+      <div className="config-row">
+        <div className="config-field">
+          <label>Price Up Color</label>
+          <input
+            type="color"
+            value={config.upColor || '#39d353'}
+            onChange={(e) => handleUpdate('upColor', e.target.value)}
+          />
+        </div>
+        <div className="config-field">
+          <label>Price Down Color</label>
+          <input
+            type="color"
+            value={config.downColor || '#ff4d4d'}
+            onChange={(e) => handleUpdate('downColor', e.target.value)}
+          />
+        </div>
+      </div>
+
       <div className="config-field">
         <label>Background Style</label>
         <select
