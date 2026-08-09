@@ -9,6 +9,7 @@ export default function AnalogClockWidgetView({ config }) {
     faceColor = 'rgba(0,0,0,0.2)',
     showNumbers = true,
     showTicks = true,
+    showSecondHand = true,
     textColor = '#ffffff',
     backgroundStyle = 'gradient',
     backgroundColor = '#1b2542',
@@ -23,11 +24,12 @@ export default function AnalogClockWidgetView({ config }) {
   const safeCSS = customCSS.replace(/<\/style>/gi, '');
 
   useEffect(() => {
+    const intervalTime = showSecondHand !== false ? 50 : 1000;
     const timer = setInterval(() => {
       setTime(new Date());
-    }, 50); // 20fps for smooth sweep hand animation
+    }, intervalTime);
     return () => clearInterval(timer);
-  }, []);
+  }, [showSecondHand]);
 
   const ms = time.getMilliseconds();
   const seconds = time.getSeconds() + ms / 1000;
@@ -171,24 +173,26 @@ export default function AnalogClockWidgetView({ config }) {
           />
 
           {/* Second Hand */}
-          <line
-            x1="100"
-            y1="115" // Extend slightly backward past center
-            x2="100"
-            y2="35"
-            stroke={secondHandColor}
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            transform={`rotate(${secAngle} 100 100)`}
-            className="clock-second-hand"
-          />
+          {showSecondHand !== false && (
+            <line
+              x1="100"
+              y1="115" // Extend slightly backward past center
+              x2="100"
+              y2="35"
+              stroke={secondHandColor}
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              transform={`rotate(${secAngle} 100 100)`}
+              className="clock-second-hand"
+            />
+          )}
 
           {/* Center Pin / Dot */}
           <circle
             cx="100"
             cy="100"
             r="5"
-            fill={secondHandColor}
+            fill={showSecondHand !== false ? secondHandColor : hourHandColor}
             className="clock-center-dot"
           />
           <circle cx="100" cy="100" r="2" fill="#ffffff" />

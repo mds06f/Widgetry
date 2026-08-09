@@ -75,6 +75,18 @@ export default function AnalogClockWidgetConfig({ config, onChange }) {
         </label>
       </div>
 
+      <div className="config-field toggle-field">
+        <label>Show Second Hand</label>
+        <label className="toggle-switch">
+          <input
+            type="checkbox"
+            checked={config.showSecondHand !== false}
+            onChange={(e) => handleUpdate('showSecondHand', e.target.checked)}
+          />
+          <span className="slider"></span>
+        </label>
+      </div>
+
       <div className="config-field">
         <label>Background Style</label>
         <select
