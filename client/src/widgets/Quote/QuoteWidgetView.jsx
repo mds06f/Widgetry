@@ -59,20 +59,27 @@ export default function QuoteWidgetView({ config }) {
   } = config;
 
   const [copied, setCopied] = React.useState(false);
+  const [quoteOffset, setQuoteOffset] = React.useState(0);
 
   // Sanitize: strip any </style> tags to prevent style-block breakout
   const safeCSS = customCSS.replace(/<\/style>/gi, '');
 
   // Select quotes list
   const list = QUOTES[category] || QUOTES.motivational;
+  
+  // Reset offset when category changes
+  React.useEffect(() => {
+    setQuoteOffset(0);
+  }, [category]);
+
   // Use a simple hash of the configuration to pick a stable index, rather than Math.random() which changes on every render.
   // This keeps the preview stable while editing!
-  const configStr = JSON.stringify(config);
+  const configStr = JSON.stringify({ ...config, category });
   let hash = 0;
   for (let i = 0; i < configStr.length; i++) {
     hash = configStr.charCodeAt(i) + ((hash << 5) - hash);
   }
-  const quoteIndex = Math.abs(hash) % list.length;
+  const quoteIndex = (Math.abs(hash) + quoteOffset) % list.length;
   const quote = list[quoteIndex];
 
   const handleCopy = () => {
@@ -140,23 +147,42 @@ export default function QuoteWidgetView({ config }) {
           </span>
         )}
 
-        <button
-          onClick={handleCopy}
-          style={{
-            background: 'rgba(255, 255, 255, 0.15)',
-            border: '1px solid rgba(255, 255, 255, 0.25)',
-            borderRadius: '20px',
-            color: textColor,
-            cursor: 'pointer',
-            fontSize: '0.72rem',
-            fontWeight: '600',
-            padding: '0.25rem 0.75rem',
-            fontFamily: 'Outfit, sans-serif',
-            transition: 'all 0.15s ease',
-          }}
-        >
-          {copied ? '✓ Copied!' : '📋 Copy Quote'}
-        </button>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button
+            onClick={() => setQuoteOffset((prev) => prev + 1)}
+            style={{
+              background: 'rgba(255, 255, 255, 0.12)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '20px',
+              color: textColor,
+              cursor: 'pointer',
+              fontSize: '0.72rem',
+              fontWeight: '600',
+              padding: '0.25rem 0.75rem',
+              fontFamily: 'Outfit, sans-serif',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            🔄 Next Quote
+          </button>
+          <button
+            onClick={handleCopy}
+            style={{
+              background: 'rgba(255, 255, 255, 0.15)',
+              border: '1px solid rgba(255, 255, 255, 0.25)',
+              borderRadius: '20px',
+              color: textColor,
+              cursor: 'pointer',
+              fontSize: '0.72rem',
+              fontWeight: '600',
+              padding: '0.25rem 0.75rem',
+              fontFamily: 'Outfit, sans-serif',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            {copied ? '✓ Copied!' : '📋 Copy Quote'}
+          </button>
+        </div>
       </div>
     </>
   );
