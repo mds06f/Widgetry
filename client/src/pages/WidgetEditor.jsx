@@ -3,7 +3,16 @@ import { widgetRegistry } from '../widgets';
 import * as LucideIcons from 'lucide-react';
 import { io } from 'socket.io-client';
 
-const AnalyticsTrendChart = ({ data }) => {
+const AnalyticsTrendChart = ({ analyticsData }) => {
+  const [timeframe, setTimeframe] = useState('daily');
+  if (!analyticsData) return null;
+
+  const data = timeframe === 'hourly'
+    ? analyticsData.hourlyBreakdown
+    : timeframe === 'weekly'
+      ? analyticsData.weeklyBreakdown
+      : analyticsData.dailyBreakdown;
+
   if (!data || data.length === 0) return null;
 
   const maxViews = Math.max(...data.map(d => d.views), 1);
@@ -22,6 +31,11 @@ const AnalyticsTrendChart = ({ data }) => {
 
   const pathD = `M ${points.join(' L ')}`;
 
+  const shouldShowLabel = (idx) => {
+    if (timeframe === 'hourly') return idx % 6 === 0 || idx === data.length - 1;
+    return true;
+  };
+
   return (
     <div style={{
       background: 'rgba(0, 0, 0, 0.25)',
@@ -31,15 +45,51 @@ const AnalyticsTrendChart = ({ data }) => {
       marginTop: '1.25rem',
       marginBottom: '1.25rem'
     }}>
-      <h4 style={{
-        fontSize: '0.85rem',
-        color: 'var(--text-secondary)',
-        marginBottom: '0.75rem',
-        textTransform: 'uppercase',
-        letterSpacing: '0.05em'
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '0.75rem'
       }}>
-        7-Day Views Trend
-      </h4>
+        <h4 style={{
+          fontSize: '0.85rem',
+          color: 'var(--text-secondary)',
+          margin: 0,
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em'
+        }}>
+          Views Trend
+        </h4>
+        <div style={{
+          display: 'flex',
+          background: 'rgba(255,255,255,0.05)',
+          borderRadius: '6px',
+          padding: '2px',
+          gap: '2px'
+        }}>
+          {['hourly', 'daily', 'weekly'].map((t) => (
+            <button
+              key={t}
+              onClick={() => setTimeframe(t)}
+              style={{
+                background: timeframe === t ? '#6366f1' : 'none',
+                color: timeframe === t ? '#fff' : 'rgba(255,255,255,0.6)',
+                border: 'none',
+                borderRadius: '4px',
+                padding: '0.2rem 0.5rem',
+                fontSize: '0.7rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                textTransform: 'capitalize',
+                transition: 'all 0.15s'
+              }}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} style={{ overflow: 'visible' }}>
           <line x1={padding} y1={padding} x2={width - padding} y2={padding} stroke="rgba(255,255,255,0.05)" strokeDasharray="3,3" />
@@ -83,15 +133,17 @@ const AnalyticsTrendChart = ({ data }) => {
                 >
                   {d.views}
                 </text>
-                <text
-                  x={x}
-                  y={height - 4}
-                  textAnchor="middle"
-                  fill="rgba(255,255,255,0.4)"
-                  fontSize="7"
-                >
-                  {new Date(d.date).toLocaleDateString('en-US', { weekday: 'short' })}
-                </text>
+                {shouldShowLabel(index) && (
+                  <text
+                    x={x}
+                    y={height - 4}
+                    textAnchor="middle"
+                    fill="rgba(255,255,255,0.4)"
+                    fontSize="7"
+                  >
+                    {d.label}
+                  </text>
+                )}
               </g>
             );
           })}
@@ -972,8 +1024,8 @@ export default function WidgetEditor({
                   </div>
                 </div>
 
-                {analyticsData.dailyBreakdown && (
-                  <AnalyticsTrendChart data={analyticsData.dailyBreakdown} />
+                {analyticsData && (
+                  <AnalyticsTrendChart analyticsData={analyticsData} />
                 )}
 
                 {/* Referrers breakdown */}
