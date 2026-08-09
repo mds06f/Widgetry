@@ -9,6 +9,34 @@ export default function Dashboard({ navigate, token, user }) {
   const [sortBy, setSortBy] = useState('newest');
   const [copiedId, setCopiedId] = useState(null);
   const [draggedWidgetId, setDraggedWidgetId] = useState(null);
+  const [searchHistory, setSearchHistory] = useState(() => {
+    try {
+      const raw = localStorage.getItem('widgetry_search_history');
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    if (!searchQuery || searchQuery.trim().length < 2) return;
+    const query = searchQuery.trim();
+    const delayDebounce = setTimeout(() => {
+      setSearchHistory((prev) => {
+        const filtered = prev.filter((q) => q.toLowerCase() !== query.toLowerCase());
+        const updated = [query, ...filtered].slice(0, 5);
+        localStorage.setItem('widgetry_search_history', JSON.stringify(updated));
+        return updated;
+      });
+    }, 1500);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchQuery]);
+
+  const clearSearchHistory = () => {
+    setSearchHistory([]);
+    localStorage.removeItem('widgetry_search_history');
+  };
 
   const filteredAndSortedWidgets = widgets
     .filter((w) => {
@@ -246,6 +274,54 @@ export default function Dashboard({ navigate, token, user }) {
             </select>
           </div>
         </div>
+        {searchHistory.length > 0 && (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            flexWrap: 'wrap',
+            marginTop: '-0.75rem',
+            marginBottom: '1.5rem',
+            fontSize: '0.8rem'
+          }}>
+            <span style={{ color: 'var(--text-secondary)' }}>Recent searches:</span>
+            {searchHistory.map((query, idx) => (
+              <button
+                key={idx}
+                onClick={() => setSearchQuery(query)}
+                className="btn btn-secondary"
+                style={{
+                  padding: '0.2rem 0.6rem',
+                  fontSize: '0.75rem',
+                  borderRadius: '15px',
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
+                }}
+                type="button"
+              >
+                {query}
+              </button>
+            ))}
+            <button
+              onClick={clearSearchHistory}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#f87171',
+                cursor: 'pointer',
+                fontSize: '0.75rem',
+                marginLeft: '0.5rem',
+                padding: 0,
+                opacity: 0.8
+              }}
+              type="button"
+            >
+              Clear history
+            </button>
+          </div>
+        )}
       )}
 
       {loading ? (
