@@ -24,6 +24,18 @@ export default function WorldClockWidgetConfig({ config, onChange }) {
     <div className="config-group">
       <h3>World Clock Settings</h3>
 
+      <div className="config-field toggle-field" style={{ marginBottom: '1.25rem' }}>
+        <label>Enable Slideshow Mode</label>
+        <label className="toggle-switch">
+          <input
+            type="checkbox"
+            checked={config.enableSlideshow === true}
+            onChange={(e) => handleUpdate('enableSlideshow', e.target.checked)}
+          />
+          <span className="slider"></span>
+        </label>
+      </div>
+
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         {/* Clock 1 */}
         <div style={{ border: '1px solid var(--border-color)', padding: '0.75rem', borderRadius: '6px' }}>
