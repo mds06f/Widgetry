@@ -6,6 +6,7 @@ export default function PomodoroWidgetView({ config }) {
     workDuration = 25,
     breakDuration = 5,
     soundAlert = true,
+    customSoundUrl = '',
     textColor = '#ffffff',
     backgroundStyle = 'gradient',
     backgroundColor = '#1b2542',
@@ -58,6 +59,16 @@ export default function PomodoroWidgetView({ config }) {
 
   const playAlertSound = () => {
     if (!soundAlert) return;
+    if (customSoundUrl) {
+      try {
+        const audio = new Audio(customSoundUrl);
+        audio.volume = 0.5;
+        audio.play();
+      } catch (e) {
+        console.warn('Failed to play custom Pomodoro sound URL:', e);
+      }
+      return;
+    }
     try {
       const AudioContextClass =
         window.AudioContext || window.webkitAudioContext;
