@@ -30,6 +30,7 @@ export default function TodoWidgetView({ config }) {
 
   const {
     title = 'My To-Do List',
+    strikeCompleted = true,
     textColor = '#ffffff',
     backgroundStyle = 'gradient',
     backgroundColor = '#1b2542',
@@ -318,7 +319,7 @@ export default function TodoWidgetView({ config }) {
                     flex: 1,
                     fontSize: '0.82rem',
                     lineHeight: '1.35',
-                    textDecoration: item.done ? 'line-through' : 'none',
+                    textDecoration: item.done && strikeCompleted !== false ? 'line-through' : 'none',
                     opacity: item.done ? 0.5 : 1,
                     transition: 'all 0.2s ease',
                     wordBreak: 'break-word',

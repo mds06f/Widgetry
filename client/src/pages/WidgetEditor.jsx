@@ -191,6 +191,7 @@ export default function WidgetEditor({
   const [widgetId, setWidgetId] = useState(initialId || null);
   const [copied, setCopied] = useState(false);
   const [copiedWebhook, setCopiedWebhook] = useState(false);
+  const [isFullscreenPreview, setIsFullscreenPreview] = useState(false);
   const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false);
   const [analyticsData, setAnalyticsData] = useState(null);
   const [loadingAnalytics, setLoadingAnalytics] = useState(false);
@@ -654,7 +655,18 @@ export default function WidgetEditor({
       {/* Main Preview canvas */}
       <main className="editor-main">
         <div className="preview-container">
-          <div className="preview-title">Live Interactive Preview</div>
+          <div className="preview-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+            <span>Live Interactive Preview</span>
+            <button
+              onClick={() => setIsFullscreenPreview(true)}
+              className="btn btn-secondary"
+              style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', gap: '0.25rem', border: '1px solid rgba(255,255,255,0.1)' }}
+              type="button"
+            >
+              <LucideIcons.Maximize2 size={12} />
+              <span>Fullscreen</span>
+            </button>
+          </div>
           <div className="preview-frame-wrapper">
             <div
               className={config.customScrollbar ? 'custom-scrollbar' : ''}
@@ -1095,6 +1107,68 @@ export default function WidgetEditor({
         >
           <LucideIcons.CheckCircle2 size={16} />
           <span>Webhook URL copied to clipboard!</span>
+        </div>
+      )}
+
+      {isFullscreenPreview && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: '#0b0f19',
+            zIndex: 99999,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: '4rem',
+            boxSizing: 'border-box',
+          }}
+        >
+          <button
+            onClick={() => setIsFullscreenPreview(false)}
+            className="btn btn-secondary"
+            style={{
+              position: 'absolute',
+              top: '2rem',
+              right: '2rem',
+              padding: '0.5rem 1rem',
+              fontSize: '0.85rem',
+              gap: '0.4rem',
+              border: '1px solid rgba(255,255,255,0.15)',
+              background: 'rgba(255,255,255,0.05)',
+              backdropFilter: 'blur(8px)',
+              zIndex: 100000,
+            }}
+            type="button"
+          >
+            <LucideIcons.Minimize2 size={16} />
+            <span>Close Fullscreen</span>
+          </button>
+
+          <div
+            className={config.customScrollbar ? 'custom-scrollbar' : ''}
+            style={{
+              width: '100%',
+              maxWidth: '800px',
+              height: '450px',
+              overflow: 'hidden',
+              borderRadius: config.borderRadius || '12px',
+              border: config.borderWidth && config.borderWidth !== '0px' && config.borderStyle && config.borderStyle !== 'none'
+                ? `${config.borderWidth} ${config.borderStyle} ${config.borderColor || 'transparent'}`
+                : 'none',
+              opacity: config.opacity !== undefined ? config.opacity : 1.0,
+              boxShadow: config.glowEnable
+                ? `0 0 ${config.glowBlur || '20px'} ${config.glowColor || '#6366f1'}`
+                : '0 20px 50px rgba(0,0,0,0.5)',
+            }}
+            title={config.tooltipText || ''}
+          >
+            <ViewComponent config={config} />
+          </div>
         </div>
       )}
     </div>

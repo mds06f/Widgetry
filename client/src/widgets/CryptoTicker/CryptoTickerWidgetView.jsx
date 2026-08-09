@@ -38,6 +38,8 @@ export default function CryptoTickerWidgetView({ config }) {
     gradientName = 'cosmic',
     backgroundImageUrl = '',
     borderRadius = '12px',
+    upColor = '#39d353',
+    downColor = '#ff4d4d',
     customCSS = '',
   } = config;
 
@@ -249,10 +251,10 @@ export default function CryptoTickerWidgetView({ config }) {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.25rem',
-                color: isPositive ? '#39d353' : '#ff4d4d',
+                color: isPositive ? upColor : downColor,
                 background: isPositive
-                  ? 'rgba(57,211,83,0.15)'
-                  : 'rgba(255,77,77,0.15)',
+                  ? `${upColor}26`
+                  : `${downColor}26`,
                 padding: '0.25rem 0.6rem',
                 borderRadius: '20px',
                 fontSize: '0.8rem',
@@ -275,7 +277,7 @@ export default function CryptoTickerWidgetView({ config }) {
               <svg width="100%" height="100%" viewBox="0 0 120 50">
                 <polyline
                   fill="none"
-                  stroke={isPositive ? '#39d353' : '#ff4d4d'}
+                  stroke={isPositive ? upColor : downColor}
                   strokeWidth="2.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
