@@ -75,7 +75,7 @@ export default function WeatherWidgetView({ config }) {
     async function fetchWeather() {
       try {
         const response = await fetch(
-          `/api/widgets/proxy/weather?city=${encodeURIComponent(currentCity)}`,
+          `/api/widgets/proxy/weather?city=${encodeURIComponent(currentCity)}&unit=${unit}`,
         );
         if (!response.ok) {
           throw new Error('City not found or server error');
@@ -98,7 +98,7 @@ export default function WeatherWidgetView({ config }) {
     return () => {
       active = false;
     };
-  }, [currentCity]);
+  }, [currentCity, unit]);
 
   const style = {
     color: textColor,
@@ -157,12 +157,7 @@ export default function WeatherWidgetView({ config }) {
     );
   }
 
-  // Convert temp if unit is Fahrenheit
-  let displayTemp = data.temperature;
-  if (unit === 'F') {
-    displayTemp = (data.temperature * 9) / 5 + 32;
-    displayTemp = Math.round(displayTemp * 10) / 10;
-  }
+  const displayTemp = data.temperature;
 
   const WeatherIcon = ICON_MAP[data.icon] || Cloud;
 
@@ -208,7 +203,7 @@ export default function WeatherWidgetView({ config }) {
             }}
           >
             {showHumidity !== false && data.humidity != null && <span>💧 Humidity: {data.humidity}%</span>}
-            {showWindSpeed !== false && data.windSpeed != null && <span>💨 Wind: {data.windSpeed} km/h</span>}
+            {showWindSpeed !== false && data.windSpeed != null && <span>💨 Wind: {data.windSpeed} {unit === 'F' ? 'mph' : 'km/h'}</span>}
           </div>
         )}
       </div>

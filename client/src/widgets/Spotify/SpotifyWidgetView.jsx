@@ -72,14 +72,72 @@ export default function SpotifyWidgetView({ config }) {
     };
   }
 
+  const match = window.location.pathname.match(/\/widget\/render\/([^/]+)/);
+  const widgetId = match ? match[1] : null;
+
+  const [liveTrack, setLiveTrack] = useState(null);
+
+  useEffect(() => {
+    if (!config.spotifyConnected || !widgetId) {
+      setLiveTrack(null);
+      return;
+    }
+
+    let active = true;
+    const fetchLivePlaying = async () => {
+      try {
+        const res = await fetch(`/api/widgets/spotify/currently-playing/${widgetId}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (active) {
+            setLiveTrack(data);
+          }
+        }
+      } catch (e) {
+        console.error('Error fetching live Spotify track:', e);
+      }
+    };
+
+    fetchLivePlaying();
+    const interval = setInterval(fetchLivePlaying, 3000);
+
+    return () => {
+      active = false;
+      clearInterval(interval);
+    };
+  }, [config.spotifyConnected, widgetId]);
+
+  const isSpotifyMode = config.spotifyConnected && liveTrack;
+
+  // Override details if Spotify is connected and we have live data
+  if (isSpotifyMode) {
+    activeTrack = {
+      title: liveTrack.title || 'Nothing Playing',
+      artist: liveTrack.artist || 'Spotify Account Connected',
+      album: liveTrack.album || '',
+      duration: liveTrack.duration || 0,
+      coverUrl: liveTrack.coverUrl || 'https://images.unsplash.com/photo-1611339555312-e607c8352fd7?w=300',
+    };
+  }
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0); // in seconds
   const [volume, setVolume] = useState(70);
 
+  // Sync state with live Spotify track
+  useEffect(() => {
+    if (isSpotifyMode) {
+      setIsPlaying(liveTrack.isPlaying);
+      setProgress(liveTrack.progress || 0);
+    }
+  }, [isSpotifyMode, liveTrack]);
+
   // Reset progress when track changes
   useEffect(() => {
-    setProgress(0);
-  }, [trackPreset, customTitle, customArtist]);
+    if (!isSpotifyMode) {
+      setProgress(0);
+    }
+  }, [trackPreset, customTitle, customArtist, isSpotifyMode]);
 
   // Handle play progression
   useEffect(() => {
@@ -88,15 +146,17 @@ export default function SpotifyWidgetView({ config }) {
       timer = setInterval(() => {
         setProgress((prev) => {
           if (prev >= activeTrack.duration) {
-            setIsPlaying(false);
-            return 0;
+            if (!isSpotifyMode) {
+              setIsPlaying(false);
+            }
+            return activeTrack.duration;
           }
           return prev + 1;
         });
       }, 1000);
     }
     return () => clearInterval(timer);
-  }, [isPlaying, activeTrack.duration]);
+  }, [isPlaying, activeTrack.duration, isSpotifyMode]);
 
   // Format time (seconds to mm:ss)
   const formatTime = (secs) => {
