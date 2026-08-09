@@ -24,8 +24,19 @@ export default function WorldClockWidgetView({ config }) {
     gradientName = 'sunset',
     backgroundImageUrl = '',
     borderRadius = '12px',
+    enableSlideshow = false,
     customCSS = ''
   } = config;
+
+  const [activeClockIdx, setActiveClockIdx] = useState(0);
+
+  useEffect(() => {
+    if (!enableSlideshow) return;
+    const interval = setInterval(() => {
+      setActiveClockIdx((prev) => (prev + 1) % 3);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [enableSlideshow]);
 
   const formatTime = (timezone) => {
     try {
@@ -94,27 +105,33 @@ export default function WorldClockWidgetView({ config }) {
       {safeCSS && <style>{safeCSS}</style>}
       <div style={containerStyle}>
         <div style={{
-          display: 'flex',
-          justifyContent: 'space-around',
-          alignItems: 'center',
           width: '100%',
-          gap: '1rem',
-          flexWrap: 'nowrap'
+          overflow: 'hidden',
+          borderRadius: '8px'
         }}>
-          {clocks.map((clock, index) => (
-            <div
-              key={index}
-              style={{
-                flex: 1,
-                background: 'rgba(0, 0, 0, 0.25)',
-                backdropFilter: 'blur(4px)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                padding: '0.75rem 0.5rem',
-                borderRadius: '8px',
-                textAlign: 'center',
-                minWidth: 0,
-                boxShadow: '0 4px 10px rgba(0,0,0,0.15)'
-              }}
+          <div style={{
+            display: 'flex',
+            width: '100%',
+            gap: enableSlideshow ? '0' : '1rem',
+            transform: enableSlideshow ? `translateX(-${activeClockIdx * 100}%)` : 'none',
+            transition: enableSlideshow ? 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
+            flexWrap: 'nowrap'
+          }}>
+            {clocks.map((clock, index) => (
+              <div
+                key={index}
+                style={{
+                  flex: enableSlideshow ? '0 0 100%' : 1,
+                  background: 'rgba(0, 0, 0, 0.25)',
+                  backdropFilter: 'blur(4px)',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  padding: '0.75rem 0.5rem',
+                  borderRadius: '8px',
+                  textAlign: 'center',
+                  minWidth: 0,
+                  boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
+                  boxSizing: 'border-box',
+                }}
             >
               <div style={{
                 fontSize: '0.75rem',
@@ -147,6 +164,7 @@ export default function WorldClockWidgetView({ config }) {
             </div>
           ))}
         </div>
+      </div>
       </div>
     </>
   );
