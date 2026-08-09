@@ -20,6 +20,18 @@ export default function TodoWidgetConfig({ config, onChange }) {
         />
       </div>
 
+      <div className="config-field toggle-field">
+        <label>Strike Completed Tasks</label>
+        <label className="toggle-switch">
+          <input
+            type="checkbox"
+            checked={config.strikeCompleted !== false}
+            onChange={(e) => handleUpdate('strikeCompleted', e.target.checked)}
+          />
+          <span className="slider"></span>
+        </label>
+      </div>
+
       <h3 style={{ marginTop: '0.5rem' }}>Appearance</h3>
 
       <div className="config-row">
