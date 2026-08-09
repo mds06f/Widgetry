@@ -76,7 +76,7 @@ export default function WeatherWidgetConfig({ config, onChange }) {
       </div>
 
       <div className="config-field toggle-field">
-        <label>Show Humidity & Wind Speed</label>
+        <label>Show Detailed Metrics</label>
         <label className="toggle-switch">
           <input
             type="checkbox"
@@ -86,6 +86,33 @@ export default function WeatherWidgetConfig({ config, onChange }) {
           <span className="slider"></span>
         </label>
       </div>
+
+      {config.showDetails && (
+        <div style={{ marginLeft: '1rem', borderLeft: '2px solid rgba(255,255,255,0.1)', paddingLeft: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
+          <div className="config-field toggle-field" style={{ margin: 0 }}>
+            <label style={{ fontSize: '0.8rem' }}>Show Humidity</label>
+            <label className="toggle-switch" style={{ transform: 'scale(0.85)' }}>
+              <input
+                type="checkbox"
+                checked={config.showHumidity !== false}
+                onChange={(e) => handleUpdate('showHumidity', e.target.checked)}
+              />
+              <span className="slider"></span>
+            </label>
+          </div>
+          <div className="config-field toggle-field" style={{ margin: 0 }}>
+            <label style={{ fontSize: '0.8rem' }}>Show Wind Speed</label>
+            <label className="toggle-switch" style={{ transform: 'scale(0.85)' }}>
+              <input
+                type="checkbox"
+                checked={config.showWindSpeed !== false}
+                onChange={(e) => handleUpdate('showWindSpeed', e.target.checked)}
+              />
+              <span className="slider"></span>
+            </label>
+          </div>
+        </div>
+      )}
 
       <div className="config-field">
         <label>Background Style</label>
