@@ -236,7 +236,8 @@ export default function Dashboard({ navigate, token, user }) {
       </div>
 
       {widgets.length > 0 && (
-        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+        <>
+          <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
           <div style={{ position: 'relative', flex: 1, minWidth: '240px' }}>
             <LucideIcons.Search
               size={18}
@@ -322,6 +323,7 @@ export default function Dashboard({ navigate, token, user }) {
             </button>
           </div>
         )}
+        </>
       )}
 
       {loading ? (
