@@ -37,6 +37,56 @@ export default function QuoteWidgetConfig({ config, onChange }) {
         </select>
       </div>
 
+      <div style={{ border: '1px solid var(--border-color)', padding: '0.75rem', borderRadius: '6px', marginBottom: '1rem' }}>
+        <h4 style={{ margin: '0 0 0.5rem 0' }}>Text Shadow Gradient</h4>
+        <div className="config-row">
+          <div className="config-field">
+            <label>Offset X ({config.shadowOffsetX !== undefined ? config.shadowOffsetX : 2}px)</label>
+            <input
+              type="range"
+              min="-15"
+              max="15"
+              value={config.shadowOffsetX !== undefined ? config.shadowOffsetX : 2}
+              onChange={(e) => handleUpdate('shadowOffsetX', parseInt(e.target.value))}
+            />
+          </div>
+          <div className="config-field">
+            <label>Offset Y ({config.shadowOffsetY !== undefined ? config.shadowOffsetY : 2}px)</label>
+            <input
+              type="range"
+              min="-15"
+              max="15"
+              value={config.shadowOffsetY !== undefined ? config.shadowOffsetY : 2}
+              onChange={(e) => handleUpdate('shadowOffsetY', parseInt(e.target.value))}
+            />
+          </div>
+        </div>
+
+        <div className="config-field">
+          <label>Blur ({config.shadowBlur !== undefined ? config.shadowBlur : 4}px)</label>
+          <input
+            type="range"
+            min="0"
+            max="20"
+            value={config.shadowBlur !== undefined ? config.shadowBlur : 4}
+            onChange={(e) => handleUpdate('shadowBlur', parseInt(e.target.value))}
+          />
+        </div>
+
+        <div className="config-field">
+          <label>Shadow Gradient Theme</label>
+          <select
+            value={config.shadowGradient || 'none'}
+            onChange={(e) => handleUpdate('shadowGradient', e.target.value)}
+          >
+            <option value="none">None (No Gradient Shadow)</option>
+            {Object.keys(GRADIENTS).map((key) => (
+              <option key={key} value={key}>{key}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
       <div className="config-field toggle-field">
         <label>Show Author</label>
         <label className="toggle-switch">

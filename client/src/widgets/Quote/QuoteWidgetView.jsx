@@ -55,6 +55,10 @@ export default function QuoteWidgetView({ config }) {
     backgroundImageUrl = '',
     borderRadius = '12px',
     showAuthor = true,
+    shadowOffsetX = 2,
+    shadowOffsetY = 2,
+    shadowBlur = 4,
+    shadowGradient = 'none',
     customCSS = '',
   } = config;
 
@@ -124,15 +128,44 @@ export default function QuoteWidgetView({ config }) {
     <>
       {safeCSS ? <style>{safeCSS}</style> : null}
       <div style={style}>
-        <p
-          style={{
-            fontWeight: '500',
-            lineHeight: '1.4',
-            marginBottom: showAuthor ? '1rem' : '0',
-          }}
-        >
-          "{quote.text}"
-        </p>
+        <div style={{ position: 'relative', width: '100%', marginBottom: showAuthor ? '1rem' : '0' }}>
+          {shadowGradient && shadowGradient !== 'none' && (
+            <p
+              style={{
+                position: 'absolute',
+                top: `${shadowOffsetY}px`,
+                left: `${shadowOffsetX}px`,
+                width: '100%',
+                margin: 0,
+                fontWeight: '500',
+                lineHeight: '1.4',
+                filter: `blur(${shadowBlur}px)`,
+                background: GRADIENTS[shadowGradient] || 'none',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                pointerEvents: 'none',
+                userSelect: 'none',
+                opacity: 0.9,
+              }}
+            >
+              "{quote.text}"
+            </p>
+          )}
+          <p
+            style={{
+              position: 'relative',
+              zIndex: 1,
+              margin: 0,
+              fontWeight: '500',
+              lineHeight: '1.4',
+              textShadow: (!shadowGradient || shadowGradient === 'none')
+                ? `${shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px rgba(0,0,0,0.3)`
+                : 'none',
+            }}
+          >
+            "{quote.text}"
+          </p>
+        </div>
         {showAuthor && (
           <span
             style={{
