@@ -45,6 +45,35 @@ export default function TodoWidgetView({ config }) {
   const [items, setItems] = useState(() => loadItems(storageKey));
   const [draft, setDraft] = useState('');
   const [filter, setFilter] = useState('all'); // 'all' | 'active' | 'completed'
+  const [draggedIndex, setDraggedIndex] = useState(null);
+
+  const handleDragStart = (e, idx) => {
+    setDraggedIndex(idx);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e, idx) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === idx) return;
+
+    setItems((prev) => {
+      const updated = [...prev];
+      const draggedItem = visibleItems[draggedIndex];
+      const targetItem = visibleItems[idx];
+
+      const draggedMainIdx = prev.findIndex((i) => i.id === draggedItem.id);
+      const targetMainIdx = prev.findIndex((i) => i.id === targetItem.id);
+
+      updated.splice(draggedMainIdx, 1);
+      updated.splice(targetMainIdx, 0, draggedItem);
+      return updated;
+    });
+    setDraggedIndex(null);
+  };
 
   // Persist whenever items change
   useEffect(() => {
@@ -274,9 +303,14 @@ export default function TodoWidgetView({ config }) {
               <span>No tasks found!</span>
             </div>
           ) : (
-            visibleItems.map((item) => (
+            visibleItems.map((item, index) => (
               <div
                 key={item.id}
+                draggable
+                onDragStart={(e) => handleDragStart(e, index)}
+                onDragOver={handleDragOver}
+                onDrop={(e) => handleDrop(e, index)}
+                onDragEnd={() => setDraggedIndex(null)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -287,8 +321,24 @@ export default function TodoWidgetView({ config }) {
                   background: item.done ? 'rgba(0,0,0,0.08)' : surfaceColor,
                   border: `1px solid ${item.done ? 'transparent' : borderColor}`,
                   transition: 'background 0.2s',
+                  opacity: draggedIndex === index ? 0.4 : 1,
+                  cursor: 'move',
                 }}
               >
+                {/* Drag Handle */}
+                <div
+                  style={{
+                    cursor: 'grab',
+                    fontSize: '0.8rem',
+                    opacity: 0.4,
+                    userSelect: 'none',
+                    paddingRight: '0.1rem',
+                  }}
+                  title="Drag to reorder"
+                >
+                  ⋮⋮
+                </div>
+
                 {/* Checkbox */}
                 <button
                   onClick={() => toggleItem(item.id)}
