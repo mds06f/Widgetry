@@ -53,39 +53,60 @@ export default function PomodoroWidgetConfig({ config, onChange }) {
       </div>
 
       {config.soundAlert !== false && (
-        <div className="config-field" style={{ marginTop: '-0.5rem', marginBottom: '1rem' }}>
-          <button
-            type="button"
-            className="btn btn-secondary"
-            style={{ width: '100%', fontSize: '0.75rem', padding: '0.35rem' }}
-            onClick={() => {
-              try {
-                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-                if (!AudioContextClass) return;
-                const audioCtx = new AudioContextClass();
-                const oscillator = audioCtx.createOscillator();
-                const gainNode = audioCtx.createGain();
+        <>
+          <div className="config-field" style={{ marginBottom: '0.75rem' }}>
+            <label>Custom Sound URL (optional)</label>
+            <input
+              type="text"
+              value={config.customSoundUrl || ''}
+              onChange={(e) => handleUpdate('customSoundUrl', e.target.value)}
+              placeholder="https://example.com/sound.mp3"
+            />
+          </div>
+          <div className="config-field" style={{ marginTop: '-0.25rem', marginBottom: '1rem' }}>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              style={{ width: '100%', fontSize: '0.75rem', padding: '0.35rem' }}
+              onClick={() => {
+                if (config.customSoundUrl) {
+                  try {
+                    const audio = new Audio(config.customSoundUrl);
+                    audio.volume = 0.5;
+                    audio.play();
+                  } catch (e) {
+                    console.warn('Failed to play custom sound URL:', e);
+                  }
+                  return;
+                }
+                try {
+                  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                  if (!AudioContextClass) return;
+                  const audioCtx = new AudioContextClass();
+                  const oscillator = audioCtx.createOscillator();
+                  const gainNode = audioCtx.createGain();
 
-                oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
-                oscillator.frequency.setValueAtTime(880, audioCtx.currentTime + 0.15); // A5
+                  oscillator.type = 'sine';
+                  oscillator.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+                  oscillator.frequency.setValueAtTime(880, audioCtx.currentTime + 0.15); // A5
 
-                gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.45);
+                  gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                  gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.45);
 
-                oscillator.connect(gainNode);
-                gainNode.connect(audioCtx.destination);
+                  oscillator.connect(gainNode);
+                  gainNode.connect(audioCtx.destination);
 
-                oscillator.start();
-                oscillator.stop(audioCtx.currentTime + 0.5);
-              } catch (e) {
-                console.warn('AudioContext failed:', e);
-              }
-            }}
-          >
-            🔊 Play Test Sound
-          </button>
-        </div>
+                  oscillator.start();
+                  oscillator.stop(audioCtx.currentTime + 0.5);
+                } catch (e) {
+                  console.warn('AudioContext failed:', e);
+                }
+              }}
+            >
+              🔊 Play Test Sound
+            </button>
+          </div>
+        </>
       )}
 
       <div className="config-field">
