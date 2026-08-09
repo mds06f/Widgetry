@@ -628,8 +628,20 @@ export default function WidgetEditor({
 
         <div style={{ marginTop: 'auto', display: 'flex', gap: '0.5rem' }}>
           <button
+            className="btn btn-secondary"
+            style={{ flex: 1, justifyContent: 'center' }}
+            onClick={() => {
+              if (window.confirm('Are you sure you want to reset all configurations to defaults?')) {
+                handleConfigChange(typeDetails.defaultConfig || {});
+              }
+            }}
+            type="button"
+          >
+            Reset Defaults
+          </button>
+          <button
             className="btn btn-primary"
-            style={{ width: '100%', justifyContent: 'center' }}
+            style={{ flex: 2, justifyContent: 'center' }}
             onClick={handleSave}
             disabled={saving}
           >
