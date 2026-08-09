@@ -112,9 +112,22 @@ export default function SpotifyWidgetConfig({ config, onChange }) {
           <option value="midnight">🌆 M83 - Midnight City</option>
           <option value="getlucky">🕺 Daft Punk - Get Lucky</option>
           <option value="strobe">⚡ Deadmau5 - Strobe</option>
+          <option value="playlist">🎹 Spotify Playlist URL/ID...</option>
           <option value="custom">✏️ Custom Song details...</option>
         </select>
       </div>
+
+      {config.trackPreset === 'playlist' && (
+        <div className="config-field" style={{ marginTop: '0.25rem', marginBottom: '0.5rem' }}>
+          <label>Spotify Playlist URL or ID</label>
+          <input
+            type="text"
+            value={config.playlistUrl || ''}
+            onChange={(e) => handleUpdate('playlistUrl', e.target.value)}
+            placeholder="e.g. 37i9dQZF1DXcBWIGo3R3m5"
+          />
+        </div>
+      )}
 
       {config.trackPreset === 'custom' && (
         <div

@@ -914,4 +914,90 @@ router.get('/spotify/currently-playing/:widgetId', async (req, res) => {
   }
 });
 
+// GET /api/widgets/spotify/playlist/:playlistId/:widgetId
+router.get('/spotify/playlist/:playlistId/:widgetId', async (req, res) => {
+  const widget = db.getById(req.params.widgetId);
+  const playlistId = req.params.playlistId;
+
+  if (!widget || !widget.config?.spotifyConnected || SPOTIFY_CLIENT_ID === 'dummy_spotify_client_id') {
+    const seed = playlistId.charCodeAt(0) || 42;
+    const mockTracks = [
+      {
+        title: `Track Alpha (Playlist Mock ${seed})`,
+        artist: 'Sonic Oasis',
+        album: 'Synthesized Dreams',
+        duration: 180,
+        coverUrl: 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=300'
+      },
+      {
+        title: `Track Beta (Playlist Mock ${seed + 1})`,
+        artist: 'Neon Horizon',
+        album: 'Cyberpunk Odyssey',
+        duration: 210,
+        coverUrl: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=300'
+      },
+      {
+        title: `Track Gamma (Playlist Mock ${seed + 2})`,
+        artist: 'Astral Echo',
+        album: 'Stellar Wanderer',
+        duration: 240,
+        coverUrl: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300'
+      }
+    ];
+    return res.json({ tracks: mockTracks });
+  }
+
+  let { spotifyAccessToken, spotifyRefreshToken, spotifyTokenExpiresAt } = widget.config;
+
+  if (Date.now() >= spotifyTokenExpiresAt - 60000) {
+    try {
+      const params = new URLSearchParams();
+      params.append('grant_type', 'refresh_token');
+      params.append('refresh_token', spotifyRefreshToken);
+      params.append('client_id', SPOTIFY_CLIENT_ID);
+      params.append('client_secret', SPOTIFY_CLIENT_SECRET);
+
+      const refreshRes = await axios.post('https://accounts.spotify.com/api/token', params, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      });
+
+      spotifyAccessToken = refreshRes.data.access_token;
+      if (refreshRes.data.refresh_token) {
+        spotifyRefreshToken = refreshRes.data.refresh_token;
+      }
+      spotifyTokenExpiresAt = Date.now() + refreshRes.data.expires_in * 1000;
+
+      widget.config.spotifyAccessToken = spotifyAccessToken;
+      widget.config.spotifyRefreshToken = spotifyRefreshToken;
+      widget.config.spotifyTokenExpiresAt = spotifyTokenExpiresAt;
+      db.update(widget.id, widget);
+    } catch (err) {
+      console.error('Failed to refresh Spotify token for playlist:', err.message);
+      return res.status(502).json({ error: 'Failed to refresh Spotify session' });
+    }
+  }
+
+  try {
+    const response = await axios.get(`https://api.spotify.com/v1/playlists/${playlistId}/tracks?limit=20`, {
+      headers: { Authorization: `Bearer ${spotifyAccessToken}` }
+    });
+
+    const tracks = response.data.items.map(item => {
+      const track = item.track;
+      return {
+        title: track.name,
+        artist: track.artists.map(a => a.name).join(', '),
+        album: track.album.name,
+        duration: Math.round(track.duration_ms / 1000),
+        coverUrl: track.album.images[0]?.url || 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=300'
+      };
+    });
+
+    res.json({ tracks });
+  } catch (err) {
+    console.error('Failed to fetch Spotify playlist:', err.message);
+    res.status(500).json({ error: 'Failed to fetch Spotify playlist tracks' });
+  }
+});
+
 module.exports = router;

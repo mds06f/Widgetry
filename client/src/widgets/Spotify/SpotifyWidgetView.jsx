@@ -40,6 +40,7 @@ const TRACK_PRESETS = {
 export default function SpotifyWidgetView({ config }) {
   const {
     trackPreset = 'resonance',
+    playlistUrl = '',
     customTitle = '',
     customArtist = '',
     customAlbum = '',
@@ -58,9 +59,60 @@ export default function SpotifyWidgetView({ config }) {
 
   const safeCSS = customCSS.replace(/<\/style>/gi, '');
 
+  const match = window.location.pathname.match(/\/widget\/render\/([^/]+)/);
+  const widgetId = match ? match[1] : null;
+
+  const [playlistTracks, setPlaylistTracks] = useState([]);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+
+  const playlistId = playlistUrl
+    ? (playlistUrl.includes('playlist/')
+        ? playlistUrl.split('playlist/')[1].split('?')[0]
+        : playlistUrl.trim())
+    : '';
+
+  useEffect(() => {
+    if (trackPreset !== 'playlist' || !playlistId || !widgetId) {
+      setPlaylistTracks([]);
+      setCurrentTrackIndex(0);
+      return;
+    }
+
+    let active = true;
+    const fetchPlaylist = async () => {
+      try {
+        const res = await fetch(`/api/widgets/spotify/playlist/${playlistId}/${widgetId}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (active && data.tracks && data.tracks.length > 0) {
+            setPlaylistTracks(data.tracks);
+            setCurrentTrackIndex(0);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching playlist tracks:', err);
+      }
+    };
+    fetchPlaylist();
+
+    return () => {
+      active = false;
+    };
+  }, [trackPreset, playlistId, widgetId]);
+
+  const isPlaylistMode = trackPreset === 'playlist' && playlistTracks.length > 0;
+
   // Determine active track details
   let activeTrack = TRACK_PRESETS[trackPreset] || TRACK_PRESETS.resonance;
-  if (trackPreset === 'custom') {
+  if (isPlaylistMode) {
+    activeTrack = playlistTracks[currentTrackIndex] || {
+      title: 'No Tracks',
+      artist: 'Empty Playlist',
+      album: '',
+      duration: 180,
+      coverUrl: 'https://images.unsplash.com/photo-1611339555312-e607c8352fd7?w=300'
+    };
+  } else if (trackPreset === 'custom') {
     activeTrack = {
       title: customTitle || 'Untitled Track',
       artist: customArtist || 'Unknown Artist',
@@ -71,9 +123,6 @@ export default function SpotifyWidgetView({ config }) {
         'https://images.unsplash.com/photo-1611339555312-e607c8352fd7?w=300&auto=format&fit=crop&q=80',
     };
   }
-
-  const match = window.location.pathname.match(/\/widget\/render\/([^/]+)/);
-  const widgetId = match ? match[1] : null;
 
   const [liveTrack, setLiveTrack] = useState(null);
 
@@ -137,7 +186,7 @@ export default function SpotifyWidgetView({ config }) {
     if (!isSpotifyMode) {
       setProgress(0);
     }
-  }, [trackPreset, customTitle, customArtist, isSpotifyMode]);
+  }, [trackPreset, customTitle, customArtist, isSpotifyMode, currentTrackIndex]);
 
   // Handle play progression
   useEffect(() => {
@@ -146,7 +195,10 @@ export default function SpotifyWidgetView({ config }) {
       timer = setInterval(() => {
         setProgress((prev) => {
           if (prev >= activeTrack.duration) {
-            if (!isSpotifyMode) {
+            if (isPlaylistMode) {
+              setCurrentTrackIndex((prevIdx) => (prevIdx + 1) % playlistTracks.length);
+              return 0;
+            } else if (!isSpotifyMode) {
               setIsPlaying(false);
             }
             return activeTrack.duration;
@@ -156,7 +208,7 @@ export default function SpotifyWidgetView({ config }) {
       }, 1000);
     }
     return () => clearInterval(timer);
-  }, [isPlaying, activeTrack.duration, isSpotifyMode]);
+  }, [isPlaying, activeTrack.duration, isSpotifyMode, isPlaylistMode, playlistTracks.length]);
 
   // Format time (seconds to mm:ss)
   const formatTime = (secs) => {
@@ -443,7 +495,18 @@ export default function SpotifyWidgetView({ config }) {
                 }}
               >
                 <button
-                  onClick={() => setProgress(0)}
+                  onClick={() => {
+                    if (isPlaylistMode) {
+                      if (progress > 3) {
+                        setProgress(0);
+                      } else {
+                        setCurrentTrackIndex((prev) => (prev - 1 + playlistTracks.length) % playlistTracks.length);
+                        setProgress(0);
+                      }
+                    } else {
+                      setProgress(0);
+                    }
+                  }}
                   style={{
                     background: 'none',
                     border: 'none',
@@ -454,7 +517,7 @@ export default function SpotifyWidgetView({ config }) {
                     alignItems: 'center',
                     opacity: 0.8,
                   }}
-                  title="Restart"
+                  title={isPlaylistMode ? "Previous Track" : "Restart"}
                 >
                   <SkipBack size={16} fill="currentColor" />
                 </button>
@@ -496,9 +559,14 @@ export default function SpotifyWidgetView({ config }) {
                 </button>
 
                 <button
-                  onClick={() =>
-                    setProgress(Math.min(activeTrack.duration, progress + 10))
-                  }
+                  onClick={() => {
+                    if (isPlaylistMode) {
+                      setCurrentTrackIndex((prev) => (prev + 1) % playlistTracks.length);
+                      setProgress(0);
+                    } else {
+                      setProgress(Math.min(activeTrack.duration, progress + 10));
+                    }
+                  }}
                   style={{
                     background: 'none',
                     border: 'none',
@@ -509,7 +577,7 @@ export default function SpotifyWidgetView({ config }) {
                     alignItems: 'center',
                     opacity: 0.8,
                   }}
-                  title="Skip 10s"
+                  title={isPlaylistMode ? "Next Track" : "Skip 10s"}
                 >
                   <SkipForward size={16} fill="currentColor" />
                 </button>
