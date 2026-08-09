@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { GRADIENTS } from '../index';
 
 export default function CountdownWidgetView({ config }) {
   const [timeLeft, setTimeLeft] = useState(null);
+  const redirectedRef = useRef(false);
 
   const {
     targetDate = '',
     label = 'Countdown',
     completionMessage = "🎉 Time's Up!",
+    actionUrl = '',
     showDays = true,
     showHours = true,
     showMinutes = true,
@@ -24,6 +26,10 @@ export default function CountdownWidgetView({ config }) {
   const safeCSS = customCSS.replace(/<\/style>/gi, '');
 
   useEffect(() => {
+    redirectedRef.current = false;
+  }, [targetDate]);
+
+  useEffect(() => {
     function calculate() {
       if (!targetDate) {
         setTimeLeft(null);
@@ -35,6 +41,14 @@ export default function CountdownWidgetView({ config }) {
 
       if (diff <= 0) {
         setTimeLeft({ expired: true });
+        if (actionUrl && !redirectedRef.current) {
+          redirectedRef.current = true;
+          try {
+            window.open(actionUrl, '_blank');
+          } catch (e) {
+            console.warn('Pop-up blocked:', e);
+          }
+        }
         return;
       }
 
@@ -50,7 +64,7 @@ export default function CountdownWidgetView({ config }) {
     calculate();
     const timer = setInterval(calculate, 1000);
     return () => clearInterval(timer);
-  }, [targetDate]);
+  }, [targetDate, actionUrl]);
 
   // Build background style
   const containerStyle = {
@@ -145,8 +159,37 @@ export default function CountdownWidgetView({ config }) {
             Set a target date in settings
           </div>
         ) : timeLeft?.expired ? (
-          <div style={{ fontSize: '1.5rem', fontWeight: '700' }}>
-            {completionMessage || "🎉 Time's Up!"}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+            <div style={{ fontSize: '1.5rem', fontWeight: '700' }}>
+              {completionMessage || "🎉 Time's Up!"}
+            </div>
+            {actionUrl && (
+              <a
+                href={actionUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  marginTop: '0.5rem',
+                  padding: '0.5rem 1.25rem',
+                  fontSize: '0.85rem',
+                  fontWeight: '700',
+                  color: '#111827',
+                  background: textColor,
+                  textDecoration: 'none',
+                  borderRadius: '20px',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                  transition: 'transform 0.2s',
+                }}
+                onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+              >
+                <span>Launch Action</span>
+                <span>➔</span>
+              </a>
+            )}
           </div>
         ) : timeLeft ? (
           <div

@@ -39,6 +39,16 @@ export default function CountdownWidgetConfig({ config, onChange }) {
         />
       </div>
 
+      <div className="config-field">
+        <label>Target Reached Action URL (optional)</label>
+        <input
+          type="text"
+          value={config.actionUrl || ''}
+          onChange={(e) => handleUpdate('actionUrl', e.target.value)}
+          placeholder="e.g. https://myproduct.com/launch"
+        />
+      </div>
+
       <h3 style={{ marginTop: '0.5rem' }}>Display Units</h3>
 
       <div className="config-field toggle-field">
