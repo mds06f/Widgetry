@@ -7,12 +7,32 @@ export function executeInSandbox(scriptCode, contextData = {}) {
         `
         self.onmessage = function(e) {
           const { code, data } = e.data;
+          
+          const capturedLogs = [];
+          const mockConsole = {
+            log: function(...args) {
+              const msg = args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : String(arg)).join(' ');
+              capturedLogs.push({ type: 'log', message: msg, time: new Date().toLocaleTimeString() });
+            },
+            warn: function(...args) {
+              const msg = args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : String(arg)).join(' ');
+              capturedLogs.push({ type: 'warn', message: msg, time: new Date().toLocaleTimeString() });
+            },
+            error: function(...args) {
+              const msg = args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : String(arg)).join(' ');
+              capturedLogs.push({ type: 'error', message: msg, time: new Date().toLocaleTimeString() });
+            }
+          };
+
+          // Override global console
+          self.console = { ...console, ...mockConsole };
+
           try {
             const func = new Function('data', code);
             const result = func(data);
-            self.postMessage({ success: true, result });
+            self.postMessage({ success: true, result, logs: capturedLogs });
           } catch (err) {
-            self.postMessage({ success: false, error: err.message });
+            self.postMessage({ success: false, error: err.message, logs: capturedLogs });
           }
         };
         `
@@ -32,9 +52,11 @@ export function executeInSandbox(scriptCode, contextData = {}) {
         worker.terminate();
         URL.revokeObjectURL(workerUrl);
         if (e.data.success) {
-          resolve(e.data.result);
+          resolve({ result: e.data.result, logs: e.data.logs || [] });
         } else {
-          reject(new Error(e.data.error));
+          const err = new Error(e.data.error);
+          err.logs = e.data.logs || [];
+          reject(err);
         }
       };
 
@@ -42,7 +64,7 @@ export function executeInSandbox(scriptCode, contextData = {}) {
         clearTimeout(timeout);
         worker.terminate();
         URL.revokeObjectURL(workerUrl);
-        reject(new Error(err.message));
+        reject(err);
       };
 
       worker.postMessage({ code: scriptCode, data: contextData });
