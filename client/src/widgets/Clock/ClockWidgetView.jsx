@@ -12,7 +12,7 @@ export default function ClockWidgetView({ config }) {
 
   const {
     timeFormat = '12',
-    showSeconds = true,
+    showSeconds = true, // Toggles seconds rendering (HH:MM:SS vs HH:MM)
     textColor = '#ffffff',
     fontSize = '36px',
     fontFamily = 'Outfit',
@@ -58,8 +58,6 @@ export default function ClockWidgetView({ config }) {
     hours = hours ? hours : 12; // the hour '0' should be '12'
   }
   const displayHours = String(hours).padStart(2, '0');
-
-  const timeString = `${displayHours}:${minutes}${showSeconds ? `:${seconds}` : ''}${ampm}`;
 
   const getFormattedDate = () => {
     const day = String(time.getDate()).padStart(2, '0');
@@ -115,7 +113,19 @@ export default function ClockWidgetView({ config }) {
           alignItems: 'center',
         }}
       >
-        <div>{timeString}</div>
+        <div>
+          {displayHours}:{minutes}
+          {showSeconds && (
+            <span style={{ fontSize: '0.65em', opacity: 0.75, marginLeft: '0.15em', fontWeight: 'normal' }}>
+              :{seconds}
+            </span>
+          )}
+          {ampm && (
+            <span style={{ fontSize: '0.5em', opacity: 0.7, marginLeft: '0.25em', textTransform: 'uppercase', fontWeight: 'normal' }}>
+              {ampm.trim()}
+            </span>
+          )}
+        </div>
         {showDate && (
           <div
             style={{
