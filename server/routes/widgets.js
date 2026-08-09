@@ -91,6 +91,39 @@ router.get('/:id', (req, res) => {
       }
     }
 
+    // Domain restrictions check
+    if (widget.config && widget.config.allowedDomains) {
+      const domains = widget.config.allowedDomains
+        .split(',')
+        .map((d) => d.trim().toLowerCase())
+        .filter(Boolean);
+
+      if (domains.length > 0) {
+        const refUrlStr = req.query.referrer || req.headers.referer;
+        if (!refUrlStr) {
+          return res.status(403).json({ error: 'Access denied: domain restriction active (no referrer found)' });
+        }
+
+        try {
+          const refUrl = new URL(refUrlStr);
+          const refHost = refUrl.hostname.toLowerCase();
+
+          const isAllowed = domains.some((domain) => {
+            return refHost === domain || refHost.endsWith('.' + domain);
+          });
+
+          const platformHost = req.headers.host ? req.headers.host.split(':')[0].toLowerCase() : 'localhost';
+          const isPlatform = refHost === platformHost || refHost === 'localhost' || refHost === '127.0.0.1';
+
+          if (!isAllowed && !isPlatform) {
+            return res.status(403).json({ error: `Access denied: domain '${refHost}' is not allowed to embed this widget` });
+          }
+        } catch (e) {
+          return res.status(403).json({ error: 'Access denied: invalid referrer URL' });
+        }
+      }
+    }
+
     res.json(widget);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch widget' });
@@ -303,6 +336,7 @@ router.delete('/:id', (req, res) => {
 // GET weather proxy endpoint (cached for 5 minutes)
 router.get('/proxy/weather', apiCache(5 * 60 * 1000), async (req, res) => {
   const city = req.query.city || 'San Francisco';
+  const unit = req.query.unit || 'C';
   try {
     // 1. Geocode city name to lat/long using Open-Meteo Geocoding API
     const geocodeUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`;
@@ -315,16 +349,22 @@ router.get('/proxy/weather', apiCache(5 * 60 * 1000), async (req, res) => {
     const { latitude, longitude, name, country } = geocodeRes.data.results[0];
 
     // 2. Fetch current weather conditions
-    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`;
+    const tempUnit = unit === 'F' ? 'fahrenheit' : 'celsius';
+    const windUnit = unit === 'F' ? 'mph' : 'kmh';
+    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&temperature_unit=${tempUnit}&wind_speed_unit=${windUnit}`;
     const weatherRes = await axios.get(weatherUrl);
 
-    if (!weatherRes.data.current_weather) {
+    if (!weatherRes.data.current) {
       return res
         .status(500)
         .json({ error: 'Failed to fetch weather conditions' });
     }
 
-    const { temperature, weathercode } = weatherRes.data.current_weather;
+    const current = weatherRes.data.current;
+    const temperature = current.temperature_2m;
+    const humidity = current.relative_humidity_2m;
+    const windSpeed = current.wind_speed_10m;
+    const weathercode = current.weather_code;
 
     // 3. Map weather codes to friendly descriptions
     // Reference: WMO weather interpretation codes
@@ -359,6 +399,8 @@ router.get('/proxy/weather', apiCache(5 * 60 * 1000), async (req, res) => {
       city: name,
       country: country || '',
       temperature,
+      humidity,
+      windSpeed,
       condition: details.condition,
       icon: details.icon,
       latitude,
@@ -367,6 +409,59 @@ router.get('/proxy/weather', apiCache(5 * 60 * 1000), async (req, res) => {
   } catch (err) {
     console.error('Weather Proxy Error:', err.message);
     res.status(500).json({ error: 'Weather service currently unavailable' });
+  }
+});
+
+function parseRssXml(xmlString) {
+  const channelTitleMatch = xmlString.match(/<channel>[\s\S]*?<title>([\s\S]*?)<\/title>/i);
+  const feedTitle = channelTitleMatch ? channelTitleMatch[1].trim().replace(/<!\[CDATA\[([\s\S]*?)\]\]>/gi, '$1') : 'RSS Feed';
+
+  const items = [];
+  const itemMatches = xmlString.match(/<item>([\s\S]*?)<\/item>/gi) || [];
+
+  for (const itemXml of itemMatches.slice(0, 3)) {
+    const titleMatch = itemXml.match(/<title>([\s\S]*?)<\/title>/i);
+    const linkMatch = itemXml.match(/<link>([\s\S]*?)<\/link>/i);
+
+    let title = titleMatch ? titleMatch[1].trim() : 'No Title';
+    let link = linkMatch ? linkMatch[1].trim() : '#';
+
+    title = title.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/gi, '$1');
+    link = link.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/gi, '$1');
+
+    title = title
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#039;/g, "'");
+
+    items.push({ title, link });
+  }
+
+  return { title: feedTitle, items };
+}
+
+// GET RSS feed proxy endpoint (cached for 10 minutes)
+router.get('/proxy/rss', apiCache(10 * 60 * 1000), async (req, res) => {
+  const feedUrl = req.query.url;
+  if (!feedUrl) {
+    return res.status(400).json({ error: 'URL query parameter is required' });
+  }
+  try {
+    const response = await axios.get(feedUrl, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Widgetry/1.0' },
+      timeout: 5000,
+    });
+    const xml = response.data;
+    if (typeof xml !== 'string') {
+      return res.status(422).json({ error: 'Invalid feed content' });
+    }
+    const parsed = parseRssXml(xml);
+    res.json(parsed);
+  } catch (err) {
+    console.error('RSS Proxy Error:', err.message);
+    res.status(500).json({ error: 'Failed to fetch or parse RSS feed' });
   }
 });
 
@@ -588,7 +683,7 @@ router.get('/:id/analytics', (req, res) => {
       }
     }
 
-    const report = analyticsDb.getAnalytics(req.params.id);
+    const report = analyticsDb.getDetailedAnalytics(req.params.id);
     res.json(report);
   } catch (err) {
     console.error('Analytics Fetch Error:', err.message);
@@ -617,6 +712,205 @@ router.post('/:id/share-org', (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: 'Failed to share widget with organization' });
+  }
+});
+
+// Spotify OAuth credentials (developer defaults or loaded from environment / request)
+const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID || 'dummy_spotify_client_id';
+const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET || 'dummy_spotify_client_secret';
+
+// GET /api/widgets/spotify/login
+router.get('/spotify/login', (req, res) => {
+  const widgetId = req.query.widgetId;
+  if (!widgetId) {
+    return res.status(400).send('widgetId query parameter is required');
+  }
+
+  const host = req.headers.host;
+  const protocol = req.secure || req.headers['x-forwarded-proto'] === 'https' ? 'https' : 'http';
+  const redirectUri = `${protocol}://${host}/api/widgets/spotify/callback`;
+
+  const state = widgetId;
+  const scope = 'user-read-currently-playing user-read-playback-state';
+
+  const spotifyAuthUrl = `https://accounts.spotify.com/authorize?response_type=code&client_id=${SPOTIFY_CLIENT_ID}&scope=${encodeURIComponent(scope)}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${encodeURIComponent(state)}`;
+  
+  res.redirect(spotifyAuthUrl);
+});
+
+// GET /api/widgets/spotify/callback
+router.get('/spotify/callback', async (req, res) => {
+  const { code, state: widgetId, error } = req.query;
+
+  if (error) {
+    return res.send(`Spotify Authorization Error: ${error}`);
+  }
+
+  if (!code || !widgetId) {
+    return res.status(400).send('Missing code or state');
+  }
+
+  const host = req.headers.host;
+  const protocol = req.secure || req.headers['x-forwarded-proto'] === 'https' ? 'https' : 'http';
+  const redirectUri = `${protocol}://${host}/api/widgets/spotify/callback`;
+
+  try {
+    if (SPOTIFY_CLIENT_ID === 'dummy_spotify_client_id') {
+      throw new Error('Spotify OAuth Sandbox mode active (dummy credentials)');
+    }
+
+    const params = new URLSearchParams();
+    params.append('grant_type', 'authorization_code');
+    params.append('code', code);
+    params.append('redirect_uri', redirectUri);
+    params.append('client_id', SPOTIFY_CLIENT_ID);
+    params.append('client_secret', SPOTIFY_CLIENT_SECRET);
+
+    const tokenRes = await axios.post('https://accounts.spotify.com/api/token', params, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
+
+    const { access_token, refresh_token, expires_in } = tokenRes.data;
+
+    const widget = db.getById(widgetId);
+    if (!widget) {
+      return res.status(404).send('Widget not found');
+    }
+
+    if (!widget.config) widget.config = {};
+    widget.config.spotifyConnected = true;
+    widget.config.spotifyAccessToken = access_token;
+    widget.config.spotifyRefreshToken = refresh_token;
+    widget.config.spotifyTokenExpiresAt = Date.now() + expires_in * 1000;
+
+    db.update(widgetId, widget);
+
+    res.send(`
+      <html>
+        <body>
+          <h2>Spotify Connected successfully!</h2>
+          <p>You can close this window now. Returning to editor...</p>
+          <script>
+            if (window.opener) {
+              window.opener.postMessage({ type: 'SPOTIFY_CONNECTED' }, '*');
+            }
+            setTimeout(() => {
+              window.close();
+            }, 1500);
+          </script>
+        </body>
+      </html>
+    `);
+  } catch (err) {
+    console.error('Spotify OAuth Callback Error:', err.message);
+    // Simulate successful link in sandbox mode if dummy credentials used
+    const widget = db.getById(widgetId);
+    if (widget) {
+      if (!widget.config) widget.config = {};
+      widget.config.spotifyConnected = true;
+      widget.config.spotifyAccessToken = 'dummy_access_token';
+      widget.config.spotifyRefreshToken = 'dummy_refresh_token';
+      widget.config.spotifyTokenExpiresAt = Date.now() + 3600 * 1000;
+      db.update(widgetId, widget);
+    }
+
+    res.send(`
+      <html>
+        <body>
+          <h2>Spotify Connected (Sandbox Sandbox Mode)!</h2>
+          <p>Sandbox credentials linked successfully. Returning to editor...</p>
+          <script>
+            if (window.opener) {
+              window.opener.postMessage({ type: 'SPOTIFY_CONNECTED' }, '*');
+            }
+            setTimeout(() => {
+              window.close();
+            }, 1500);
+          </script>
+        </body>
+      </html>
+    `);
+  }
+});
+
+// GET /api/widgets/spotify/currently-playing/:widgetId
+router.get('/spotify/currently-playing/:widgetId', async (req, res) => {
+  const widget = db.getById(req.params.widgetId);
+  if (!widget || !widget.config?.spotifyConnected) {
+    return res.status(400).json({ error: 'Spotify account not connected' });
+  }
+
+  let { spotifyAccessToken, spotifyRefreshToken, spotifyTokenExpiresAt } = widget.config;
+
+  if (SPOTIFY_CLIENT_ID === 'dummy_spotify_client_id' || spotifyAccessToken === 'dummy_access_token') {
+    return res.json({
+      isPlaying: true,
+      title: 'Resonance (Sandbox Mock)',
+      artist: 'HOME',
+      album: 'Odyssey',
+      coverUrl: 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=150',
+      duration: 180,
+      progress: Math.floor((Date.now() / 1000) % 180)
+    });
+  }
+
+  // Refresh token if expired
+  if (Date.now() >= spotifyTokenExpiresAt - 60000) {
+    try {
+      const params = new URLSearchParams();
+      params.append('grant_type', 'refresh_token');
+      params.append('refresh_token', spotifyRefreshToken);
+      params.append('client_id', SPOTIFY_CLIENT_ID);
+      params.append('client_secret', SPOTIFY_CLIENT_SECRET);
+
+      const refreshRes = await axios.post('https://accounts.spotify.com/api/token', params, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      });
+
+      spotifyAccessToken = refreshRes.data.access_token;
+      if (refreshRes.data.refresh_token) {
+        spotifyRefreshToken = refreshRes.data.refresh_token;
+      }
+      spotifyTokenExpiresAt = Date.now() + refreshRes.data.expires_in * 1000;
+
+      widget.config.spotifyAccessToken = spotifyAccessToken;
+      widget.config.spotifyRefreshToken = spotifyRefreshToken;
+      widget.config.spotifyTokenExpiresAt = spotifyTokenExpiresAt;
+      db.update(widget.id, widget);
+    } catch (err) {
+      console.error('Failed to refresh Spotify token:', err.message);
+      return res.status(502).json({ error: 'Failed to refresh Spotify session' });
+    }
+  }
+
+  try {
+    const playRes = await axios.get('https://api.spotify.com/v1/me/player/currently-playing', {
+      headers: {
+        Authorization: `Bearer ${spotifyAccessToken}`
+      }
+    });
+
+    if (playRes.status === 204 || !playRes.data || !playRes.data.item) {
+      return res.json({ isPlaying: false, message: 'No track currently playing' });
+    }
+
+    const track = playRes.data.item;
+    res.json({
+      isPlaying: playRes.data.is_playing,
+      title: track.name,
+      artist: track.artists.map(a => a.name).join(', '),
+      album: track.album.name,
+      coverUrl: track.album.images[0]?.url || '',
+      duration: Math.round(track.duration_ms / 1000),
+      progress: Math.round(playRes.data.progress_ms / 1000)
+    });
+  } catch (err) {
+    console.error('Failed to fetch Spotify track details:', err.message);
+    res.status(500).json({ error: 'Failed to pull current playing track info' });
   }
 });
 

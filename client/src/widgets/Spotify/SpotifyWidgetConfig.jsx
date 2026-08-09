@@ -9,9 +9,98 @@ export default function SpotifyWidgetConfig({ config, onChange }) {
     });
   };
 
+  const match = window.location.pathname.match(/\/edit\/([^/]+)/);
+  const widgetId = match ? match[1] : null;
+
+  const handleConnectSpotify = () => {
+    if (!widgetId) return;
+    const width = 500;
+    const height = 650;
+    const left = window.screen.width / 2 - width / 2;
+    const top = window.screen.height / 2 - height / 2;
+    
+    const popup = window.open(
+      `/api/widgets/spotify/login?widgetId=${widgetId}`,
+      'SpotifyLogin',
+      `width=${width},height=${height},left=${left},top=${top}`
+    );
+
+    const handleMessage = (event) => {
+      if (event.data && event.data.type === 'SPOTIFY_CONNECTED') {
+        handleUpdate('spotifyConnected', true);
+        window.removeEventListener('message', handleMessage);
+      }
+    };
+    window.addEventListener('message', handleMessage);
+  };
+
   return (
     <div className="config-group">
       <h3>Spotify Configuration</h3>
+
+      <div style={{ marginBottom: '1.25rem' }}>
+        {config.spotifyConnected ? (
+          <div style={{
+            background: 'rgba(29, 185, 84, 0.1)',
+            border: '1px solid rgba(29, 185, 84, 0.3)',
+            color: '#1db954',
+            padding: '0.6rem 0.8rem',
+            borderRadius: '6px',
+            fontSize: '0.82rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}>
+            <span>✓ Linked to Spotify Account</span>
+            <button
+              onClick={() => handleUpdate('spotifyConnected', false)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#f87171',
+                cursor: 'pointer',
+                fontSize: '0.72rem',
+                textDecoration: 'underline'
+              }}
+            >
+              Disconnect
+            </button>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+            <button
+              type="button"
+              onClick={handleConnectSpotify}
+              disabled={!widgetId}
+              style={{
+                background: '#1db954',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '24px',
+                padding: '0.5rem 1rem',
+                fontSize: '0.82rem',
+                fontWeight: '700',
+                cursor: widgetId ? 'pointer' : 'not-allowed',
+                opacity: widgetId ? 1 : 0.6,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.4rem',
+                transition: 'opacity 0.15s'
+              }}
+              onMouseEnter={(e) => { if (widgetId) e.currentTarget.style.opacity = 0.9; }}
+              onMouseLeave={(e) => { if (widgetId) e.currentTarget.style.opacity = 1; }}
+            >
+              🔊 Connect Spotify Account
+            </button>
+            {!widgetId && (
+              <small style={{ color: 'var(--text-muted)', fontSize: '0.72rem', textAlign: 'center' }}>
+                Please save this widget once before linking Spotify.
+              </small>
+            )}
+          </div>
+        )}
+      </div>
 
       <div className="config-field">
         <label>Select Track Preset</label>
