@@ -8,6 +8,8 @@ export default function CountdownWidgetView({ config }) {
     targetDate = '',
     label = 'Countdown',
     completionMessage = "🎉 Time's Up!",
+    actionUrl = '',
+    style = 'digital',
     showDays = true,
     showHours = true,
     showMinutes = true,
@@ -86,7 +88,7 @@ export default function CountdownWidgetView({ config }) {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    minWidth: '60px',
+    minWidth: style === 'flip' ? 'none' : '60px',
   };
 
   const numberStyle = {
@@ -150,19 +152,40 @@ export default function CountdownWidgetView({ config }) {
           </div>
         ) : timeLeft ? (
           <div
-            style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}
+            style={{ display: 'flex', alignItems: 'center', gap: style === 'flip' ? '0.75rem' : '0.25rem' }}
           >
-            {units.map((unit, i) => (
-              <React.Fragment key={unit.key}>
-                <div style={unitStyle}>
-                  <span style={numberStyle}>
-                    {String(unit.value ?? 0).padStart(2, '0')}
-                  </span>
-                  <span style={unitLabelStyle}>{unit.key}</span>
-                </div>
-                {i < units.length - 1 && <span style={separatorStyle}>:</span>}
-              </React.Fragment>
-            ))}
+            {units.map((unit, i) => {
+              const padded = String(unit.value ?? 0).padStart(2, '0');
+              return (
+                <React.Fragment key={unit.key}>
+                  <div style={unitStyle}>
+                    {style === 'flip' ? (
+                      <div className="flip-card-container">
+                        {padded.split('').map((char, idx) => (
+                          <div key={`${idx}-${char}`} className="flip-digit flip-animate">
+                            {char}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <span style={numberStyle}>
+                        {padded}
+                      </span>
+                    )}
+                    <span style={unitLabelStyle}>{unit.key}</span>
+                  </div>
+                  {i < units.length - 1 && (
+                    <span style={{
+                      ...separatorStyle,
+                      alignSelf: style === 'flip' ? 'center' : 'flex-start',
+                      marginTop: style === 'flip' ? '-1rem' : '0.1rem',
+                    }}>
+                      :
+                    </span>
+                  )}
+                </React.Fragment>
+              );
+            })}
           </div>
         ) : null}
       </div>
