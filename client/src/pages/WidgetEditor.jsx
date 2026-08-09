@@ -3,6 +3,178 @@ import { widgetRegistry } from '../widgets';
 import * as LucideIcons from 'lucide-react';
 import { io } from 'socket.io-client';
 
+const AnalyticsTrendChart = ({ data }) => {
+  if (!data || data.length === 0) return null;
+
+  const maxViews = Math.max(...data.map(d => d.views), 1);
+  const height = 120;
+  const width = 360;
+  const padding = 20;
+
+  const chartHeight = height - padding * 2;
+  const chartWidth = width - padding * 2;
+
+  const points = data.map((d, index) => {
+    const x = padding + (index / (data.length - 1)) * chartWidth;
+    const y = height - padding - (d.views / maxViews) * chartHeight;
+    return `${x},${y}`;
+  });
+
+  const pathD = `M ${points.join(' L ')}`;
+
+  return (
+    <div style={{
+      background: 'rgba(0, 0, 0, 0.25)',
+      padding: '1rem',
+      borderRadius: '10px',
+      border: '1px solid rgba(255,255,255,0.05)',
+      marginTop: '1.25rem',
+      marginBottom: '1.25rem'
+    }}>
+      <h4 style={{
+        fontSize: '0.85rem',
+        color: 'var(--text-secondary)',
+        marginBottom: '0.75rem',
+        textTransform: 'uppercase',
+        letterSpacing: '0.05em'
+      }}>
+        7-Day Views Trend
+      </h4>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} style={{ overflow: 'visible' }}>
+          <line x1={padding} y1={padding} x2={width - padding} y2={padding} stroke="rgba(255,255,255,0.05)" strokeDasharray="3,3" />
+          <line x1={padding} y1={height / 2} x2={width - padding} y2={height / 2} stroke="rgba(255,255,255,0.05)" strokeDasharray="3,3" />
+          <line x1={padding} y1={height - padding} x2={width - padding} y2={height - padding} stroke="rgba(255,255,255,0.1)" />
+
+          <path
+            d={`${pathD} L ${width - padding},${height - padding} L ${padding},${height - padding} Z`}
+            fill="url(#sparkline-gradient)"
+            opacity="0.15"
+          />
+
+          <path
+            d={pathD}
+            fill="none"
+            stroke="#6366f1"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+
+          {data.map((d, index) => {
+            const [x, y] = points[index].split(',');
+            return (
+              <g key={index}>
+                <circle
+                  cx={x}
+                  cy={y}
+                  r="4"
+                  fill="#818cf8"
+                  stroke="#131a30"
+                  strokeWidth="2"
+                />
+                <text
+                  x={x}
+                  y={y - 8}
+                  textAnchor="middle"
+                  fill="#fff"
+                  fontSize="8"
+                  fontWeight="bold"
+                >
+                  {d.views}
+                </text>
+                <text
+                  x={x}
+                  y={height - 4}
+                  textAnchor="middle"
+                  fill="rgba(255,255,255,0.4)"
+                  fontSize="7"
+                >
+                  {new Date(d.date).toLocaleDateString('en-US', { weekday: 'short' })}
+                </text>
+              </g>
+            );
+          })}
+
+          <defs>
+            <linearGradient id="sparkline-gradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#6366f1" />
+              <stop offset="100%" stopColor="#6366f1" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+    </div>
+  );
+};
+
+const STYLE_PRESETS = {
+  slate: {
+    textColor: '#f8fafc',
+    backgroundStyle: 'solid',
+    backgroundColor: '#334155',
+    borderRadius: '12px',
+    glowEnable: false,
+    borderStyle: 'solid',
+    borderWidth: '1px',
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    opacity: 1.0,
+    customScrollbar: true,
+  },
+  cyberpunk: {
+    textColor: '#00ffff',
+    backgroundStyle: 'solid',
+    backgroundColor: '#070714',
+    borderRadius: '0px',
+    glowEnable: true,
+    glowColor: '#ff007f',
+    glowBlur: '20px',
+    borderStyle: 'solid',
+    borderWidth: '2px',
+    borderColor: '#00ffff',
+    opacity: 0.95,
+    customScrollbar: true,
+    customCSS: `div { font-family: 'Courier New', monospace; text-shadow: 0 0 5px #00ffff; }`,
+  },
+  autumn: {
+    textColor: '#fef3c7',
+    backgroundStyle: 'gradient',
+    gradientName: 'sunset',
+    borderRadius: '24px',
+    glowEnable: true,
+    glowColor: '#b45309',
+    glowBlur: '10px',
+    borderStyle: 'none',
+    borderWidth: '0px',
+    opacity: 1.0,
+    customScrollbar: false,
+  },
+  glassmorphism: {
+    textColor: '#ffffff',
+    backgroundStyle: 'solid',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: '16px',
+    glowEnable: false,
+    borderStyle: 'solid',
+    borderWidth: '1px',
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    opacity: 1.0,
+    customScrollbar: true,
+    customCSS: `div { backdrop-filter: blur(12px) !important; }`,
+  },
+  darkness: {
+    textColor: '#e2e8f0',
+    backgroundStyle: 'gradient',
+    gradientName: 'darkness',
+    borderRadius: '12px',
+    glowEnable: false,
+    borderStyle: 'none',
+    borderWidth: '0px',
+    opacity: 1.0,
+    customScrollbar: true,
+  }
+};
+
 export default function WidgetEditor({
   navigate,
   initialId,
@@ -182,6 +354,27 @@ export default function WidgetEditor({
     }
   };
 
+  const getSelectedPreset = () => {
+    for (const [name, preset] of Object.entries(STYLE_PRESETS)) {
+      const isMatch = Object.keys(preset).every((key) => {
+        return config[key] === preset[key];
+      });
+      if (isMatch) return name;
+    }
+    return 'custom';
+  };
+
+  const handlePresetChange = (presetName) => {
+    if (presetName === 'custom') return;
+    const presetStyles = STYLE_PRESETS[presetName];
+    if (presetStyles) {
+      handleConfigChange({
+        ...config,
+        ...presetStyles,
+      });
+    }
+  };
+
   const handleNameChange = (newName) => {
     setWidgetName(newName);
     if (socketRef.current && widgetId) {
@@ -292,6 +485,24 @@ export default function WidgetEditor({
           </div>
 
           <div className="config-group">
+            <h3>Style Presets</h3>
+            <div className="config-field">
+              <label>Apply Style Template</label>
+              <select
+                value={getSelectedPreset()}
+                onChange={(e) => handlePresetChange(e.target.value)}
+              >
+                <option value="custom">Custom Styling (Manual)</option>
+                <option value="slate">Minimalist Slate</option>
+                <option value="cyberpunk">Neon Cyberpunk</option>
+                <option value="autumn">Autumn Forest</option>
+                <option value="glassmorphism">Frosted Glass</option>
+                <option value="darkness">Pitch Black</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="config-group">
             <h3>Border & Frame</h3>
             <div className="config-row">
               <div className="config-field">
@@ -389,6 +600,21 @@ export default function WidgetEditor({
                 />
                 <span className="slider"></span>
               </label>
+            </div>
+          </div>
+          <div className="config-group">
+            <h3>Access Security</h3>
+            <div className="config-field">
+              <label>Allowed Domains (comma-separated)</label>
+              <input
+                type="text"
+                value={config.allowedDomains || ''}
+                onChange={(e) => handleConfigChange({ ...config, allowedDomains: e.target.value })}
+                placeholder="e.g. myblog.com, mysite.org"
+              />
+              <small style={{ color: 'var(--text-muted)', fontSize: '0.72rem', marginTop: '0.25rem', display: 'block' }}>
+                Leave blank to allow embedding on any website.
+              </small>
             </div>
           </div>
         </div>
@@ -725,6 +951,10 @@ export default function WidgetEditor({
                     </div>
                   </div>
                 </div>
+
+                {analyticsData.dailyBreakdown && (
+                  <AnalyticsTrendChart data={analyticsData.dailyBreakdown} />
+                )}
 
                 {/* Referrers breakdown */}
                 <h4

@@ -97,10 +97,51 @@ router.get('/me', authMiddleware, (req, res) => {
     res.json({
       id: user.id,
       email: user.email,
+      profilePic: user.profilePic || '',
       createdAt: user.createdAt,
     });
   } catch (err) {
     res.status(500).json({ error: 'Server error fetching user profile' });
+  }
+});
+
+// @route   PUT /api/auth/me
+// @desc    Update user profile details (email, password, profilePic)
+router.put('/me', authMiddleware, async (req, res) => {
+  const { email, password, profilePic } = req.body;
+  try {
+    const updateData = {};
+    if (email) {
+      const existing = dbUsers.getByEmail(email);
+      if (existing && existing.id !== req.user.id) {
+        return res.status(400).json({ error: 'Email already in use' });
+      }
+      updateData.email = email;
+    }
+    if (profilePic !== undefined) {
+      updateData.profilePic = profilePic;
+    }
+    if (password) {
+      if (password.length < 6) {
+        return res.status(400).json({ error: 'Password must be at least 6 characters' });
+      }
+      updateData.password = password;
+    }
+
+    const updatedUser = await dbUsers.update(req.user.id, updateData);
+    if (!updatedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({
+      id: updatedUser.id,
+      email: updatedUser.email,
+      profilePic: updatedUser.profilePic || '',
+      createdAt: updatedUser.createdAt,
+    });
+  } catch (err) {
+    console.error('Update profile error:', err);
+    res.status(500).json({ error: 'Server error updating profile' });
   }
 });
 
