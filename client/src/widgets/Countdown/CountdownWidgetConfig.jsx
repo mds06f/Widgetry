@@ -101,6 +101,17 @@ export default function CountdownWidgetConfig({ config, onChange }) {
 
       <h3 style={{ marginTop: '0.5rem' }}>Appearance</h3>
 
+      <div className="config-field">
+        <label>Countdown Display Style</label>
+        <select
+          value={config.style || 'digital'}
+          onChange={(e) => handleUpdate('style', e.target.value)}
+        >
+          <option value="digital">Classic Digital</option>
+          <option value="flip">Flip Clock</option>
+        </select>
+      </div>
+
       <div className="config-row">
         <div className="config-field">
           <label>Text Color</label>
